@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://essayspring.com"><img src="https://github.com" height="256px" width="256px"></a>
+  <a href="https://essayspring.com"><img src="https://raw.githubusercontent.com/shadrqen/essayspring/main/clientside/static/icon.png" height="256px" width="256px"></a>
   <br>
   EssaySpring
   <br>

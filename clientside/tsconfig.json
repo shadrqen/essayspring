@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "types": [
+      "webpack-env",
+      "vuetify",
+      "jest"
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "api/*.ts",
+    "components/*.vue",
+    "components/**/*.vue",
+    "layouts/*.vue",
+    "middleware/*.vue",
+    "mixins/*.js",
+    "pages/*.vue",
+    "plugins/*.js",
+    "plugins/*.ts",
+    "services/*.js",
+    "sockets/*.js",
+    "store/*.ts",
+    "store/**/*.ts",
+    "utils/*.ts",
+    "utils/*.js",
+    "tests/**/*.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

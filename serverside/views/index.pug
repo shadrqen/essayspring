@@ -1,0 +1,44 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+
+  extends layout
+
+  block content
+    if resend
+      form(method='POST' action='/auth/v1/resend_token')
+        div.label
+          h6=message
+        div.form-group
+          input#email.form-control(type='email', value=email name='email' hidden)
+        button.btn.btn-default(type='submit') Resend Token
+
+    else
+      if (message === 'Email confirmed successfully! Kindly create your password below' || message === 'Email has already been confirmed! Create your password below')
+        form(method='POST' action='/auth/v1/create_writer_password')
+          h2= message
+          div.label Create password
+          div.username
+            input(type="password" placeholder="Password", name='password')
+          div.password
+            input(type="password" placeholder="Confirm password")
+          div.form-group
+            input#email.form-control(type='email', value=email name='email' hidden)
+          button(type='submit') Submit
+
+      else if (message === 'Password set successfully')
+        form(method='POST' action='')
+          h4= 'Password set successfully! Kindly click '
+          a(href=frontendUrl) here to login
+
+      else if (message === 'Password already updated')
+        form(method='POST' action='')
+          h4= 'Password already updated! Kindly click '
+          a(href=frontendUrl) here to login
+
+      else
+        form(method='POST' action='')
+          h2= message

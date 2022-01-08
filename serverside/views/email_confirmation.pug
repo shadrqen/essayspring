@@ -1,0 +1,82 @@
+doctype html
+html(lang="en")
+    head
+        title EssaySpring
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap')
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+        link(rel='stylesheet', type='text/css', href='/stylesheets/style.css')
+        link(rel="preconnect" href="https://fonts.gstatic.com")
+        link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap")
+
+    body
+        #topDiv
+            #container
+                #main
+                    if resend
+                        form(method='POST' action='/auth/v1/resend_token')
+                            div.label
+                                h6=message
+                            div.form-group
+                                input#email.form-control(type='email', value=email name='email' hidden)
+                            button.btn.btn-default(type='submit') Resend Token
+
+                    else
+                        if (message === 'Email confirmed successfully! Kindly create your password below')
+                            form(method='POST' action='/auth/v1/create_writer_password' id="form")
+                                h3= message
+                                div.label Create password
+                                div.password
+                                    input(type="password" id="password" required placeholder="Password", name='password')
+                                div.password
+                                    input(type="password" id="password2" required placeholder="Confirm password")
+                                div.form-group
+                                    div.form-control(id="short-password") Password should be at least 6 characters
+                                div.form-group
+                                    div.form-control(id="passwordRequired") Password cannot be empty
+                                div.form-group
+                                    div.form-control(id="notification") Password mismatch
+                                div.form-group
+                                    input#email.form-control(type='email', value=email name='email' hidden)
+                                button(type='button' onclick='checkPasswords()') Submit
+
+                        else if (message === 'Password set successfully')
+                            form(method='POST' action='')
+                                h4= 'Password set successfully! Kindly click '
+                                a(href=frontendUrl) here to login
+
+                        else if (message === 'Password already updated')
+                            form(method='POST' action='')
+                                h4= 'Password already updated! Kindly click '
+                                a(href=frontendUrl) here to login
+
+                        else
+                            form(method='POST' action='')
+                                h2= message
+
+        script(type='text/javascript').
+            function checkPasswords() {
+                const password = document.getElementById('password').value
+                const password2 = document.getElementById('password2').value
+                let targetElement
+                if (!password || !password2) {
+                    targetElement = document.getElementById('passwordRequired')
+                } else {
+                    if (password !== password2) {
+                        targetElement = document.getElementById('notification')
+                    } else {
+                        if (password.length < 6) {
+                            targetElement = document.getElementById('short-password')
+                        }
+                    }
+                }
+                if (targetElement) {
+                    targetElement.style.display = 'block'
+                    setTimeout(() => {
+                        targetElement.style.display = 'none'
+                    }, 3000)
+                } else {
+                    document.getElementById('form').submit()
+                }
+            }

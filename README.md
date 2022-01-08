@@ -47,43 +47,24 @@ Currently, the EssaySpring clientside has been integrated successfully. The next
 
 Installation
 ------------
-Installing EssaySpring is easy.
+Installing EssaySpring is easy
 
 #### Fork and clone
 
 - Fork the repository
 - Clone to your machine
-`git clone https://github.com/[YOUR_USERNAME]/essayspring.git`
+```git clone https://github.com/[YOUR_USERNAME]/essayspring.git```
 
-#### Build Setup
+#### Dev Setup
+For each of the five microservices, open and follow the steps (in each microservice README) to run the development setup
 
-``` bash
-# install dependencies
-npm install
 
-# serve with hot reload at localhost:4100
-- ./start.sh or
-- npm run dev
-
-# build for production with minification
-npm run build
-
-# run unit tests
-npm run test:unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-
-```
 ## Contributing
 
 You can help out with the ongoing development by looking for potential bugs in our code base, or by contributing new features. We are always welcoming new pull requests containing bug fixes, refactors and new features. We have a list of tasks and bugs on our issue tracker on Github. Please comment on issues if you want to contribute with, to avoid duplicating effort.
 Here's how:
 - Fork the repository ([here is the guide](https://help.github.com/articles/fork-a-repo/)). 
-- Clone to your machine git clone https://github.com/[YOUR_USERNAME]/essayspring.git
+- Clone to your machine ```git clone https://github.com/[YOUR_USERNAME]/essayspring.git```
 - Make your changes
 - Create a pull request
 
@@ -93,7 +74,7 @@ Here's how:
 <table>
   <tr>
     <td><a href="https://twitter.com/shadrqen">Twitter</a></td>
-    <td>You can follow our Twitter account to get updates on new features or releases</td>
+    <td>You can follow my Twitter account to get updates on new features or releases</td>
   </tr>
 </table>
 

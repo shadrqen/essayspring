@@ -1,0 +1,33 @@
+version: '3'
+services:
+  postgresql:
+    image: 'docker.io/bitnami/postgresql:latest'
+    restart: always
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=Ole2020...
+      - POSTGRESQL_DATABASE=vernemq
+      - POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on
+    volumes:
+      - './db_volume:/bitnami/postgresql'
+    ports:
+      - '5434:5434'
+    networks:
+      - verne_network
+  vernemq:
+    build: .
+    ports:
+      - '1883:1883'
+      - '4369:4369'
+      - '9090:8080'
+      - '8883:8883'
+      - '8888:8888'
+      - '9100:9109'
+      - '44053:44053'
+    networks:
+      - verne_network
+    depends_on:
+      - postgresql
+networks:
+  verne_network:
+    driver: bridge

@@ -1,0 +1,140 @@
+body {
+    background: #F2F2F2;
+    font-family: 'Lato', sans-serif;
+}
+
+a {
+    color: black;
+}
+
+#topDiv {
+    width: 100%;
+    margin: 0 auto;
+}
+
+#container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f2f2f2;
+}
+
+#main {
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*height: 100vh;*/
+    width: 390px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    padding-left: 20px;
+    padding-right: 3vw;
+    padding-bottom: 20px;
+}
+
+form {
+    width: 100%;
+    padding: 10px;
+}
+
+
+input:focus,
+button:focus {
+    outline: none;
+}
+
+button {
+    background: #007991;
+    color: #fff;
+    border: 0;
+    width: 100%;
+    padding: 10px;
+    margin-top: 1vw;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.checkbox {
+    color: #fff;
+    padding-bottom: 10px;
+}
+
+h3 {
+    text-align: center;
+    text-transform: capitalize;
+    margin-bottom: 5vw;
+    border: 1px solid rgb(214,233,198);
+    background-color: rgb(223,240,216);
+    color: rgb(70,136,71);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+p {
+    text-align: center;
+    color: #fff;
+    text-transform: capitalize;
+}
+
+a {
+    padding-left: 5px;
+    text-decoration: none;
+    color: #63cdda;
+    text-transform: capitalize;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#password, #password2 {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.label {
+    font-size: 25px;
+    text-align: center;
+    margin-bottom: 15px;
+    text-transform: capitalize;
+    font-family: "Poppins-Bold", serif;
+}
+
+@media(max-width:610px) {
+    form {
+        width: 93%;
+    }
+
+    button {
+        padding: 5px;
+    }
+}
+
+@media(max-width:420px) {
+    form {
+        width: 90%;
+    }
+
+    h3 {
+        margin: 10px;
+    }
+}
+
+#notification, #short-password, #passwordRequired {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid rgb(238,211,215);
+    background-color: rgb(242,222,222);
+    color: rgb(185,74,72);
+    display: none;
+}

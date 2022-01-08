@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EssaySpring Email Confirmation</title>
+    <style type="text/css">
+        .forgotpasswordlink{
+            float: left;
+            padding-top: 14px;
+            color: #138496;
+        }
+
+        a {
+            color: #92badd;
+            display:inline-block;
+            text-decoration: none;
+            font-weight: 400;
+        }
+
+        .underlineHover{
+
+            text-align: center;
+            /* padding-left: 19px; */
+        }
+
+        /* STRUCTURE */
+
+        .wrapper {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+        }
+
+        #formContent {
+            -webkit-border-radius: 10px 10px 10px 10px;
+            border-radius: 10px 10px 10px 10px;
+            background: #fff;
+            padding: 0px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+            box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+
+        #formFooter {
+            background-color: #f6f6f6;
+            border-top: 1px solid #dce8f1;
+            padding: 5px;
+            text-align: center;
+            -webkit-border-radius: 0 0 10px 10px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        #loginForm{
+            padding-left: 50px;
+            padding-right: 50px;
+            padding-bottom: 5px;
+        }
+        /* ANIMATIONS */
+
+        /* Simple CSS3 Fade-in-down Animation */
+
+        /* Simple CSS3 Fade-in Animation */
+        .underlineHover:after {
+            /* display: block; */
+            left: 0;
+            bottom: -10px;
+            width: 0;
+            height: 2px;
+            background-color: #138496;
+            transition: width 0.2s;
+        }
+
+        .underlineHover:hover {
+            background: #92badd;
+        }
+
+        .underlineHover:hover:after{
+            width: 100%;
+        }
+
+        /* Simple CSS3 Fade-in Animation */
+        .forgotpasswordlink:after {
+            display: block;
+            left: 0;
+            bottom: -10px;
+            width: 0;
+            height: 2px;
+            background-color: #138496;
+            content: "";
+            transition: width 0.2s;
+        }
+
+        .forgotpasswordlink:hover {
+            color: #0d0d0d;
+        }
+
+        .forgotpasswordlink:hover:after{
+            width: 100%;
+        }
+
+        h1{
+            color: #138496;
+        }
+
+        #logintitle{
+            padding-bottom: 8px;
+            padding-top: 15px;
+        }
+
+        /* OTHERS */
+
+        *:focus {
+            outline: none;
+        }
+
+        #icon {
+            width:30%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="wrapper fadeInDown" :style="`padding-top: ${padding_top}`">
+        <div id="formContent">
+            <div id="logintitle">
+                <h1 class="font-weight-light"> Login </h1>
+            </div>
+
+            <!-- Login Form -->
+
+            <form action="" enctype="multipart/form-data" id="loginForm" method="post" ref="login_form">
+                <input
+                        placeholder="Email"
+                        required
+                        type="password"
+                        name="password"/>
+                <input
+                        placeholder="Email"
+                        required
+                        type="password"
+                        name="password2"/>
+                <button
+                        @click="submit"
+                        block
+                        class="white--text font-weight-light"
+                        color="#17a2b8"
+                        id="submitbutton"
+                        large
+                        primary
+                >Login
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const signUpButton = document.getElementById('signUp')
+    const signInButton = document.getElementById('signIn')
+    const container = document.getElementById('container')
+
+    signUpButton.addEventListener('click', () => {
+        container.classList.add('right-panel-active')
+    })
+    signInButton.addEventListener('click', () => {
+        container.classList.remove('right-panel-active')
+    })
+
+</script>
+</body>
+</html>

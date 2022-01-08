@@ -1,0 +1,25 @@
+
+authentication
+    - sign up
+        - writer registration
+        - client registration
+    - log in
+        - username and password match
+        - otp
+    - auth decorator
+    - cors decorator
+    - roles required decorator
+    - user agent check (only allow browsers)
+orders
+    - post
+    - bid
+    - submit
+    - review
+    - revise
+
+
+
+payments
+    - client submit payment
+    - withdraw money to virtual account
+    - withdraw money from virtual account to MPESA

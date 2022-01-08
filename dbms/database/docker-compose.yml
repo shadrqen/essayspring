@@ -1,0 +1,19 @@
+version: '2'
+services:
+  postgresql:
+    image: 'docker.io/bitnami/postgresql:latest'
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=Ole2020...
+      - POSTGRESQL_DATABASE=essayprime_development
+      - POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on
+    volumes:
+      - './db_volume:/bitnami/postgresql'
+    ports:
+      - '5432:5432'
+  phppgadmin:
+    image: 'docker.io/bitnami/phppgadmin:latest'
+    ports:
+      - '8081:8080'
+    depends_on:
+      - postgresql

@@ -14,17 +14,23 @@
 
 
 ## EssaySpring
-<h4><b> EssaySpring </b> is a freelance academic writing platform that has been on development for quite a while - albeit under private repos.
+<b> EssaySpring </b> is a freelance academic writing platform that has been on development for quite a while - albeit under private repos.
 However, I am currently in the process of moving a majority of the functionalities to be open-source. While I believe the idea and its implementation could be of high
  value to me, I feel like it would even be more should we join hands together as a community. The project has been running under a beta
 release for quite some time now. There are still areas of improvement, and your contribution is highly welcome and appreciated as we make the 
-world a better place - one open-source contribution at a time.</h4>
+world a better place - one open-source contribution at a time.
 
 ## Structure
 > Customer here is used to refer to persons who post jobs in the platform, while writers are the professionals who offer their services for a fee.
 
-The platform is decoupled into six smaller microservices that operate independently. First, it is broken down into two sub-systems, each of which has its own micro-services.
+The platform is decoupled into two sub-systems and several microservices that operate independently.
+- [EssaySpring](https://essayspring.com)
+  > The customer-facing side
+- [Writeray](https://writeray.com)
+  > The writer-facing side
 
+## Integration
+Currently, the EssaySpring clientside has been integrated successfully. The next step is to integrate its backend and DBMS microservices.
 
 ## Core Features
 - **Post orders 24/7** - Post your order any time of the day/week
@@ -71,6 +77,8 @@ npm run e2e
 # run all tests
 npm test
 
+```
+
 ## Contributing
 
 You can help out with the ongoing development by looking for potential bugs in our code base, or by contributing new features. We are always welcoming new pull requests containing bug fixes, refactors and new features. We have a list of tasks and bugs on our issue tracker on Github. Please comment on issues if you want to contribute with, to avoid duplicating effort.
@@ -95,6 +103,3 @@ Here's how:
 Beginning with version 0.0.1, the code in this repository is licensed under the [GNU AGPL v3](https://www.gnu.org/licenses/agpl-3.0.de.html) license with a
 [common clause](https://commonsclause.com/) selling exception. See [LICENSE.md](https://github.com/vabene1111/recipes/blob/develop/LICENSE.md) for details.
 
-> NOTE: There appears to be a whole range of legal issues with licensing anything else then the standard completely open licenses.
-> I am in the process of getting some professional legal advice to sort out these issues.
-> Please also see [Issue 238](https://github.com/vabene1111/recipes/issues/238) for some discussion and **reasoning** regarding the topic.

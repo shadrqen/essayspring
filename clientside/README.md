@@ -1,21 +1,28 @@
-<h1 align="center">
+<h3 align="center">
   <br>
-  <a href="https://essayspring.com"><img src="https://github.com" height="256px" width="256px"></a>
+  <a href="https://essayspring.com"><img src="https://raw.githubusercontent.com/shadrqen/essayspring/main/clientside/static/icon.png" height="256px" width="256px"></a>
   <br>
-  EssaySpring
   <br>
-</h1>
+  EssaySpring Clientside
+  <br>
+</h3>
 
-<h4 align="center">Get your order done in record time, plagiarism grammar error-free</h4>
+### Dev Setup
 
-<p align="center">
-<a href="https://essayspring.com" target="_blank" rel="noopener noreferrer">Website</a> •
-</p>
+#### install dependencies
+```
+npm install
 
-<br>
+# in case you encounter errors installing dependencies
 
-<h4 align="center">
-This is the client-facing side of the platform. It gives clients access to a carefully select pool of highly qualified professionals from a wide array of fields.
-<br>
-Here, clients can log in, post orders, manage writers and most importantly improve their performance.
-</h4>
+npm install --legacy-peer-deps
+```
+
+#### create a .env file and add
+```
+URL=[your local ip address]
+```
+#### serve with hot reload at localhost:4100
+```
+- ./start.sh
+```

@@ -78,7 +78,6 @@ npm run e2e
 npm test
 
 ```
-
 ## Contributing
 
 You can help out with the ongoing development by looking for potential bugs in our code base, or by contributing new features. We are always welcoming new pull requests containing bug fixes, refactors and new features. We have a list of tasks and bugs on our issue tracker on Github. Please comment on issues if you want to contribute with, to avoid duplicating effort.

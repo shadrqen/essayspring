@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         # Clientside folder working directory.
-        working-directory: clientside
+        working-directory: ./clientside
 
     steps:
       - uses: actions/checkout@v2

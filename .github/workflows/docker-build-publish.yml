@@ -7,19 +7,21 @@ on:
 
 jobs:
 
-  build:
+  clientside-build:
 
-    name: Build and push to DockerHub
-
+    name: Build and push the client to DockerHub
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Clientside folder working directory.
+        working-directory: ./clientside
 
     steps:
       - uses: actions/checkout@v2
-
       - uses: dorny/paths-filter@v2
         id: filter
         with:
-          filters: |
+          filters: | # to build only on changes to the clientside
             clientside:
               - 'clientside/**'
       - name: Check out the repo
@@ -32,21 +34,77 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
-      - name: Build and Push to Docker Hub - Client
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: ./clientside
           file: ./clientside/Dockerfile
           push: true
           tags: ${{ secrets.ES_CLIENT }}:0.1.${{ steps.date.outputs.date }}
-      - name: Build and Push to Docker Hub - Server
+
+  server-build:
+
+    name: Build and push the server to DockerHub
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Clientside folder working directory.
+        working-directory: ./serverside
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: | # to build only on changes to the serverside
+            serverside:
+              - 'serverside/**'
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%s')"
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: ./serverside
           file: ./serverside/Dockerfile
           push: true
           tags: ${{ secrets.ES_SERVER }}:0.1.${{ steps.date.outputs.date }}
-      - name: Build and Push to Docker Hub - DBMS
+
+  dbms-build:
+
+    name: Build and push server to DockerHub
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Clientside folder working directory.
+        working-directory: ./dbms
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: | # to build only on changes to the dbms
+            dbms:
+              - 'dbms/**'
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%s')"
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASS }}
+      - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: ./dbms

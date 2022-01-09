@@ -18,7 +18,6 @@ jobs:
         run: echo "::set-output name=date::$(date +'%s')"
       - name: Build and Push to Docker Hub (Clientside)
         working-directory: ./clientside
-        uses: docker/build-push-action@v2
         with:
           push: true
           tags: shadrqen/essayspring-client:0.1.${{ steps.date.outputs.date }}

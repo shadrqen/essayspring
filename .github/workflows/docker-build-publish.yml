@@ -7,16 +7,11 @@ on:
 
 jobs:
 
-  clientside-build:
+  build:
 
-    name: Build clientside and push to DockerHub
+    name: Build and push to DockerHub
 
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        # Clientside folder working directory.
-        working-directory: ./clientside
 
     steps:
       - uses: actions/checkout@v2
@@ -37,10 +32,24 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
-      - name: Build and Push to Docker Hub
+      - name: Build and Push to Docker Hub - Client
         uses: docker/build-push-action@v2
         with:
           context: ./clientside
           file: ./clientside/Dockerfile
           push: true
           tags: ${{ secrets.ES_CLIENT }}:0.1.${{ steps.date.outputs.date }}
+      - name: Build and Push to Docker Hub - Server
+        uses: docker/build-push-action@v2
+        with:
+          context: ./serverside
+          file: ./serverside/Dockerfile
+          push: true
+          tags: ${{ secrets.ES_SERVER }}:0.1.${{ steps.date.outputs.date }}
+      - name: Build and Push to Docker Hub - DBMS
+        uses: docker/build-push-action@v2
+        with:
+          context: ./dbms
+          file: ./dbms/Dockerfile
+          push: true
+          tags: ${{ secrets.ES_DBMS }}:0.1.${{ steps.date.outputs.date }}

@@ -7,9 +7,9 @@ on:
 
 jobs:
 
-  clientside-build:
+  client-build:
 
-    name: Build and push the client to DockerHub
+    name: client build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -44,11 +44,11 @@ jobs:
 
   server-build:
 
-    name: Build and push the server to DockerHub
+    name: server build
     runs-on: ubuntu-latest
     defaults:
       run:
-        # Clientside folder working directory.
+        # Serverside folder working directory.
         working-directory: ./serverside
 
     steps:
@@ -79,11 +79,11 @@ jobs:
 
   dbms-build:
 
-    name: Build and push server to DockerHub
+    name: dbms build
     runs-on: ubuntu-latest
     defaults:
       run:
-        # Clientside folder working directory.
+        # DBMS folder working directory.
         working-directory: ./dbms
 
     steps:

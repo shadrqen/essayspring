@@ -3,7 +3,12 @@ name: EssaySpring CI/CD
 on:
   push:
     branches:
-    - feature-github-actions
+    - dev
+    - main
+  pull_request:
+    branches:
+      - dev
+      - main
 
 jobs:
 

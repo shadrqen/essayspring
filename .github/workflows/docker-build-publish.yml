@@ -19,8 +19,6 @@ jobs:
         working-directory: ./clientside
 
     steps:
-      - uses: actions/checkout@v2
-
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -35,5 +33,7 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
+          context: ./clientside
+          file: ./clientside/Dockerfile
           push: true
           tags: shadrqen/essayspring-client:0.1.${{ steps.date.outputs.date }}

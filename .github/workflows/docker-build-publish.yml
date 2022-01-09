@@ -2,23 +2,36 @@ name: EssaySpring CI/CD
 
 on:
   push:
-    branches: [ feature-github-actions ]
+    branches:
+    - feature-github-actions
 
 jobs:
 
-  build:
+  clientside-build:
+
+    name: Build clientside and push to DockerHub
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        # Clientside folder working directory.
+        working-directory: clientside
+
     steps:
+      - uses: actions/checkout@v2
+
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            clientside:
+              - 'clientside/**'
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Get current date
         id: date
         run: echo "::set-output name=date::$(date +'%s')"
-      - name: CD Clientside
-        run: |
-          cd clientside
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:

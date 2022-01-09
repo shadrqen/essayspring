@@ -43,4 +43,4 @@ jobs:
           context: ./clientside
           file: ./clientside/Dockerfile
           push: true
-          tags: shadrqen/essayspring-client:0.1.${{ steps.date.outputs.date }}
+          tags: ${{ secrets.ES_CLIENT }}:0.1.${{ steps.date.outputs.date }}

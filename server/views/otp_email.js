@@ -1,6 +1,6 @@
 class EmailOTP {
     static emailOTPCode = (otp, intention) =>
-        '<!DOCTYPE html>\n' +
+      '<!DOCTYPE html>\n' +
         '<html>\n' +
         '\n' +
         '<head>\n' +

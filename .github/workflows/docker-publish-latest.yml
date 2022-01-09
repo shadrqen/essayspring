@@ -1,20 +1,20 @@
-name: EssaySpring CI/CD
+name: publish latest image to docker
 
 on:
   push:
     branches:
-    - feature-github-actions
+      - main
 
 jobs:
 
   client-build:
 
-    name: client build
+    if: github.repository_owner == 'shadrqen'
     runs-on: ubuntu-latest
     defaults:
       run:
         # Clientside folder working directory.
-        working-directory: ./clientside
+        working-directory: ./client
 
     steps:
       - uses: actions/checkout@v2
@@ -22,8 +22,8 @@ jobs:
         id: filter
         with:
           filters: | # to build only on changes to the clientside
-            clientside:
-              - 'clientside/**'
+            client:
+              - 'client/**'
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Get current date
@@ -37,19 +37,19 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./clientside
-          file: ./clientside/Dockerfile
+          context: ./client
+          file: ./client/Dockerfile
           push: true
-          tags: ${{ secrets.ES_CLIENT }}:0.1.${{ steps.date.outputs.date }}
+          tags: ${{ secrets.ES_CLIENT }}:latest
 
   server-build:
 
-    name: server build
+    if: github.repository_owner == 'shadrqen'
     runs-on: ubuntu-latest
     defaults:
       run:
         # Serverside folder working directory.
-        working-directory: ./serverside
+        working-directory: ./server
 
     steps:
       - uses: actions/checkout@v2
@@ -57,8 +57,8 @@ jobs:
         id: filter
         with:
           filters: | # to build only on changes to the serverside
-            serverside:
-              - 'serverside/**'
+            server:
+              - 'server/**'
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Get current date
@@ -72,14 +72,14 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./serverside
-          file: ./serverside/Dockerfile
+          context: ./server
+          file: ./server/Dockerfile
           push: true
-          tags: ${{ secrets.ES_SERVER }}:0.1.${{ steps.date.outputs.date }}
+          tags: ${{ secrets.ES_SERVER }}:latest
 
   dbms-build:
 
-    name: dbms build
+    if: github.repository_owner == 'shadrqen'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -110,4 +110,4 @@ jobs:
           context: ./dbms
           file: ./dbms/Dockerfile
           push: true
-          tags: ${{ secrets.ES_DBMS }}:0.1.${{ steps.date.outputs.date }}
+          tags: ${{ secrets.ES_DBMS }}:latest

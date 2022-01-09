@@ -1,6 +1,5 @@
-<<<<<<< HEAD
-import { shallowMount, mount } from '@vue/test-utils'
-import Index from '@/pages/Index.vue'
+import { mount } from '@vue/test-utils'
+// import Index from '@/pages/Index.vue'
 
 // The component to test
 const MessageComponent = {
@@ -19,6 +18,8 @@ const Counter = {
     return { count: 0 }
   }
 }
+
+/* eslint-disable no-undef */
 
 test('displays message', () => {
   // mount() returns a wrapped Vue component we can interact with
@@ -44,26 +45,16 @@ test('increments counter value on click', async () => {
   expect(text.text()).toContain('Total clicks: 1')
 })
 
+/* eslint-enable no-undef */
+
 /*
 describe('Index', () => {
   it('renders props.msg when passed', () => {
     const msg = 'new message'
     const wrapper = shallowMount(Index, {
-=======
-import { shallowMount } from '@vue/test-utils'
-import Index from '@/components/HelloWorld.vue'
-
-describe('HelloWorld.vue', () => {
-  it('renders props.msg when passed', () => {
-    const msg = 'new message'
-    const wrapper = shallowMount(HelloWorld, {
->>>>>>> 3728584... Feature commenting (#223)
       propsData: { msg }
     })
     expect(wrapper.text()).toMatch(msg)
   })
 })
-<<<<<<< HEAD
  */
-=======
->>>>>>> 3728584... Feature commenting (#223)

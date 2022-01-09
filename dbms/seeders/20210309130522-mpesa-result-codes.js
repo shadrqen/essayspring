@@ -157,4 +157,4 @@ module.exports = {
      * await queryInterface.bulkDelete('People', null, {});
      */
   }
-};
+}

@@ -1,6 +1,6 @@
 class WriterOrderEmailAction {
     static orderAction = (orderId, msg, user, url) =>
-        '<!DOCTYPE html>\n' +
+      '<!DOCTYPE html>\n' +
         '<html>\n' +
         '\n' +
         '<head>\n' +

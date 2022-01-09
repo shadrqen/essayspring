@@ -1,6 +1,6 @@
 class NewClientNotification {
     static newClientEmail = (msg, url, purpose) =>
-        '<!DOCTYPE html>\n' +
+      '<!DOCTYPE html>\n' +
         '<html>\n' +
         '\n' +
         '<head>\n' +

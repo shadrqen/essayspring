@@ -23,25 +23,24 @@ class AuthService {
     * its value is as expected.
     * Also, making sure that the api key is the one that is expected by the application */
     if (origin) {
-        if (targetOrigin.includes(origin)) {
-          const innerApiKey = req.headers.api_key
-          if (innerApiKey && innerApiKey === apiKey) {
-            /* Process to the next callback in case the origin and api key match */
-            next()
-          } else {
-            /* Otherwise return status 500 */
-            res.status(500).send('I\'m lost.')
-          }
+      if (targetOrigin.includes(origin)) {
+        const innerApiKey = req.headers.api_key
+        if (innerApiKey && innerApiKey === apiKey) {
+          /* Process to the next callback in case the origin and api key match */
+          next()
         } else {
           /* Otherwise return status 500 */
           res.status(500).send('I\'m lost.')
         }
+      } else {
+        /* Otherwise return status 500 */
+        res.status(500).send('I\'m lost.')
+      }
     } else {
       /* Otherwise return status 500 */
       res.status(500).send('I\'m lost.')
     }
   }
-
 }
 
 module.exports = AuthService

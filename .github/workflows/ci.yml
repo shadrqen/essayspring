@@ -4,61 +4,62 @@ on: [push]
 
 jobs:
 
-  client-build:
+  client-ci:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install npm dependencies
         # Clientside folder working directory.
         working-directory: client
-
-    steps:
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: Install npm dependencies
         run: npm install
       - name: Run linter
+        working-directory: client
         run: npm run lint
       - name: Run unit tests
+        working-directory: client
         run: npm run test:unit
       - name: Build Nuxt project
+        working-directory: client
         run: npm run build
 
-  server-build:
+  server-ci:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install npm dependencies
         # Serverside folder working directory.
         working-directory: server
-
-    steps:
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: Install npm dependencies
         run: npm install
       - name: Run linter
+        working-directory: server
         run: npm run lint
       - name: Run unit tests
+        working-directory: server
         run: npm run test
 
-  dbms-build:
+  dbms-ci:
 
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        # DBMS folder working directory.
-        working-directory: dbms
 
     steps:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
       - name: Install npm dependencies
+        # DBMS folder working directory.
+        working-directory: dbms
         run: npm install
       - name: Run linter
+        working-directory: dbms
         run: npm run lint
       - name: Run unit tests
+        working-directory: dbms
         run: npm run test

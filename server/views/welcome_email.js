@@ -1,6 +1,6 @@
 class WelcomeEmail {
     static welcomeEmail = (url, unsubscribeUrl) =>
-        '<!DOCTYPE html>\n' +
+      '<!DOCTYPE html>\n' +
         '<html>\n' +
         '\n' +
         '<head>\n' +

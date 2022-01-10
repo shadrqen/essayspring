@@ -1,0 +1,64 @@
+name: continuous integration
+
+on: [push]
+
+jobs:
+
+  client-build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Clientside folder working directory.
+        working-directory: ./clientside
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Run linter
+        run: npm run lint
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Build Nuxt project
+        run: npm run build
+
+  server-build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Serverside folder working directory.
+        working-directory: ./serverside
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Run linter
+        run: npm run lint
+      - name: Run unit tests
+        run: npm run test
+
+  dbms-build:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # DBMS folder working directory.
+        working-directory: ./dbms
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install npm dependencies
+        run: npm install
+      - name: Run linter
+        run: npm run lint
+      - name: Run unit tests
+        run: npm run test

@@ -1,6 +1,6 @@
 class NewWriterRegistration {
     static newWriterRegistration = (names, url) =>
-        '<!DOCTYPE html>\n' +
+      '<!DOCTYPE html>\n' +
         '<html>\n' +
         '\n' +
         '<head>\n' +

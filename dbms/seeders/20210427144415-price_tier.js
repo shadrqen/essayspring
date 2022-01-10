@@ -11,7 +11,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    return queryInterface.bulkInsert({ tableName: 'price_tier', schema: 'payments'}, [
+    return queryInterface.bulkInsert({ tableName: 'price_tier', schema: 'payments' }, [
       {
         tier: 'Tier1',
         isDeleted: false,

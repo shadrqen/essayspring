@@ -7,66 +7,58 @@ jobs:
   client-ci:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
 
     steps:
+      - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
       - name: Install npm dependencies
-        run: |
-          cd client
-          npm install
+        run: npm install
       - name: Run linter
-        run: |
-          cd client
-          npm run lint
+        run: npm run lint
       - name: Run unit tests
-        run: |
-          cd client
-          npm run test:unit
+        run: npm run test:unit
       - name: Build Nuxt project
-        run: |
-          cd client
-          npm run build
+        run: npm run build
 
   server-ci:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
 
     steps:
+      - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
       - name: Install npm dependencies
-        run: |
-          cd server
-          npm install
+        run: npm install
       - name: Run linter
-        run: |
-          cd server
-          npm run lint
+        run: npm run lint
       - name: Run unit tests
-        run: |
-          cd server
-          npm run test
+        run: npm run test
 
   dbms-ci:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dbms
 
     steps:
+      - uses: actions/checkout@v1
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
       - name: Install npm dependencies
-        run: |
-          cd dbms
-          npm install
+        run: npm install
       - name: Run linter
-        run: |
-          cd dbms
-          npm run lint
+        run: npm run lint
       - name: Run unit tests
-        run: |
-          cd dbms
-          npm run test
+        run: npm run test

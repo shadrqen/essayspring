@@ -20,7 +20,6 @@ const Counter = {
 }
 
 /* eslint-disable no-undef */
-
 test('displays message', () => {
   // mount() returns a wrapped Vue component we can interact with
   const wrapper = mount(MessageComponent, {
@@ -46,15 +45,9 @@ test('increments counter value on click', async () => {
 })
 
 /* eslint-enable no-undef */
-
 /*
 describe('Index', () => {
   it('renders props.msg when passed', () => {
     const msg = 'new message'
     const wrapper = shallowMount(Index, {
-      propsData: { msg }
-    })
-    expect(wrapper.text()).toMatch(msg)
-  })
-})
  */

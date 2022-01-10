@@ -10,7 +10,7 @@ jobs:
     defaults:
       run:
         # Clientside folder working directory.
-        working-directory: ./clientside
+        working-directory: ./client
 
     steps:
       - uses: actions/setup-node@v2
@@ -31,7 +31,7 @@ jobs:
     defaults:
       run:
         # Serverside folder working directory.
-        working-directory: ./serverside
+        working-directory: ./server
 
     steps:
       - uses: actions/setup-node@v2

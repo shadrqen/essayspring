@@ -14,7 +14,7 @@ jobs:
     defaults:
       run:
         # Clientside folder working directory.
-        working-directory: ./clientside
+        working-directory: ./client
 
     steps:
       - uses: actions/checkout@v2
@@ -22,8 +22,8 @@ jobs:
         id: filter
         with:
           filters: | # to build only on changes to the clientside
-            clientside:
-              - 'clientside/**'
+            client:
+              - 'client/**'
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Get current date
@@ -37,8 +37,8 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./clientside
-          file: ./clientside/Dockerfile
+          context: ./client
+          file: ./client/Dockerfile
           push: true
           tags: ${{ secrets.ES_CLIENT }}:dev
 
@@ -49,7 +49,7 @@ jobs:
     defaults:
       run:
         # Serverside folder working directory.
-        working-directory: ./serverside
+        working-directory: ./server
 
     steps:
       - uses: actions/checkout@v2
@@ -57,8 +57,8 @@ jobs:
         id: filter
         with:
           filters: | # to build only on changes to the serverside
-            serverside:
-              - 'serverside/**'
+            server:
+              - 'server/**'
       - name: Check out the repo
         uses: actions/checkout@v2
       - name: Get current date
@@ -72,8 +72,8 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          context: ./serverside
-          file: ./serverside/Dockerfile
+          context: ./server
+          file: ./server/Dockerfile
           push: true
           tags: ${{ secrets.ES_SERVER }}:dev
 

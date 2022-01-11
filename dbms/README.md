@@ -1,6 +1,6 @@
 <h3 align="center">
   <br>
-  <a href="https://essayspring.com" target="_blank"><img src="https://raw.githubusercontent.com/shadrqen/essayspring/main/clientside/static/icon.png" height="256px" width="256px"></a>
+  <a href="https://essayspring.com" target="_blank"><img src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/icon.png" height="256px" width="256px"></a>
   <br>
   EssaySpring DBMS
   <br>

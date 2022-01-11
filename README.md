@@ -81,5 +81,5 @@ Here's how:
 ## License
 
 Beginning with version 0.0.1, the code in this repository is licensed under the [GNU AGPL v3](https://www.gnu.org/licenses/agpl-3.0.de.html) license with a
-[common clause](https://commonsclause.com/) selling exception. See [LICENSE.md](https://github.com/vabene1111/recipes/blob/develop/LICENSE.md) for details.
+[common clause](https://commonsclause.com/) selling exception. See [LICENSE.md](https://github.com/shadrqen/essayspring/blob/dev/LICENSE) for details.
 

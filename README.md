@@ -9,7 +9,13 @@
 <h4 align="center">Get your order done in record time, plagiarism and grammar error-free</h4>
 
 <p align="center">
-<a href="https://essayspring.com" target="_blank" rel="noopener noreferrer">Website</a> •
+<a href="https://github.com/shadrqen/essayspring/actions" target="_blank" rel="noopener noreferrer"><img src="https://github.com/shadrqen/essayspring/actions/workflows/ci.yml/badge.svg?branch=main" ></a>
+<a href="https://github.com/shadrqen/essayspring/actions" target="_blank" rel="noopener noreferrer"><img src="https://github.com/shadrqen/essayspring/actions/workflows/docker-publish-latest.yml/badge.svg?branch=main" ></a>
+</p>
+
+<p align="center">
+<a href="https://essayspring.com" target="_blank" rel="noopener noreferrer">EssaySpring</a> •
+<a href="https://writeray.com" target="_blank" rel="noopener noreferrer">Writeray</a> •
 </p>
 
 

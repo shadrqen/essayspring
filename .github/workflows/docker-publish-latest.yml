@@ -1,4 +1,4 @@
-name: publish latest image to docker
+name: publish latest image docker
 
 on:
   push:

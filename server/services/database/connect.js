@@ -9,7 +9,7 @@ let apiKey, dbMicroService, origin
 if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
   dbMicroService = `http://${process.env.DBMS}/`
   origin = 'https://api.essayspring.com:gkjslif'
-  apiKey = process.env.DEV_API_KEY
+  apiKey = process.env.API_KEY
 } else {
   dbMicroService = `http://${process.env.URL}:3050/`
   origin = 'http://localhost:3100:lspauidg'

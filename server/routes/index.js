@@ -20,8 +20,8 @@ getDBRequest('v1/check') //  .get('https://elitesay-web-db-service.azurewebsites
   .then(() => {
     console.log('Database microservice connected successfully')
   })
-  .catch(() => {
-    console.error('Failed to connect to the database microservice')
+  .catch((e) => {
+    console.error('Failed to connect to the database microservice:', e)
   })
 
 /* GET home page. */

@@ -26,7 +26,7 @@ module.exports.getDBRequest = async url => {
       return res.data
     })
     .catch(error => {
-      console.log('\n\n\n error: ', error, '\n\n\n');
+      console.log('\n\n\n error: ', error, '\n\n\n')
       return Promise.reject(error.message)
     })
 }
@@ -38,7 +38,7 @@ module.exports.postDBRequest = async (url, body) => {
       return res.data
     })
     .catch(error => {
-      console.log('\n\n\n error: ', error, '\n\n\n');
+      console.log('\n\n\n error: ', error, '\n\n\n')
       return Promise.reject(error.message)
     })
 }

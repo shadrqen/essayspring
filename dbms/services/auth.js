@@ -13,7 +13,7 @@ class AuthService {
     /* Setting the variables */
     if (environ && environ === 'production') {
       targetOrigin = ['https://api.essayspring.com:gkjslif', 'https://api.writeray.com:rthjerht45thjer']
-      apiKey = process.env.DEV_API_KEY
+      apiKey = process.env.API_KEY
     } else {
       targetOrigin = ['http://localhost:3100:lspauidg', 'http://localhost:6200:hj34we4y3hjw4e3j']
       apiKey = process.env.DEV_API_KEY

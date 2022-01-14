@@ -3,7 +3,7 @@
   <v-app>
     <hero-image
       :textCaption="textCaption"
-      :textH5="textH6"
+      :textH5="textH5"
       :textSubTitle1="textSubTitle1"
       :mainHero="mainHero"
       :mainHeroPub="mainHeroPub"
@@ -134,8 +134,7 @@ export default {
       timeRatingAdded: '14 hours ago',
       rating: 10,
       textCaption: 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption',
-      textH5: 'text-h5 text-xl-h4 text-lg-h4 text-md-h5 text-sm-h5',
-      textH6: 'text-h6 text-xl-h5 text-lg-h5 text-md-h6 text-sm-h6',
+      textH5: 'text-h5 text-xl-h5 text-lg-h5 text-md-h5 text-sm-h5',
       textSubTitle1: 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1',
       mainHero: 'Manage your writers and orders professionally',
       mainHeroPub: 'Let our team of professional writers take care of your coursework',
@@ -152,7 +151,7 @@ export default {
   * attribute is not accessible on the serverside */
   async asyncData () {
     const textCaption = 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption'
-    const textH5 = 'text-h5 text-xl-h4 text-lg-h4 text-md-h5 text-sm-h5'
+    const textH5 = 'text-h5 text-xl-h5 text-lg-h5 text-md-h5 text-sm-h5'
     const textSubTitle1 = 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1'
     const mainHero = 'Manage your writers and orders professionally'
     const subHero = 'Your one-stop writing companion for managing writers and orders'

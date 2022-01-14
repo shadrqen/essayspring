@@ -20,23 +20,33 @@
 
 
 ## EssaySpring
-<b> EssaySpring </b> is a freelance academic writing platform that has been on development for quite a while - albeit under private repos.
-However, I am currently in the process of moving a majority of the functionalities to be open-source. While I believe the idea and its implementation could be of high
- value to me, I feel like it would even be more should we join hands together as a community. The project has been running under a beta
-release for quite some time now. There are still areas of improvement, and your contribution is highly welcome and appreciated as we make the 
+#### About
+<b> EssaySpring </b> is a freelance academic writing platform that provides (clients) access to a select pool of highly-qualified professionals from a wide array of fields.
+It allows clients to post tasks/assignments to and receive completed copies within a set timeline - plagiarism and grammar-error free. Payments are made automatically through M-PESA
+(a Kenyan mobile phone-based money transfer and payments service), and updated real-time using MQTT. The professionals can be either public (seen by all clients) or private (only visible
+to a client).
+
+#### Development
+The platform has been on development for quite a while under private repos. However, I have moved a majority of the functionalities here to be open-source.
+While I believe the idea and its implementation could be of high value to me, I feel like it would even be more should we join hands together as a community.
+The project has been running under a beta release for quite some time now. There are still areas of improvement, and your contribution is highly welcome and appreciated as we make the 
 world a better place - one open-source contribution at a time.
 
-## Structure
-> Customer here is used to refer to persons who post jobs in the platform, while writers are the professionals who offer their services for a fee.
+#### Writeray
+<b>Writeray</b> is the professional service/platform that allows them to register, before being vetted carefully to ensure only the best get to handle the client orders.
+It is currently running under a different altogether, but shares the DBMS microservice and the database. Plans are underway to integrate the same here.
 
-The platform is decoupled into two sub-systems and several microservices that operate independently.
-- [EssaySpring](https://essayspring.com)
-  > The customer-facing side
-- [Writeray](https://writeray.com)
-  > The writer-facing side
+## Structure
+The platform is decoupled into three modules.
+- Client
+  > The front-end or clientside of the application
+- Server
+  > The back-end or serverside of the application
+- DBMS
+  > The database microservice.
 
 ## Integration
-Currently, the EssaySpring clientside has been integrated successfully. The next step is to integrate its backend and DBMS microservices.
+Currently, the client-facing platform (EssaySpring) has been integrated successfully. The next step is to integrate the professional-facing side (Writeray).
 
 ## Core Features
 - **Post orders 24/7** - Post your order any time of the day/week
@@ -53,7 +63,6 @@ Currently, the EssaySpring clientside has been integrated successfully. The next
 
 Installation
 ------------
-Installing EssaySpring is easy
 
 #### Fork and clone
 

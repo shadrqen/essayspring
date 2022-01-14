@@ -3,7 +3,7 @@
   <v-card flat class="hero_image rounded-0">
     <v-card-text>
       <v-container>
-        <v-row no-gutters :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
+        <v-row no-gutters>
           <v-col cols="12" xl="5" lg="5" md="5" sm="4">
             <p :class="textH5"
                id="sit_back_relax"> {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }} </p>
@@ -38,7 +38,7 @@
           </v-col>
           <v-col cols="12" xl="2" lg="2" md="1" sm="1"></v-col>
           <v-col cols="12" xl="5" lg="5" md="6" sm="7">
-            <v-card id="client_post_order_card" flat class="ml-n16">
+            <v-card id="client_post_order_card" flat>
               <v-card-title :style="{ 'padding-left': clientPostOrderCardTextPadding,
                             'padding-right': clientPostOrderCardTextPadding}"
                             :class="textH5" id="client_post_order_card_title">

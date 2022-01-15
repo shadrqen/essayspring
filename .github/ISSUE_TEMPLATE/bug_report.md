@@ -1,5 +1,8 @@
-name: Bug Report
-description: Create a report to help us improve
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+assignees: ''
 labels: 'Bug (Potential)'
 body:
 - type: markdown
@@ -11,9 +14,9 @@ body:
   label: Preflight Checklist
   options:
   - label: I'm on [the latest version of EssaySpring](https://github.com/shadrqen/essayspring/releases).
-  required: true
+    required: true
   - label: There's [no other issue](https://github.com/shadrqen/essayspring/issues?q=is%3Aissue) that already describes my problem.
-  required: true
+    required: true
 - type: textarea
   attributes:
   label: Describe the Bug

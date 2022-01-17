@@ -43,7 +43,7 @@ const jwt = require('jsonwebtoken')
 
 const redisClient = require('../other/redis')
 
-const postDBRequest = require('../database/connect').postDBRequest
+const { getDBRequest, postDBRequest } = require('../database/connect')
 
 let authSecretKey
 if (process.env && process.env.NODE_ENV === 'production') {
@@ -54,6 +54,18 @@ if (process.env && process.env.NODE_ENV === 'production') {
 
 /* The authentication service that deals with login, signup and access to resources */
 class AuthService {
+  static async getRequest (url) {
+    return await getDBRequest(url)
+      .then(response => response)
+      .catch(error => requestsMixin.customErrorMessage(error))
+  }
+
+  static async postRequest (url, body) {
+    return await postDBRequest(url, body)
+      .then(response => response)
+      .catch(error => requestsMixin.customErrorMessage(error))
+  }
+
   /* Function to return OTP Codes */
   static generateOTP () {
     const digits = '0123456789'
@@ -240,7 +252,10 @@ class AuthService {
                 match = true
               }
               if (match) {
-                await AuthService.saveLogin(email)
+                await AuthService.postRequest('users/v1/save_login', {
+                  email: email,
+                  source: 'EssaySpring'
+                })
                 const accessToken = AuthService.generateAccessToken(email, '15min', 'Client')
                 const refreshToken = AuthService.generateRefreshToken(email, 'Client')
                 return {
@@ -322,22 +337,6 @@ class AuthService {
           }
         })
       })
-    }
-
-    static async getWebUserByMail (email) {
-      return await postDBRequest('users/v1/web_user_by_email', { email: email })
-        .then(res => res)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static async createWriterPassword (req) {
-      return await postDBRequest('users/v1/create_writer_password', req)
-        .then(res => {
-          return res
-        })
-        .catch(error => {
-          return requestsMixin.customErrorMessage(error)
-        })
     }
 
     /* We log in by first submitting an email address, then password if a user exists.
@@ -725,7 +724,7 @@ class AuthService {
     /* Called to send the code, but does not do the actual sending */
     static async sendOTPCode (req) {
       try {
-        return AuthService.getWebUserByMail(req.email)
+        return AuthService.postRequest('users/v1/web_user_by_email', { email: req.email })
           .then(user => {
             /* This functionality happens when a client wants to log in for the second time.
                     * That's why interest is only on clients not writers or even admins */
@@ -780,15 +779,6 @@ class AuthService {
       } catch (e) {
         return requestsMixin.customErrorMessage(e)
       }
-    }
-
-    static async saveLogin (email) {
-      return await postDBRequest('users/v1/save_login', {
-        email: email,
-        source: 'EssaySpring'
-      })
-        .then(response => response)
-        .catch(error => Promise.reject(error))
     }
 
     static async getClientMobile (req) {

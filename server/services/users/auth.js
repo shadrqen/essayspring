@@ -43,7 +43,7 @@ const jwt = require('jsonwebtoken')
 
 const redisClient = require('../other/redis')
 
-const postDBRequest = require('../database/connect').postDBRequest
+const { getDBRequest, postDBRequest } = require('../database/connect')
 
 let authSecretKey
 if (process.env && process.env.NODE_ENV === 'production') {

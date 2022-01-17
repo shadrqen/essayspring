@@ -431,6 +431,7 @@ import api from '../../api/api'
 import { bus } from '../../plugins/bus'
 import FacebookLogin from '../../services/facebook-login'
 import registrationMixin from '../../mixins/registration'
+import login from '../../mixins/login'
 
 export default {
   name: 'Dialogs',
@@ -439,6 +440,7 @@ export default {
     SuccessCheckMark: () => import('../../components/general/SuccessCheckMark'),
     AlertMessage: () => import('../../components/general/AlertMessage')
   },
+  mixins: [login],
   data () {
     return {
       validate: Validation,
@@ -536,7 +538,8 @@ export default {
       'changeLoginMode',
       'changeOrderPostingDone',
       'changeClientGotStarted',
-      'changeReportProblemDialog'
+      'changeReportProblemDialog',
+      'changeUserType'
     ]),
     closeLoginDialog () {
       this.changeLoginDialog(false)
@@ -669,19 +672,7 @@ export default {
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
           if (res.message === 'success') {
-            this.changeAccessToken(res.accessToken)
-            this.changeRefreshToken(res.refreshToken)
-            this.changeEmail(this.loginForm.email)
-            api.setAuthHeaders()
-            this.changeLoginStatus(true)
-            this.changeLoginDialog(false)
-            this.changeLoginMode('Email')
-            this.changeClientPostOrderForm({
-              key: 'email',
-              subKey: null,
-              val: res.email,
-              option: null
-            })
+            this.loginCurrentUser(res)
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
             * client had a pending order on his last log in or not. If the status of the variable is finished,

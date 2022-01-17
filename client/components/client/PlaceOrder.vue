@@ -204,7 +204,7 @@
                 class="text_field"
                 @click='pickFile'
                 @dragover.prevent @drop.prevent
-                @drop="uploadFile"
+                @drop="uploadCurrentFile"
             >
               <input
                   type="file"
@@ -212,7 +212,7 @@
                   ref="image"
                   id="file"
                   accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .odt, .csv, .txt, video/*, audio/*"
-                  @change="uploadFile"
+                  @change="uploadCurrentFile"
               >
               <span v-if="supportingFileUploading">
                         <v-progress-circular
@@ -508,6 +508,7 @@ import api from '@/api/api.ts'
 import AlertMessage from '@/components/general/AlertMessage'
 import TimeMixin from '@/mixins/time'
 import Deadline from '@/components/client/Deadline'
+import DeadlineTimeDisabler from '../../mixins/deadlineTimeDisabler'
 
 export default {
   name: 'PlaceOrder',
@@ -515,6 +516,7 @@ export default {
     AlertMessage,
     Deadline
   },
+  mixins: [DeadlineTimeDisabler],
   data () {
     return {
       typeOfService: 'writing',
@@ -1011,41 +1013,29 @@ export default {
           return Promise.reject(error)
         })
     },
-    async uploadFile (e) {
-      const files = e.target.files || e.dataTransfer.files
-      if (files[0].size > 50 * 1024 * 1024) {
-        alert('File is too large! Attach a file not more than 50MBs')
-      }
-      /* We only accept certain file types, and we need to confirm that the one uploaded is of the right type */
-      if (registrationMixin.confirmFileMimeType(e)) {
-        if (!files.length) { return }
-        this.supportingFileUploading = true
-        const fileForm = new FormData()
-        const file = document.getElementById('file').files[0]
-        fileForm.append('file', file)
-        fileForm.append('fileType', 'clientSupportingFile')
-        await api.postRequest('users/v1/upload_file', fileForm)
-          .then(res => {
-            if (!res.error) {
-              if (!this.clientPostOrderForm.supportingFiles.some(file => file === res.filename)) {
-                if (res.filename) {
-                  this.changeClientPostOrderForm({
-                    key: 'supportingFiles',
-                    subKey: null,
-                    val: { originalName: file.name, fileUrl: res.filename },
-                    option: 'push'
-                  })
-                }
+    async uploadCurrentFile (e) {
+      const file = document.getElementById('file').files[0]
+      this.supportingFileUploading = true
+      this.uploadFile(e)
+        .then(response => {
+          if (!response.error) {
+            if (!this.clientPostOrderForm.supportingFiles.some(file_ => file_ === response.filename)) {
+              if (response.filename) {
+                this.changeClientPostOrderForm({
+                  key: 'supportingFiles',
+                  subKey: null,
+                  val: { originalName: file.name, fileUrl: response.filename },
+                  option: 'push'
+                })
               }
             }
-            this.supportingFileUploading = false
-          })
-          .catch(() => {
-            this.supportingFileUploading = true
-          })
-      } else {
-        alert('File format not supported')
-      }
+          }
+          this.supportingFileUploading = false
+        })
+        /* TODO: To handle this error */
+        .catch(() => {
+          this.supportingFileUploading = false
+        })
     },
     async removeFile (file) {
       await api.postRequest('orders/v1/remove_file', { filename: file, orderId: this.clientPostOrderForm.orderId })
@@ -1067,39 +1057,6 @@ export default {
         default:
           this.tAHeight = 290
           this.textAreaHeight = '300px'
-      }
-    },
-    /* The minimum selectable deadline for any job is 6 hours.
-    * This means that should a user want to place an order at 8am, the earliest deadline should not be earlier
-    * than 2pm. Therefore, we need to disable the time between 12am to 2pm. This is considering that we can't
-    * also select a time that is later than 8am.
-    * This is what the function below does.
-    * TODO: To merge this functionality with that on the HeroImage */
-    disablePossibleDeadlineTimes () {
-      const dateTime = new Time.DateTime()
-      if (this.clientPostOrderForm.deadlineDate) {
-        const time = dateTime._time
-        const currentRefinedTime = String(time.split(' ')[0].split(':')[0]).concat(time.split(' ')[1])
-        const indexOfCurrentTime = this.time.filter(time => time.time === currentRefinedTime)[0]
-        if (this.clientPostOrderForm.deadlineDate === dateTime._date) {
-          const maximumAllowedTimeIds = indexOfCurrentTime.id + 6 > 24 ? 24 : indexOfCurrentTime.id + 6
-          this.disabledTimes = this.time.filter(time => time.id <= maximumAllowedTimeIds)
-          const selectedTimeIsDisabled = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)
-          if (selectedTimeIsDisabled.length > 0) {
-            this.clientPostOrderForm.deadlineTime = ''
-          }
-        } else if (this.clientPostOrderForm.deadlineDate === dateTime.tomorrow) {
-          if (dateTime.currentHr >= 18) {
-            const timeDiffToMidnight = dateTime.currentHr - 17
-            this.disabledTimes = this.time.filter(time => time.id <= timeDiffToMidnight)
-          } else {
-            this.disabledTimes = []
-          }
-        } else {
-          this.disabledTimes = []
-        }
-      } else {
-        this.disabledTimes = []
       }
     },
     priceCalculationIsNecessary () {

@@ -287,6 +287,8 @@ import api from '@/api/api.ts'
 
 import Deadline from '@/components/client/Deadline'
 import TimeMixin from '@/mixins/time'
+import DeadlineTimeDisabler from '../../mixins/deadlineTimeDisabler'
+import login from '../../mixins/login'
 
 export default {
   name: 'HeroImageClient',
@@ -295,6 +297,7 @@ export default {
   components: {
     Deadline
   },
+  mixins: [DeadlineTimeDisabler, login],
   data () {
     return {
       subHeroNewLine: '',
@@ -366,7 +369,7 @@ export default {
   watch: {
     deadlineDateMenu () {
       if (!this.deadlineDateMenu) {
-        this.disableDeadlineTime()
+        this.disablePossibleDeadlineTimes()
       }
     }
   },
@@ -387,7 +390,8 @@ export default {
       changeEmail: 'changeEmail',
       changeLoginDialogContents: 'changeLoginDialogContents',
       changeLoginDialog: 'changeLoginDialog',
-      changeClientGotStarted: 'changeClientGotStarted'
+      changeClientGotStarted: 'changeClientGotStarted',
+      changeUserType: 'changeUserType'
     }),
     async proceedToPlaceOrder () {
       if (this.$refs.clientPostOrderForm.validate()) {
@@ -609,28 +613,7 @@ export default {
       switch (res.response) {
         /* We only act on the success option */
         case 'success':
-          this.changeClient({ key: 'regUpdateSuccessful', val: true })
-          this.changeClient({ key: 'isNew', val: res.isNew })
-          this.changeAccessToken(res.accessToken)
-          this.changeRefreshToken(res.refreshToken)
-          this.changeLoginStatus(true)
-          this.changeLoginDialog(false)
-          this.changeEmail(email)
-          this.changeClientPostOrderForm({
-            key: 'email',
-            subKey: null,
-            val: email,
-            option: null
-          })
-          /* We are calling this function so as to set axios access and refresh tokens that will be used for
-          * authentication at the backend */
-          api.setAuthHeaders()
-          this.changeLoginDialogContents({
-            key: 'dialogContent',
-            subKey: 'clientLogin',
-            val: false,
-            option: null
-          })
+          this.loginCurrentUser(res)
           /* TODO: To confirm the role of the redirected variable */
           if (redirected) {
             if (this.$route.fullPath !== '/') {
@@ -721,42 +704,6 @@ export default {
         .catch(() => {
           this.reGetStates()
         })
-    },
-    /* The minimum selectable deadline for any job is 6 hours.
-    * This means that should a user want to place an order at 8am, the earliest deadline should not be earlier
-    * than 2pm. Therefore, we need to disable the time between 12am to 2pm. This is considering that we can't
-    * also select a time that is later than 8am.
-    * This is what the function below does */
-    disableDeadlineTime () {
-      const dateTime = new Time.DateTime()
-      if (this.clientPostOrderForm.deadlineDate) {
-        /* We can only be prompted to disable the times in two scenarios:
-        * 1. The date selected is today */
-        if (this.clientPostOrderForm.deadlineDate === dateTime._date) {
-          const time = dateTime._time
-          const currentRefinedTime = String(time.split(' ')[0].split(':')[0]).concat(time.split(' ')[1])
-          const indexOfCurrentTime = this.time.filter(time => time.time === currentRefinedTime)[0]
-          const maximumAllowedTimeIds = indexOfCurrentTime.id + 6 > 24 ? 24 : indexOfCurrentTime.id + 6
-          this.disabledTimes = this.time.filter(time => time.id <= maximumAllowedTimeIds)
-          const selectedTimeIsDisabled = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)
-          if (selectedTimeIsDisabled.length > 0) {
-            this.clientPostOrderForm.deadlineTime = ''
-          }
-        } /* 2. The date selected is tomorrow */else if (this.clientPostOrderForm.deadlineDate === dateTime.tomorrow) {
-          /* In case the deadline date falls tomorrow, we can only disable anything if the current hour is
-          * 1800hrs or later because 18+6=24 */
-          if (dateTime.currentHr >= 18) {
-            const timeDiffToMidnight = dateTime.currentHr - 17
-            this.disabledTimes = this.time.filter(time => time.id <= timeDiffToMidnight)
-          } else {
-            this.disabledTimes = []
-          }
-        } else {
-          this.disabledTimes = []
-        }
-      } else {
-        this.disabledTimes = []
-      }
     }
   },
   mounted () {
@@ -774,7 +721,7 @@ export default {
         }
       }
     })
-    this.disableDeadlineTime()
+    this.disablePossibleDeadlineTimes()
   }
 }
 </script>

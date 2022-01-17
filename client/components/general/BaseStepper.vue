@@ -2,7 +2,7 @@
   <v-stepper v-model="level" light :non-linear="true" class="elevation-0">
     <v-card class="elevation-0 rounded-0 main-card" height="50">
       <v-container>
-<!--        The margins are a bit messy at the moment, that's why you see a lot of dynamic styling-->
+<!--        The margins are a bit messy at the moment, that's why you see a lot of dynamic styling -->
 <!--        FIXME: Add a cleaner way of dynamic styling for the stepper -->
         <v-stepper-header class="elevation-0" v-if="['xl', 'lg', 'md'].includes(viewport_code)" :style="xl ? 'margin-top: -23px; margin-left: 12vw; margin-right: 11vw;' : 'margin-top: -23px;'">
 <!--          TODO: Also, add dynamic steps by using one array that is loopable-->

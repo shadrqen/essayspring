@@ -117,9 +117,11 @@ import api from '../../api/api.ts'
 import { mapGetters, mapMutations } from 'vuex'
 import Validation from '../../plugins/Validation.ts'
 import Socket from '../../sockets'
+import DefaultFormMixin from '../../mixins/defaultRegistrationForm'
 
 export default {
   name: 'AddFunds',
+  mixins: [DefaultFormMixin],
   data () {
     return {
       paymentForm: {
@@ -328,48 +330,9 @@ export default {
       /* The order posting state is used to indicate whether a user has finished posting an order
       (through successful payment ofcourse) or not */
       this.changeOrderPostingDone(true)
-      const defaultForm = {
-        level: 1,
-        orderPostingStep: 1,
-        email: '',
-        paperSubject: '',
-        topic: '',
-        pageCount: 1,
-        wordCount: 1,
-        deadlineDate: '',
-        deadlineTime: '',
-        studyLevel: '',
-        citationStyleId: '',
-        serviceType: 'Writing',
-        supportingFiles: [],
-        instructions: '',
-        orderId: 0,
-        selectedWriter: {
-          name: '',
-          email: '',
-          totalPrice: 0,
-          cpp: 0,
-          currencyCode: ''
-        },
-        paymentSummary: {
-          totalPrice: 0,
-          extrasList: [],
-          extrasTotalPrice: 0
-        },
-        orderSavingProgress: {
-          details: false,
-          payment: false
-        },
-        addFunds: {
-          paymentSuccessful: false,
-          paymentFailed: false,
-          notYetPaid: true
-        }
-      }
       /* Changing the whole order posting state to the above default
-      * This is to allow the user to begin afresh next time he/she wants to post another order.
-      * FIXME: To make the above object reusable */
-      this.changeWholeClientPostOrderForm(defaultForm)
+      * This is to allow the user to begin afresh next time he/she wants to post another order. */
+      this.changeWholeClientPostOrderForm(this.defaultForm)
       /* We need to change/set the order posting email so as not to prompt the user to do this once again */
       this.changeClientPostOrderForm({
         key: 'email',

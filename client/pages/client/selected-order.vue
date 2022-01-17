@@ -396,7 +396,7 @@
                     class="text_field"
                     @click="pickFile"
                     @dragover.prevent @drop.prevent
-                    @drop="uploadFile"
+                    @drop="uploadCurrentFile"
                   >
                     <input
                       type="file"
@@ -404,7 +404,7 @@
                       ref="image"
                       id="file"
                       accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .odt, .csv, .txt, video/*, audio/*"
-                      @change="uploadFile"
+                      @change="uploadCurrentFile"
                     >
                     <span v-if="supportingFileUploading">
                         <v-progress-circular
@@ -662,6 +662,7 @@ import Time from '@/utils/time'
 import Validation from '@/plugins/Validation'
 import NavDrawer from '@/components/general/NavDrawer'
 import authMixin from '../../utils/auth'
+import filesMixin from '../../mixins/filesMixin'
 
 export default {
   name: 'SelectedOrder',
@@ -682,6 +683,7 @@ export default {
       }
     ]
   },
+  mixins: [filesMixin],
   components: {
     NavDrawer,
     Deadline,
@@ -1210,37 +1212,23 @@ export default {
         }, 2000)
       }
     },
-    pickFile () {
-      this.$refs.image.click()
-    },
-    /* TODO: To make this functionality centralized or object-oriented */
-    async uploadFile (e) {
-      const files = e.target.files || e.dataTransfer.files
-      if (files[0].size > 10 * 1024 * 1024) {
-        alert('File is too large! Attach a file less than 2mbs')
-      } else if (registrationMixin.confirmFileMimeType(e)) {
-        if (!files.length) { return }
-        this.supportingFileUploading = true
-        const file = document.getElementById('file').files[0]
-        const fileForm = new FormData()
-        fileForm.append('file', file)
-        fileForm.append('fileType', 'clientSupportingFile')
-        await api.postRequest('users/v1/upload_file', fileForm)
-          .then(res => {
-            if (!res.error) {
-              this.revisionFormSupportingFiles.push({
-                fileUrl: res.filename,
-                originalName: file.name
-              })
-            }
-            this.supportingFileUploading = false
+    async uploadCurrentFile (e) {
+      const file = document.getElementById('file').files[0]
+      this.supportingFileUploading = true
+      this.uploadFile(e)
+      .then(response => {
+        if (!response.error) {
+          this.revisionFormSupportingFiles.push({
+            fileUrl: response.filename,
+            originalName: file.name
           })
-          .catch(() => {
-            this.supportingFileUploading = false
-          })
-      } else {
-        alert('File format not supported')
-      }
+        }
+        this.supportingFileUploading = false
+      })
+        /*TODO: To handle this error*/
+      .catch(() => {
+        this.supportingFileUploading = false
+      })
     },
     /* TODO: To also find a way of making the functionality below more reusable */
     removeFile (file) {

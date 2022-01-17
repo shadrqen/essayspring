@@ -130,6 +130,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { bus } from '../../plugins/bus'
 import PaymentSuccessful from '../../components/client/PaymentSuccessful'
 import authMixin from '../../utils/auth'
+import DefaultFormMixin from '../../mixins/defaultRegistrationForm'
 
 export default {
   name: 'ClientPlaceOrder',
@@ -143,6 +144,7 @@ export default {
       }
     ]
   },
+  mixins: [DefaultFormMixin],
   components: {
     BaseStepper,
     PlaceOrder,
@@ -204,59 +206,7 @@ export default {
         if (this.clientPostOrderForm.orderAlreadyPaidFor) {
           this.changeOrderPostingDone(true)
           const email = this.clientPostOrderForm.email
-          /* TODO: To maje the functionality below reusable by creating a mixin that would be inherited by all
-          *  components that want to use it. This is because it is repetitive */
-          const defaultForm = {
-            type: 'public',
-            level: 1,
-            orderPostingStep: 1,
-            email: '',
-            paperSubject: '',
-            assignmentType: '',
-            topic: '',
-            pageCount: 1,
-            sources: 0,
-            wordCount: 1,
-            deadlineDate: '',
-            deadlineTime: '',
-            studyLevel: '',
-            citationStyleId: '',
-            serviceType: 'Writing',
-            supportingFiles: [],
-            instructions: '',
-            orderId: 0,
-            writerBids: [],
-            selectedWriter: {
-              name: '',
-              id: ''
-            },
-            paymentSummary: {
-              cpp: 0,
-              currencyCode: '',
-              paperPrice: 0,
-              leastPaperPrice: 0,
-              totalPrice: 0,
-              discount: 0,
-              extrasList: [],
-              extrasTotalPrice: 0
-            },
-            orderSavingProgress: {
-              details: false,
-              payment: false
-            },
-            stepStatus: {
-              step1: true,
-              step2: true,
-              step3: true,
-              step4: true
-            },
-            addFunds: {
-              paymentSuccessful: false,
-              paymentFailed: false,
-              notYetPaid: true
-            }
-          }
-          this.changeWholeClientPostOrderForm(defaultForm)
+          this.changeWholeClientPostOrderForm(this.defaultForm)
           this.changeClientPostOrderForm({
             key: 'email',
             subKey: null,
@@ -522,58 +472,7 @@ export default {
       } else {
         if (this.orderPostingDone) {
           const email = this.clientPostOrderForm.email
-          /* TODO: To remove this repetitive functionality */
-          const defaultForm = {
-            type: 'public',
-            level: 1,
-            orderPostingStep: 1,
-            email: '',
-            paperSubject: '',
-            assignmentType: '',
-            topic: '',
-            pageCount: 1,
-            sources: 0,
-            wordCount: 1,
-            deadlineDate: '',
-            deadlineTime: '',
-            studyLevel: '',
-            citationStyleId: '',
-            serviceType: 'Writing',
-            supportingFiles: [],
-            instructions: '',
-            orderId: 0,
-            orderAlreadyPaidFor: false,
-            selectedWriter: {
-              id: '',
-              name: ''
-            },
-            paymentSummary: {
-              cpp: 0,
-              currencyCode: '',
-              leastPaperPrice: 0,
-              paperPrice: 0,
-              totalPrice: 0,
-              discount: 0,
-              extrasList: [],
-              extrasTotalPrice: 0
-            },
-            orderSavingProgress: {
-              details: false,
-              payment: false
-            },
-            stepStatus: {
-              step1: true,
-              step2: true,
-              step3: true,
-              step4: true
-            },
-            addFunds: {
-              paymentSuccessful: false,
-              paymentFailed: false,
-              notYetPaid: true
-            }
-          }
-          this.changeWholeClientPostOrderForm(defaultForm)
+          this.changeWholeClientPostOrderForm(this.defaultForm)
           this.changeOrderPostingDone(false)
           this.changeClientPostOrderForm({
             key: 'email',

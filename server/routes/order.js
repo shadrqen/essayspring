@@ -6,7 +6,7 @@ const { auth, cors, writerayAuth, writerayMicroServiceAuth } = require('../servi
 
 const { logger } = require('../services/logs/logger')
 
-const { getOrderStatusTypes, getOrders } = require('../services/orders/order')
+const { getOrders } = require('../services/orders/order')
 
 const ordersService = require('../services/orders/order')
 
@@ -16,7 +16,7 @@ router.get('/', logger, auth, function (req, res, next) {
 })
 
 router.get('/get_disciplines', logger, cors, async (req, res) => {
-  await ordersService.getDisciplines()
+  await ordersService.getRequest('orders/v1/disciplines')
     .then(response => {
       res.status(200).json(response)
     })
@@ -26,7 +26,7 @@ router.get('/get_disciplines', logger, cors, async (req, res) => {
 })
 
 router.get('/get_assignment_types', logger, cors, async (req, res) => {
-  await ordersService.getAssignmentTypes()
+  await ordersService.getRequest('orders/v1/assignment_types')
     .then(response => {
       res.status(200).json(response)
     })
@@ -36,7 +36,7 @@ router.get('/get_assignment_types', logger, cors, async (req, res) => {
 })
 
 router.post('/get_order_service_types', logger, auth, async (req, res) => {
-  await ordersService.getOrderServiceTypes(req.body)
+  await ordersService.postRequest('orders/v1/order_service_types', { extra: req.body.extra })
     .then(response => {
       res.status(200).json(response)
     })
@@ -46,7 +46,7 @@ router.post('/get_order_service_types', logger, auth, async (req, res) => {
 })
 
 router.get('/get_citation_styles', logger, auth, async (req, res) => {
-  await ordersService.getCitationStyles()
+  await ordersService.getRequest('orders/v1/citation_styles')
     .then(response => {
       res.status(200).json(response)
     })
@@ -56,7 +56,7 @@ router.get('/get_citation_styles', logger, auth, async (req, res) => {
 })
 
 router.get('/get_order_formats', logger, auth, async (req, res) => {
-  await ordersService.getOrderFormats()
+  await ordersService.getRequest('orders/v1/order_formats')
     .then(response => {
       res.status(200).json(response)
     })
@@ -66,7 +66,7 @@ router.get('/get_order_formats', logger, auth, async (req, res) => {
 })
 
 router.get('/get_academic_certifications', logger, cors, async (req, res) => {
-  await ordersService.getAcademicCertifications()
+  await ordersService.getRequest('orders/v1/academic_certifications')
     .then(response => {
       res.status(200).json(response)
     })
@@ -86,7 +86,11 @@ router.get('/get_time', logger, cors, async (req, res) => {
 })
 
 router.post('/get_education_levels', logger, auth, async (req, res) => {
-  await ordersService.getEducationLevels(req.body)
+  await ordersService.postRequest('orders/v1/education_levels',
+    {
+      academicInclined: req.body.academicInclined,
+      orderInclined: req.body.orderInclined
+    })
     .then(response => {
       res.status(200).json(response)
     })
@@ -106,7 +110,7 @@ router.post('/get_order_bids', logger, auth, async (req, res) => {
 })
 
 router.post('/save_order_details', logger, auth, async (req, res) => {
-  await ordersService.saveOrderDetails(req.body)
+  await ordersService.postRequest('orders/v1/save_order_details', req.body)
     .then(response => {
       res.status(200).json(response)
       if (req.body.type === 'public') {
@@ -120,7 +124,7 @@ router.post('/save_order_details', logger, auth, async (req, res) => {
 })
 
 router.post('/save_order_payment_details', logger, auth, async (req, res) => {
-  await ordersService.saveOrderPaymentDetails(req.body)
+  await ordersService.postRequest('orders/v1/save_order_payment_details', req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -131,7 +135,7 @@ router.post('/save_order_payment_details', logger, auth, async (req, res) => {
 })
 
 router.post('/remove_file', logger, auth, async (req, res) => {
-  await ordersService.removeFile(req.body)
+  await ordersService.postRequest('orders/v1/remove_file', req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -142,7 +146,7 @@ router.post('/remove_file', logger, auth, async (req, res) => {
 })
 
 router.post('/update_order_status', logger, auth, async (req, res) => {
-  await ordersService.updateOrderStatus(req.body)
+  await ordersService.postRequest('orders/v1/update_order_status', req.body)
     .then(response => {
       res.status(200).json(response)
       if (req.body.type === 'private' && !response.writerAlreadyChosen) {
@@ -170,7 +174,7 @@ router.post(
   })
 
 router.get('/get_order_status_types', logger, auth, async function (req, res, next) {
-  await getOrderStatusTypes()
+  await ordersService.getRequest('orders/v1/get_order_status_types')
     .then(response => {
       res.status(200).json(response)
     })

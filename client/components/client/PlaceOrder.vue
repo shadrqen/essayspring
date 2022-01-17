@@ -1032,7 +1032,7 @@ export default {
           }
           this.supportingFileUploading = false
         })
-        /*TODO: To handle this error*/
+        /* TODO: To handle this error */
         .catch(() => {
           this.supportingFileUploading = false
         })

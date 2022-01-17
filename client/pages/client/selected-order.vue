@@ -1216,19 +1216,19 @@ export default {
       const file = document.getElementById('file').files[0]
       this.supportingFileUploading = true
       this.uploadFile(e)
-      .then(response => {
-        if (!response.error) {
-          this.revisionFormSupportingFiles.push({
-            fileUrl: response.filename,
-            originalName: file.name
-          })
-        }
-        this.supportingFileUploading = false
-      })
-        /*TODO: To handle this error*/
-      .catch(() => {
-        this.supportingFileUploading = false
-      })
+        .then(response => {
+          if (!response.error) {
+            this.revisionFormSupportingFiles.push({
+              fileUrl: response.filename,
+              originalName: file.name
+            })
+          }
+          this.supportingFileUploading = false
+        })
+        /* TODO: To handle this error */
+        .catch(() => {
+          this.supportingFileUploading = false
+        })
     },
     /* TODO: To also find a way of making the functionality below more reusable */
     removeFile (file) {

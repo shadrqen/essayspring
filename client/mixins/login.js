@@ -1,7 +1,7 @@
 import api from '../api/api'
 export default {
   methods: {
-    loginCurrentUser(res) {
+    loginCurrentUser (res) {
       const email = res.email
       this.changeClient({ key: 'regUpdateSuccessful', val: true })
       this.changeClient({ key: 'isNew', val: res.isNew })

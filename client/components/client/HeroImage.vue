@@ -675,11 +675,13 @@ export default {
     * 5 seconds to try and get the states again in case of an error. It does this until a given count is reached
     * before stopping. Mind you the real maximum count would be anywhere between 100/4 or thereabout  */
     reGetStates () {
-      setTimeout(() => {
-        if (this.stateReloadCount < 100) {
-          this.getStates()
-        }
-      }, 5000)
+      if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
+        setTimeout(() => {
+          if (this.stateReloadCount < 100) {
+            this.getStates()
+          }
+        }, 5000)
+      }
       /* The reasoning behind the timeout was to try and buy time before the issue that could have
       * happened at the back-end to be resolved
       * TODO: To confirm the issue with the backend micro-service in as far as this is concerned so as to remove

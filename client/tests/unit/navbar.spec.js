@@ -1,6 +1,9 @@
+// eslint-disable-next-line no-unused-vars
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
+// eslint-disable-next-line no-unused-vars
 import Vuetify from 'vuetify'
+// eslint-disable-next-line no-unused-vars
 import NavBar from '@/components/general/NavBar.vue'
 
 const localVue = createLocalVue()
@@ -13,6 +16,7 @@ const localVue = createLocalVue()
 
 // eslint-disable-next-line no-undef
 describe('It shows the correct items on hero image', () => {
+  // eslint-disable-next-line no-unused-vars
   let actions, getters, store, wrapper
   // eslint-disable-next-line no-undef
   beforeEach(() => {
@@ -22,9 +26,11 @@ describe('It shows the correct items on hero image', () => {
       framework: {},
       smAndDown: true
     }
+    // eslint-disable-next-line no-unused-vars
     const $vuetify = new Vuetify()
     $vuetify.framework.breakpoint = breakpoint
 
+    // eslint-disable-next-line no-unused-vars
     const $store = {
       state: {
         user: {

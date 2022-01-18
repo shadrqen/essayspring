@@ -187,7 +187,7 @@ export default {
           'text-sm-subtitle-1 font-weight-regular',
       emailClass: 'text-caption text-xl-body-2 text-lg-body-2 text-md-body-2\n' +
           'text-sm-body-2 font-weight-regular',
-      /*TODO: To find out why I initially used this.$store.state.user.loginStatus */
+      /* TODO: To find out why I initially used this.$store.state.user.loginStatus */
       localLoginStatus: this.loginStatus,
       viewport_code: null,
       overlay: false
@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     /* TODO: To remove object getters and replace with list in cases where we're not changing the
-    *   names*/
+    *   names */
     ...mapGetters({
       loginStatus: 'loginStatus',
       loginDialog: 'loginDialog',
@@ -337,7 +337,7 @@ export default {
     })
   },
   created () {
-    /*TODO: To find out why I initially used this.$store.state.user.loginStatus */
+    /* TODO: To find out why I initially used this.$store.state.user.loginStatus */
     this.localLoginStatus = this.loginStatus
     this.viewport_code = this.viewportCode
     this.set_window_inner_width()

@@ -90,7 +90,7 @@ export default {
         }
       }
     },
-    loginClient (res) {
+    loginStatusient (res) {
       this.loginCurrentUser(res)
       if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
         this.changeOrderPostingDone(true)

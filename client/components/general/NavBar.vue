@@ -188,7 +188,7 @@ export default {
       emailClass: 'text-caption text-xl-body-2 text-lg-body-2 text-md-body-2\n' +
           'text-sm-body-2 font-weight-regular',
       /* TODO: To find out why I initially used this.$store.state.user.loginStatus */
-      localLoginStatus: this.loginStatus,
+      localLoginStatus: null,
       viewport_code: null,
       overlay: false
     }
@@ -202,7 +202,7 @@ export default {
     /* TODO: To remove object getters and replace with list in cases where we're not changing the
     *   names */
     ...mapGetters({
-      loginStatus: 'loginStatus',
+      globalLoginStatus: 'loginStatus',
       loginDialog: 'loginDialog',
       viewportCode: 'getViewPortCode',
       email: 'email',
@@ -227,12 +227,6 @@ export default {
           val = false
       }
       return val
-    }
-  },
-  watch: {
-    /* TODO: To remove this watcher */
-    loginStatus () {
-      this.localLoginStatus = this.loginStatus
     }
   },
   methods: {
@@ -296,7 +290,7 @@ export default {
     /* I am using the window innerwidth in the toolbar ( particularly for the login link ) */
     set_window_inner_width () {
       if (process.browser) {
-        this.viewport_code = this.$store.state.design.viewport_code
+        this.viewport_code = this.viewportCode
         this.inner_width = window.innerWidth
       }
     },
@@ -326,6 +320,8 @@ export default {
   },
   mounted () {
     this.changeLoginDialog(false)
+    this.viewport_code = this.viewportCode
+    this.localLoginStatus = this.globalLoginStatus
     if (process.browser) {
       window.addEventListener('resize', this.set_window_inner_width)
     }
@@ -337,9 +333,6 @@ export default {
     })
   },
   created () {
-    /* TODO: To find out why I initially used this.$store.state.user.loginStatus */
-    this.localLoginStatus = this.loginStatus
-    this.viewport_code = this.viewportCode
     this.set_window_inner_width()
   }
 }

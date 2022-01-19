@@ -254,7 +254,7 @@ export default {
   },
   data () {
     return {
-      inner_width: 0,
+      inner_width: 300,
       navbarIcon: false,
       navbarUrls: [
         { text: 'How it Works', icon: '', url: '/general/how-it-works' },

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "test:unit": "vue-cli-service test:unit ---watch",
+    "test:unit": "vue-cli-service test:unit",
     "dev": "nuxt",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.ts,.vue .",

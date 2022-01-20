@@ -1,11 +1,11 @@
-
 // eslint-disable-next-line no-unused-vars
-import { mount, shallowMount, createLocalVue } from '@vue/test-utils'
+import { createLocalVue, shallowMount } from '@vue/test-utils'
+
+import flushPromises from 'flush-promises'
 
 import Vuex from 'vuex'
 
 // import sinon from 'sinon'
-
 // eslint-disable-next-line no-unused-vars
 import Vuetify from 'vuetify'
 
@@ -40,7 +40,21 @@ describe('Can log in', () => {
       loginStatus: () => false,
       getViewPortCode: () => 'lg',
       reportProblemDialog: () => false,
-      loginDialog: () => true
+      loginDialog: () => true,
+      loginDialogContents: () => {
+        return {
+          dialogTitle: 'Log in to your account',
+          dialogContent: {
+            submitEmail: true,
+            login: false,
+            notification: false,
+            notificationMessage: null,
+            loginInfo: null,
+            clientLogin: false,
+            setPassword: false
+          }
+        }
+      }
     }
     mutations = {
       // eslint-disable-next-line no-undef
@@ -57,6 +71,15 @@ describe('Can log in', () => {
       localVue,
       vuetify,
       router,
+      data () {
+        return {
+          loginForm: {
+            email: 'a@b.c',
+            password: 'dfdfdfY66dg',
+            gotStarted: false
+          }
+        }
+      },
       propsData: {
         viewport_code: 'lg'
       },
@@ -65,14 +88,24 @@ describe('Can log in', () => {
   })
   // eslint-disable-next-line no-undef
   it('can log in', async () => {
-    // const loginEmailText = wrapper.find('#loginEmail')
+    const loginEmailText = wrapper.find('#loginEmail')
     /* Act */
     // await login.trigger('click')
 
     /* Assert */
     // eslint-disable-next-line no-undef
-    // expect(loginEmailText.exists()).toBe(true)
+    expect(loginEmailText.exists()).toBe(true)
+
+    await loginEmailText.trigger('keyup.center')
+
+    const submitEmail = await wrapper.vm.submitEmail()
+
     // eslint-disable-next-line no-undef
-    expect(1).toBe(1)
+    wrapper.vm.$refs.submitEmailForm.validate = () => jest.fn()
+
+    await flushPromises()
+
+    // eslint-disable-next-line no-undef
+    expect(submitEmail).toBeCalled()
   })
 })

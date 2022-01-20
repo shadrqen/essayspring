@@ -506,7 +506,10 @@ export default {
     })
   },
   mounted () {
-    FacebookLogin.fbInitSdk()
+    /* TODO: To restore the function on test */
+    if (process.env.NODE_ENV !== 'test') {
+      FacebookLogin.fbInitSdk()
+    }
     bus.$on('updateLoginForm', val => {
       this.loginForm.email = val
     })
@@ -801,7 +804,9 @@ export default {
       }
     },
     async submitEmail () {
+      console.log('\n\n\n outside :', this.$refs.submitEmailForm[0].validate(), ' \n\n\n')
       if (this.$refs.submitEmailForm.validate()) {
+        console.log('\n\n\n here \n\n\n')
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
@@ -840,8 +845,7 @@ export default {
               }, 2000)
             }
           })
-          .catch(e => {
-            console.log(e)
+          .catch(() => {
             this.setAlertMessages('Error submitting email address. Kindly try again')
             this.submitEmailOngoing = false
           })

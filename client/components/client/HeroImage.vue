@@ -1,20 +1,41 @@
 <!--The hero image of the application.-->
 <template>
-  <v-card class="hero_image rounded-0" flat>
+  <v-card
+    class="hero_image rounded-0"
+    flat
+  >
     <v-card-text>
       <v-container>
-        <v-row :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''" no-gutters>
-          <v-col cols="12" lg="5" md="5" sm="4" xl="5">
-            <p id="sit_back_relax"
-               :class="textH5"> {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }} </p>
-            <p id="we_offer_exemplary_service"
-               :class="textSubTitle1">
+        <v-row
+          :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+          no-gutters
+        >
+          <v-col
+            cols="12"
+            lg="5"
+            md="5"
+            sm="4"
+            xl="5"
+          >
+            <p
+              id="sit_back_relax"
+              :class="textH5"
+            >
+              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }}
+            </p>
+            <p
+              id="we_offer_exemplary_service"
+              :class="textSubTitle1"
+            >
               {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? subHeroPub : subHero }}
               <br>
               {{ subHeroNewLine }}
             </p>
             <client-only>
-              <v-row v-if="viewportCode !== 'xs'" justify="center">
+              <v-row
+                v-if="viewportCode !== 'xs'"
+                justify="center"
+              >
                 <v-img
                   :height="clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? null : 300"
                   :src="require('~/assets/exams.svg')"
@@ -29,19 +50,37 @@
                       <v-progress-circular
                         color="teal darken-3"
                         indeterminate
-                      ></v-progress-circular>
+                      />
                     </v-row>
                   </template>
                 </v-img>
               </v-row>
             </client-only>
           </v-col>
-          <v-col cols="12" lg="2" md="1" sm="1" xl="2"></v-col>
-          <v-col cols="12" lg="5" md="6" sm="7" xl="5">
-            <v-card id="client_post_order_card" flat>
-              <v-card-title id="client_post_order_card_title"
-                            :class="textH5" :style="{ 'padding-left': clientPostOrderCardTextPadding,
-                            'padding-right': clientPostOrderCardTextPadding}">
+          <v-col
+            cols="12"
+            lg="2"
+            md="1"
+            sm="1"
+            xl="2"
+          />
+          <v-col
+            cols="12"
+            lg="5"
+            md="6"
+            sm="7"
+            xl="5"
+          >
+            <v-card
+              id="client_post_order_card"
+              flat
+            >
+              <v-card-title
+                id="client_post_order_card_title"
+                :class="textH5"
+                :style="{ 'padding-left': clientPostOrderCardTextPadding,
+                          'padding-right': clientPostOrderCardTextPadding}"
+              >
                 <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
                   Boost Your Grades
                 </template>
@@ -50,12 +89,17 @@
                 </template>
               </v-card-title>
               <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
-              <v-form ref="clientPostOrderForm" v-on:submit.prevent="">
-                <v-card-text id="client_post_order_card_text"
-                             :style="{ 'padding-left': clientPostOrderCardTextPadding,
+              <v-form
+                ref="clientPostOrderForm"
+                @submit.prevent=""
+              >
+                <v-card-text
+                  id="client_post_order_card_text"
+                  :style="{ 'padding-left': clientPostOrderCardTextPadding,
                             'padding-right': clientPostOrderCardTextPadding,
                             'padding-bottom': clientPostOrderCardTextPadding}"
-                             class="mt-n4">
+                  class="mt-n4"
+                >
                   <label class="text_field_label">Email</label>
                   <v-text-field
                     v-model="clientPostOrderForm.email"
@@ -66,9 +110,9 @@
                     solo
                     type="email"
                     @keyup.enter="proceedToPlaceOrder"
-                  ></v-text-field>
-<!--                  It is broken down into two instances: Public and private-->
-<!--                  The public instance allows a client to specify order details-->
+                  />
+                  <!--                  It is broken down into two instances: Public and private-->
+                  <!--                  The public instance allows a client to specify order details-->
                   <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
                     <template v-if="pageFullyLoaded">
                       <br>
@@ -87,7 +131,7 @@
                         item-value="id"
                         label="Select the assignment type"
                         solo
-                      ></v-select>
+                      />
                       <br>
                       <label class="text_field_label">Number of pages</label>
                       <br>
@@ -110,7 +154,7 @@
                           flat
                           solo
                           @keypress="validateNumOfPages"
-                        ></v-text-field>
+                        />
                         <v-btn
                           id="num-of-pages-buttons-client-add-hero"
                           class="num-of-pages-buttons"
@@ -120,15 +164,27 @@
                           <v-icon>add</v-icon>
                         </v-btn>
                       </v-btn-toggle>
-                      <span v-if="numOfPagesError.status" id="numOfPagesError"> {{ numOfPagesError.message }} </span>
+                      <span
+                        v-if="numOfPagesError.status"
+                        id="numOfPagesError"
+                      > {{ numOfPagesError.message }} </span>
                       <br>
                       <br>
                       <label class="text_field_label">
                         Deadline:
-                        <assignment-deadline :deadline="deadline" color="#007991"></assignment-deadline>
+                        <assignment-deadline
+                          :deadline="deadline"
+                          color="#007991"
+                        />
                       </label>
                       <v-row no-gutters>
-                        <v-col cols="6" lg="6" md="6" sm="6" xl="6">
+                        <v-col
+                          cols="6"
+                          lg="6"
+                          md="6"
+                          sm="6"
+                          xl="6"
+                        >
                           <v-menu
                             ref="deadline_date_menu"
                             v-model="deadlineDateMenu"
@@ -137,7 +193,7 @@
                             offset-y
                             transition="scale-transition"
                           >
-                            <template v-slot:activator="{ on, attrs }">
+                            <template v-slot:activator="{ on }">
                               <v-text-field
                                 v-model="clientPostOrderForm.deadlineDate"
                                 :rules="validate.deadlineDate"
@@ -150,7 +206,7 @@
                                 solo
                                 v-bind="attrs"
                                 v-on="on"
-                              ></v-text-field>
+                              />
                             </template>
                             <v-date-picker
                               v-model="clientPostOrderForm.deadlineDate"
@@ -158,11 +214,23 @@
                               color="#007991"
                               no-title
                               @input="deadlineDateMenu = false"
-                            ></v-date-picker>
+                            />
                           </v-menu>
                         </v-col>
-                        <v-col cols="1" lg="1" md="1" sm="1" xl="1"></v-col>
-                        <v-col cols="5" lg="5" md="5" sm="5" xl="5">
+                        <v-col
+                          cols="1"
+                          lg="1"
+                          md="1"
+                          sm="1"
+                          xl="1"
+                        />
+                        <v-col
+                          cols="5"
+                          lg="5"
+                          md="5"
+                          sm="5"
+                          xl="5"
+                        >
                           <v-select
                             id="deadline-time"
                             v-model="clientPostOrderForm.deadlineTime"
@@ -179,7 +247,7 @@
                             label="Time"
                             solo
                             style="height: 50px"
-                          ></v-select>
+                          />
                         </v-col>
                         <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
                       </v-row>
@@ -193,7 +261,7 @@
                         label="Select the assignment type"
                         solo
                         type="text"
-                      ></v-text-field>
+                      />
                       <br>
                       <label class="text_field_label">Number of pages</label>
                       <br>
@@ -203,9 +271,9 @@
                         label="Number of pages"
                         solo
                         type="text"
-                      ></v-text-field>
+                      />
                       <br>
-                      <label class="text_field_label"></label>
+                      <label class="text_field_label" />
                       Deadline:
                       <v-text-field
                         class="text-field"
@@ -213,10 +281,19 @@
                         label="Deadline date"
                         solo
                         type="text"
-                      ></v-text-field>
+                      />
                       <v-row no-gutters>
-                        <v-col cols="12" lg="12" md="12" sm="12" xl="12">
-                          <p id="by_clicking_paragraph2" :class="textCaption">
+                        <v-col
+                          cols="12"
+                          lg="12"
+                          md="12"
+                          sm="12"
+                          xl="12"
+                        >
+                          <p
+                            id="by_clicking_paragraph2"
+                            :class="textCaption"
+                          >
                             By clicking "Get Started", you agree to our Terms of Service and Privacy Policy. You also
                             agree
                             to receive bonuses, discounts and promotional materials.
@@ -225,20 +302,41 @@
                       </v-row>
                     </template>
                   </template>
-<!--                  While the private instance only requires an email address-->
+                  <!--                  While the private instance only requires an email address-->
                   <template>
                     <v-row no-gutters>
-                      <v-col id="continue_btn_col" cols="12" lg="12" md="12" sm="12" xl="12">
-                        <v-btn id="continue_btn"
-                               @click="proceedToPlaceOrder()"
+                      <v-col
+                        id="continue_btn_col"
+                        cols="12"
+                        lg="12"
+                        md="12"
+                        sm="12"
+                        xl="12"
+                      >
+                        <v-btn
+                          id="continue_btn"
+                          @click="proceedToPlaceOrder()"
                         >
-              <span class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
-              text-md-subtitle-1 text-sm-subtitle-1">Get Started</span>
-                          <v-icon color="white">keyboard_arrow_right</v-icon>
+                          <span
+                            class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+              text-md-subtitle-1 text-sm-subtitle-1"
+                          >Get Started</span>
+                          <v-icon color="white">
+                            keyboard_arrow_right
+                          </v-icon>
                         </v-btn>
                       </v-col>
-                      <v-col cols="12" lg="12" md="12" sm="12" xl="12">
-                        <p :class="textCaption" class="by_clicking_paragraph">
+                      <v-col
+                        cols="12"
+                        lg="12"
+                        md="12"
+                        sm="12"
+                        xl="12"
+                      >
+                        <p
+                          :class="textCaption"
+                          class="by_clicking_paragraph"
+                        >
                           By clicking "Get Started", you agree to our Terms of Service and Privacy Policy. You also
                           agree
                           to receive bonuses, discounts and promotional materials.
@@ -253,16 +351,16 @@
         </v-row>
       </v-container>
     </v-card-text>
-<!--    Overlay loader-->
+    <!--    Overlay loader-->
     <v-overlay
       :value="overlay"
       opacity="0.9"
     >
       <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </v-card>
@@ -292,8 +390,48 @@ import login from '../../mixins/login'
 
 export default {
   name: 'HeroImageClient',
-  props: ['textCaption', 'textH5', 'textSubTitle1', 'subHero', 'mainHero', 'clientPostOrderCardTextPadding',
-    'viewportCode', 'pageFullyLoaded', 'mainHeroPub', 'subHeroPub'],
+  props: {
+    textCaption: {
+      type: String,
+      required: true
+    },
+    textH5: {
+      type: String,
+      required: true
+    },
+    textSubTitle1: {
+      type: String,
+      required: true
+    },
+    subHero: {
+      type: String,
+      required: true
+    },
+    mainHero: {
+      type: String,
+      required: true
+    },
+    clientPostOrderCardTextPadding: {
+      type: String,
+      required: true
+    },
+    viewportCode: {
+      type: String,
+      required: true
+    },
+    pageFullyLoaded: {
+      type: Boolean,
+      required: true
+    },
+    mainHeroPub: {
+      type: String,
+      required: true
+    },
+    subHeroPub: {
+      type: String,
+      required: true
+    }
+  },
   components: {
     AssignmentDeadline
   },
@@ -675,11 +813,13 @@ export default {
     * 5 seconds to try and get the states again in case of an error. It does this until a given count is reached
     * before stopping. Mind you the real maximum count would be anywhere between 100/4 or thereabout  */
     reGetStates () {
-      setTimeout(() => {
-        if (this.stateReloadCount < 100) {
-          this.getStates()
-        }
-      }, 5000)
+      if (process.env && process.env.NODE_ENV === 'production') {
+        setTimeout(() => {
+          if (this.stateReloadCount < 100) {
+            this.getStates()
+          }
+        }, 5000)
+      }
       /* The reasoning behind the timeout was to try and buy time before the issue that could have
       * happened at the back-end to be resolved
       * TODO: To confirm the issue with the backend micro-service in as far as this is concerned so as to remove

@@ -2,31 +2,43 @@
 <template>
   <div>
     <client-only>
-      <nav-drawer :drawer="drawer"></nav-drawer>
+      <nav-drawer :drawer="drawer" />
       <v-container fluid>
         <base-table
           :table-data="{ headers: headers, items: items, title: orderStatusTitle }"
           :drawer="drawer"
-          :selectedOrder="false"
+          :selected-order="false"
         >
           <template #table-filters>
-            <v-row no-gutters class="mb-n3">
-              <v-col v-bind="attrs" class="pr-1">
+            <v-row
+              no-gutters
+              class="mb-n3"
+            >
+              <v-col
+                v-bind="attrs"
+                class="pr-1"
+              >
                 <v-text-field
                   v-model="search"
                   append-icon="mdi-magnify"
                   label="Search"
                   single-line
                   hide-details
-                ></v-text-field>
+                />
               </v-col>
-              <v-col v-bind="attrs" class="pl-1">
+              <v-col
+                v-bind="attrs"
+                class="pl-1"
+              >
                 <v-select
                   :items="['Time', 'Order Type']"
                   label="Filter By"
-                ></v-select>
+                />
               </v-col>
-              <v-col v-bind="attrs" class="pl-1">
+              <v-col
+                v-bind="attrs"
+                class="pl-1"
+              >
                 <v-select
                   :items="orderStatusTypes"
                   item-text="status"
@@ -34,7 +46,7 @@
                   label="Orders"
                   v-model="selectedOrder"
                   @change="getWriters()"
-                ></v-select>
+                />
               </v-col>
             </v-row>
           </template>
@@ -46,10 +58,10 @@
       opacity="0.9"
     >
       <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </div>

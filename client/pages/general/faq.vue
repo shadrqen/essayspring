@@ -1,13 +1,21 @@
 <template>
   <v-app>
-  <order-now-bar title="FAQs"></order-now-bar>
+    <order-now-bar title="FAQs" />
     <v-container class="mt-2">
-      <v-row justify="center" :style="xl ? 'margin-left: 11vw; margin-right: 15vw;' : ''">
-        <v-expansion-panels popout focusable flat>
+      <v-row
+        justify="center"
+        :style="xl ? 'margin-left: 11vw; margin-right: 15vw;' : ''"
+      >
+        <v-expansion-panels
+          popout
+          focusable
+          flat
+        >
           <v-expansion-panel
-              id="expansion_panel" class="rounded-0"
-              v-for="(item,i) in qas"
-              :key="i"
+            id="expansion_panel"
+            class="rounded-0"
+            v-for="(item,i) in qas"
+            :key="i"
           >
             <v-expansion-panel-header> {{ item.question }} </v-expansion-panel-header>
             <v-expansion-panel-content>

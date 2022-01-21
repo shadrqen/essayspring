@@ -4,10 +4,10 @@
     opacity="0.9"
   >
     <div class="lds-ellipsis">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <div />
+      <div />
+      <div />
+      <div />
     </div>
   </v-overlay>
 </template>

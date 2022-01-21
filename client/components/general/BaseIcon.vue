@@ -1,7 +1,13 @@
 <template>
-  <div class="icon" :class="[`icon--${name}`, `icon--${size}`, { 'has-align-fix': fixAlign }]">
+  <div
+    :class="[`icon--${name}`, `icon--${size}`, { 'has-align-fix': fixAlign }]"
+    class="icon"
+  >
     <svg class="icon__svg">
-      <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'#icon--' + name"></use>
+      <use
+        :xlink:href="'#icon--' + name"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      />
     </svg>
   </div>
 </template>
@@ -9,14 +15,23 @@
 <script>
 export default {
   props: {
-    name: {},
+    name: {
+      type: String,
+      required: true
+    },
     size: {
+      type: String,
+      required: true,
       default: 'normal'
     },
     modifier: {
+      type: String,
+      required: true,
       default: null
     },
     fixAlign: {
+      type: Boolean,
+      required: true,
       default: true
     }
   }

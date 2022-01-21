@@ -1,11 +1,18 @@
 <template>
   <v-container>
     <v-card
-        flat
-        class="grey lighten-3"
+      class="grey lighten-3"
+      flat
     >
-      <v-card-actions :class="titleClass"> {{ title }} </v-card-actions>
-      <v-card-subtitle id="header-subtitle" :class="subTitleClass"> {{ subTitle }} </v-card-subtitle>
+      <v-card-actions :class="titleClass">
+        {{ title }}
+      </v-card-actions>
+      <v-card-subtitle
+        id="header-subtitle"
+        :class="subTitleClass"
+      >
+        {{ subTitle }}
+      </v-card-subtitle>
     </v-card>
   </v-container>
 </template>
@@ -16,7 +23,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Header',
-  props: ['title', 'subTitle'],
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    subTitle: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       card_margin_right: {

@@ -1,18 +1,18 @@
 <!--Page that handles OAuth functionality. Currently handling Google's OAuth redirects-->
 <template>
   <v-app>
-    <index></index>
+    <index />
     <v-overlay
       :value="overlay"
       opacity="0.9"
     >
       <div
-          class="lds-ellipsis"
+        class="lds-ellipsis"
       >
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
       </div>
     </v-overlay>
   </v-app>

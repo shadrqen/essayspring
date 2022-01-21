@@ -3,11 +3,24 @@
   <v-card>
     <v-row no-gutters>
       <v-col
-          cols="12" xl="6" offset-xl="3" lg="6" offset-lg="3" md="6" offset-md="3" sm="8" offset-sm="2"
-          v-if="orderForm.addFunds.notYetPaid"
+        cols="12"
+        xl="6"
+        offset-xl="3"
+        lg="6"
+        offset-lg="3"
+        md="6"
+        offset-md="3"
+        sm="8"
+        offset-sm="2"
+        v-if="orderForm.addFunds.notYetPaid"
       >
         <v-form ref="orderPaymentForm">
-          <h5 class="text-h6 text-lg-h5 text-md-h5 text-sm-h5" id="header">Pay via MPESA</h5>
+          <h5
+            class="text-h6 text-lg-h5 text-md-h5 text-sm-h5"
+            id="header"
+          >
+            Pay via MPESA
+          </h5>
           <span class="grey--text text--darken-2">You will receive an STK push on your phone. Kindly enter your pin to complete the transaction</span>
           <br>
           <br>
@@ -18,26 +31,46 @@
             label="Mobile number"
             :rules="validation.mobileNumberField"
             solo
-            v-model="paymentForm.mobile"></v-text-field>
+            v-model="paymentForm.mobile"
+          />
           <br>
-          <span v-if="mobileRequired" style="color: red; font-size: 14px">
+          <span
+            v-if="mobileRequired"
+            style="color: red; font-size: 14px"
+          >
             Mobile number is required
           </span>
-          <span v-if="mobileFormatRequired" style="color: red; font-size: 14px">
+          <span
+            v-if="mobileFormatRequired"
+            style="color: red; font-size: 14px"
+          >
             Format is e.g. 254700111222
           </span>
           <v-row no-gutters>
-            <v-col cols="6" xl="6" lg="6" md="6" sm="6">
-              <slot name="back-btn"></slot>
+            <v-col
+              cols="6"
+              xl="6"
+              lg="6"
+              md="6"
+              sm="6"
+            >
+              <slot name="back-btn" />
             </v-col>
-            <v-col cols="6" xl="6" lg="6" md="6" sm="6" class="text-end">
+            <v-col
+              cols="6"
+              xl="6"
+              lg="6"
+              md="6"
+              sm="6"
+              class="text-end"
+            >
               <v-btn
-                  id="pay-now-btn"
-                  outlined
-                  @click="validateMobile"
+                id="pay-now-btn"
+                outlined
+                @click="validateMobile"
               >
                 <span
-                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+                  class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
                 >
                   Pay now
@@ -49,56 +82,72 @@
         </v-form>
       </v-col>
       <v-dialog
-          v-model="confirmPaymentDialog"
-          eager
-          max-width="300"
+        v-model="confirmPaymentDialog"
+        eager
+        max-width="300"
       >
         <v-card>
-          <v-toolbar color="#344754" flat short>
-            <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Confirm phone number'">
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+          <v-toolbar
+            color="#344754"
+            flat
+            short
+          >
+            <v-toolbar-title
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+              v-text="'Confirm phone number'"
+            />
+            <v-spacer />
             <v-toolbar-items>
               <v-btn
-                  icon
-                  dark
-                  @click="confirmPaymentDialog = !confirmPaymentDialog"
+                icon
+                dark
+                @click="confirmPaymentDialog = !confirmPaymentDialog"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
           <v-card-text class="mt-2">
-            <v-form ref="initiatePaymentForm" v-on:submit.prevent="">
+            <v-form
+              ref="initiatePaymentForm"
+              @submit.prevent=""
+            >
               <v-row no-gutters>
-                <v-col v-bind="attrs12" class="mt-4">
+                <v-col
+                  v-bind="attrs12"
+                  class="mt-4"
+                >
                   <v-text-field
-                      flat
-                      class="text-field"
-                      label="Mobile number"
-                      :rules="validation.mobileNoField"
-                      solo
-                      @keyup.enter="payNow"
-                      v-model="paymentForm.mobile"></v-text-field>
+                    flat
+                    class="text-field"
+                    label="Mobile number"
+                    :rules="validation.mobileNoField"
+                    solo
+                    @keyup.enter="payNow"
+                    v-model="paymentForm.mobile"
+                  />
                 </v-col>
               </v-row>
             </v-form>
-            <v-divider></v-divider>
+            <v-divider />
             <v-row no-gutters>
-              <v-col v-bind="attrs6" class="text-end">
+              <v-col
+                v-bind="attrs6"
+                class="text-end"
+              >
                 <v-btn
-                    id="initiate_payment"
-                    class="mt-6"
-                    outlined
-                    @click="payNow"
+                  id="initiate_payment"
+                  class="mt-6"
+                  outlined
+                  @click="payNow"
                 >
-                <span
+                  <span
                     class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
-                >
-                  Initiate payment
-                </span>
+                  >
+                    Initiate payment
+                  </span>
                 </v-btn>
               </v-col>
             </v-row>
@@ -106,7 +155,7 @@
         </v-card>
       </v-dialog>
     </v-row>
-    <overlay-loader :overlay="overlay"></overlay-loader>
+    <overlay-loader :overlay="overlay" />
   </v-card>
 </template>
 

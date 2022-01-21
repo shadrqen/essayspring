@@ -1,22 +1,49 @@
 <template>
-  <v-card flat class="hero_image rounded-0">
+  <v-card
+    class="hero_image rounded-0"
+    flat
+  >
     <v-card-text>
       <v-container>
         <v-row no-gutters>
-          <v-col cols="12" xl="5" lg="5" md="5" sm="4">
-            <p :class="text_h5"
-               id="sit_back_relax"> {{ mainHero }} </p>
-            <p :class="text_sub_title_1"
-               id="we_offer_exemplary_service">
+          <v-col
+            cols="12"
+            lg="5"
+            md="5"
+            sm="4"
+            xl="5"
+          >
+            <p
+              id="sit_back_relax"
+              :class="text_h5"
+            >
+              {{ mainHero }}
+            </p>
+            <p
+              id="we_offer_exemplary_service"
+              :class="text_sub_title_1"
+            >
               {{ subHero }}
               <br>
               {{ subHeroNewLine }}
             </p>
-            <slot name="image"></slot>
+            <slot name="image" />
           </v-col>
-          <v-col cols="12" xl="2" lg="2" md="1" sm="1"></v-col>
-          <v-col cols="12" xl="5" lg="5" md="6" sm="7">
-            <slot name="login_register"></slot>
+          <v-col
+            cols="12"
+            lg="2"
+            md="1"
+            sm="1"
+            xl="2"
+          />
+          <v-col
+            cols="12"
+            lg="5"
+            md="6"
+            sm="7"
+            xl="5"
+          >
+            <slot name="login_register" />
           </v-col>
         </v-row>
       </v-container>
@@ -27,7 +54,20 @@
 <script>
 export default {
   name: 'HeroImage',
-  props: ['mainHero', 'subHero', 'subHeroNewLine'],
+  props: {
+    mainHero: {
+      type: String,
+      required: true
+    },
+    subHero: {
+      type: String,
+      required: true
+    },
+    subHeroNewLine: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       break_point_name: null,

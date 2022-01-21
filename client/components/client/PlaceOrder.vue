@@ -5,94 +5,104 @@
 <!--The variable determines the fields displayed on the form.-->
 <template>
   <v-card
-      class="mb-8"
-      flat
+    class="mb-8"
+    flat
   >
-<!--    The main element loads only after the allStatesLoaded variable is true-->
-<!--    This variable is expounded on the computed properties, but essentially turns true only if-->
-<!--    some state variables have been loaded successfully. This helps ensure that the DOM does-->
-<!--    not break-->
+    <!--    The main element loads only after the allStatesLoaded variable is true-->
+    <!--    This variable is expounded on the computed properties, but essentially turns true only if-->
+    <!--    some state variables have been loaded successfully. This helps ensure that the DOM does-->
+    <!--    not break-->
     <template v-if="allStatesLoaded">
       <v-form ref="clientPostOrderForm">
-        <v-row :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''" no-gutters>
-<!--          First column - with contents dependent on the type of client (public vs private)-->
-          <v-col :class="isMobile ? 'mb-6' : ''" cols="12" lg="4" md="4" sm="6" xl="4">
+        <v-row
+          :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''"
+          no-gutters
+        >
+          <!--          First column - with contents dependent on the type of client (public vs private)-->
+          <v-col
+            :class="isMobile ? 'mb-6' : ''"
+            cols="12"
+            lg="4"
+            md="4"
+            sm="6"
+            xl="4"
+          >
             <label class="text_field_label">Assignment Type</label>
             <v-select
-                v-model="clientPostOrderForm.assignmentType"
-                :items="assignmentTypes"
-                :rules="validate.assignmentTypeField"
-                chips
-                class="text-field"
-                color="green"
-                data-cy="assignment-type-input-hero"
-                deletable-chips
-                flat
-                item-text="type"
-                item-value="id"
-                label="Select assignment type"
-                solo
-                @change="priceCalculationIsNecessary"
-            ></v-select>
+              v-model="clientPostOrderForm.assignmentType"
+              :items="assignmentTypes"
+              :rules="validate.assignmentTypeField"
+              chips
+              class="text-field"
+              color="green"
+              data-cy="assignment-type-input-hero"
+              deletable-chips
+              flat
+              item-text="type"
+              item-value="id"
+              label="Select assignment type"
+              solo
+              @change="priceCalculationIsNecessary"
+            />
             <br>
             <label class="text_field_label">Subject</label>
             <v-select
-                v-model="clientPostOrderForm.paperSubject"
-                :items="disciplines"
-                :rules="validate.paperSubjectField"
-                chips
-                class="text-field"
-                data-cy='discipline-input'
-                deletable-chips
-                flat
-                item-text="discipline"
-                item-value="id"
-                label="What is the subject?"
-                solo
-            ></v-select>
+              v-model="clientPostOrderForm.paperSubject"
+              :items="disciplines"
+              :rules="validate.paperSubjectField"
+              chips
+              class="text-field"
+              data-cy="discipline-input"
+              deletable-chips
+              flat
+              item-text="discipline"
+              item-value="id"
+              label="What is the subject?"
+              solo
+            />
             <br>
             <label
-                class="text_field_label"
+              class="text_field_label"
             >Topic</label>
             <v-text-field
-                id="topic"
-                v-model="clientPostOrderForm.topic"
-                :rules="validate.paperTopicField"
-                class="text-field"
-                flat
-                label="What is the topic of your paper?"
-                solo
-            ></v-text-field>
+              id="topic"
+              v-model="clientPostOrderForm.topic"
+              :rules="validate.paperTopicField"
+              class="text-field"
+              flat
+              label="What is the topic of your paper?"
+              solo
+            />
             <br>
             <label class="text_field_label mt-n2">Number of pages</label>
             <br>
             <div style="width: 100%; overflow: hidden; display: block">
               <div style="float: left; width: 70%">
                 <v-btn-toggle
-                    id="num-of-pages-btn-toggle"
-                    v-model="toggleNumOfPages"
-                    mandatory
+                  id="num-of-pages-btn-toggle"
+                  v-model="toggleNumOfPages"
+                  mandatory
                 >
                   <v-btn
-                      id="num-of-pages-buttons-client-remove"
-                      :disabled="clientPostOrderForm.pageCount === 1"
-                      outlined
-                      @click="changePageCount('remove')"
+                    id="num-of-pages-buttons-client-remove"
+                    :disabled="clientPostOrderForm.pageCount === 1"
+                    outlined
+                    @click="changePageCount('remove')"
                   >
                     <v-icon>remove</v-icon>
                   </v-btn>
                   <v-text-field
-                      id="num_of_pages"
-                      v-model="clientPostOrderForm.pageCount"
-                      class="num-of-pages-text-field"
-                      flat
-                      solo
-                      @keypress="validateNumOfPages"
-                  ></v-text-field>
+                    id="num_of_pages"
+                    v-model="clientPostOrderForm.pageCount"
+                    class="num-of-pages-text-field"
+                    flat
+                    solo
+                    @keypress="validateNumOfPages"
+                  />
                   <v-btn
-                      id="num-of-pages-buttons-client-add"
-                      outlined
-                      @click="changePageCount('add')"
+                    id="num-of-pages-buttons-client-add"
+                    outlined
+                    @click="changePageCount('add')"
                   >
                     <v-icon>add</v-icon>
                   </v-btn>
@@ -104,7 +114,10 @@
                 ({{ orderFormat.spacing }})
               </div>
             </div>
-            <span v-if="numOfPagesError.status" class="input-error"> {{ numOfPagesError.message }} </span>
+            <span
+              v-if="numOfPagesError.status"
+              class="input-error"
+            > {{ numOfPagesError.message }} </span>
             <br>
             <label class="text_field_label">Number of sources</label>
             <v-text-field
@@ -115,112 +128,144 @@
               label="How many sources?"
               solo
               @keyup="checkSourcesLimit"
-            ></v-text-field>
-            <span v-if="sourcesExceeded" class="input-error"> {{ sourcesExceededMessage }} </span>
+            />
+            <span
+              v-if="sourcesExceeded"
+              class="input-error"
+            > {{ sourcesExceededMessage }} </span>
             <br>
             <div>
               <label class="text_field_label">
                 Deadline
-                <assignment-deadline :deadline="deadline" color="#007991"></assignment-deadline>
+                <assignment-deadline
+                  :deadline="deadline"
+                  color="#007991"
+                />
               </label>
               <v-row no-gutters>
-                <v-col cols="6" lg="6" md="6" sm="6" xl="6">
+                <v-col
+                  cols="6"
+                  lg="6"
+                  md="6"
+                  sm="6"
+                  xl="6"
+                >
                   <v-menu
-                      id="deadline_date_menu"
-                      ref="deadline_date_menu"
-                      v-model="deadlineDateMenu"
-                      :close-on-content-click="false"
-                      max-width="400"
-                      offset-y
-                      transition="scale-transition"
+                    id="deadline_date_menu"
+                    ref="deadline_date_menu"
+                    v-model="deadlineDateMenu"
+                    :close-on-content-click="false"
+                    max-width="400"
+                    offset-y
+                    transition="scale-transition"
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                          v-model="clientPostOrderForm.deadlineDate"
-                          :rules="validate.deadlineDate"
-                          append-icon="mdi-calendar"
-                          class="text-field"
-                          color="#007991"
-                          flat
-                          label="Date"
-                          readonly
-                          solo
-                          v-bind="attrs"
-                          v-on="on"
-                      ></v-text-field>
+                        v-model="clientPostOrderForm.deadlineDate"
+                        :rules="validate.deadlineDate"
+                        append-icon="mdi-calendar"
+                        class="text-field"
+                        color="#007991"
+                        flat
+                        label="Date"
+                        readonly
+                        solo
+                        v-bind="attrs"
+                        v-on="on"
+                      />
                     </template>
                     <v-date-picker
-                        v-model="clientPostOrderForm.deadlineDate"
-                        :min="currentDate"
-                        color="#007991"
-                        no-title
-                        @change="priceCalculationIsNecessary"
-                        @input="deadlineDateMenu = false"
-                    ></v-date-picker>
+                      v-model="clientPostOrderForm.deadlineDate"
+                      :min="currentDate"
+                      color="#007991"
+                      no-title
+                      @change="priceCalculationIsNecessary"
+                      @input="deadlineDateMenu = false"
+                    />
                   </v-menu>
                 </v-col>
-                <v-col cols="1" lg="1" md="1" sm="1" xl="1"></v-col>
-                <v-col cols="5" lg="5" md="5" sm="5" xl="5">
+                <v-col
+                  cols="1"
+                  lg="1"
+                  md="1"
+                  sm="1"
+                  xl="1"
+                />
+                <v-col
+                  cols="5"
+                  lg="5"
+                  md="5"
+                  sm="5"
+                  xl="5"
+                >
                   <v-select
-                      v-model="clientPostOrderForm.deadlineTime"
-                      :disabled="!clientPostOrderForm.deadlineDate"
-                      :items="filteredDisabledTimes"
-                      :rules="validate.deadlineTime"
-                      append-icon="schedule"
-                      class="text-field"
-                      color="#007991"
-                      data-cy='deadline-time-input'
-                      flat
-                      item-text="time"
-                      item-value="id"
-                      label="Time"
-                      solo
-                      @change="priceCalculationIsNecessary"
-                  ></v-select>
+                    v-model="clientPostOrderForm.deadlineTime"
+                    :disabled="!clientPostOrderForm.deadlineDate"
+                    :items="filteredDisabledTimes"
+                    :rules="validate.deadlineTime"
+                    append-icon="schedule"
+                    class="text-field"
+                    color="#007991"
+                    data-cy="deadline-time-input"
+                    flat
+                    item-text="time"
+                    item-value="id"
+                    label="Time"
+                    solo
+                    @change="priceCalculationIsNecessary"
+                  />
                 </v-col>
               </v-row>
             </div>
           </v-col>
-          <v-col :style="viewportCode !== 'xs' ? 'padding-left: 15px;' +
-             'padding-right: 15px' : ''" cols="12" lg="4" md="4" sm="6" xl="4">
+          <v-col
+            :style="viewportCode !== 'xs' ? 'padding-left: 15px;' +
+              'padding-right: 15px' : ''"
+            cols="12"
+            lg="4"
+            md="4"
+            sm="6"
+            xl="4"
+          >
             <label class="text_field_label">Paper instructions</label>
             <v-textarea
-                id="paper_instructions"
-                v-model="clientPostOrderForm.instructions"
-                :height="tAHeight"
-                :style="{ height: textAreaHeight }"
-                class="text-area"
-                flat
-                no-resize
-                placeholder="Give us the specific instructions of the paper and other details"
-                solo
-            ></v-textarea>
+              id="paper_instructions"
+              v-model="clientPostOrderForm.instructions"
+              :height="tAHeight"
+              :style="{ height: textAreaHeight }"
+              class="text-area"
+              flat
+              no-resize
+              placeholder="Give us the specific instructions of the paper and other details"
+              solo
+            />
             <br>
             <label
-                class="text_field_label"
+              class="text_field_label"
             >Upload supporting files</label>
             <br>
             <div
-                class="text_field"
-                @click='pickFile'
-                @drop="uploadCurrentFile" @dragover.prevent
-                @drop.prevent
+              class="text_field"
+              @click="pickFile"
+              @drop="uploadCurrentFile"
+              @dragover.prevent
+              @drop.prevent
             >
               <input
-                  id="file"
-                  ref="image"
-                  accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .odt, .csv, .txt, video/*, audio/*"
-                  style="display: none"
-                  type="file"
-                  @change="uploadCurrentFile"
+                id="file"
+                ref="image"
+                accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .odt, .csv, .txt, video/*, audio/*"
+                style="display: none"
+                type="file"
+                @change="uploadCurrentFile"
               >
               <span v-if="supportingFileUploading">
-                        <v-progress-circular
-                            :size="30"
-                            color="#007991"
-                            indeterminate
-                        ></v-progress-circular>
-                      </span>
+                <v-progress-circular
+                  :size="30"
+                  color="#007991"
+                  indeterminate
+                />
+              </span>
               <span v-else>
                 <v-icon>cloud_upload</v-icon>
                 Drag file here or click to upload
@@ -228,107 +273,123 @@
             </div>
             <div v-if="clientPostOrderForm.supportingFiles.length > 0">
               <div
-                  v-for="(file, key) in clientPostOrderForm.supportingFiles"
-                  :key="key"
-                  style="font-size: 15px; color: #403d3d;"
+                v-for="(file, key) in clientPostOrderForm.supportingFiles"
+                :key="key"
+                style="font-size: 15px; color: #403d3d;"
               >
                 <v-chip
-                    class="ma-2"
-                    close
-                    @click:close="removeFile(file.fileUrl)"
+                  class="ma-2"
+                  close
+                  @click:close="removeFile(file.fileUrl)"
                 >
                   {{ formatOriginalName(file.originalName) }}
                 </v-chip>
               </div>
             </div>
           </v-col>
-          <v-col cols="12" lg="4" md="4" sm="6" xl="4">
+          <v-col
+            cols="12"
+            lg="4"
+            md="4"
+            sm="6"
+            xl="4"
+          >
             <span v-if="['xs', 'sm'].includes(viewportCode)"><br></span>
             <label class="text_field_label">Type of service</label>
             <br>
             <v-btn-toggle
-                v-model="toggleTypeOfService"
-                class="btn-toggle"
-                mandatory
+              v-model="toggleTypeOfService"
+              class="btn-toggle"
+              mandatory
             >
               <v-btn
-                  v-for="(type, key) in serviceTypes"
-                  :key="key"
-                  :class="clientPostOrderForm.serviceType === type.type ? 'service-type-buttons-active' :
-                    'service-type-buttons-inactive'"
-                  outlined
-                  style="height: 36px"
-                  @click="changeServiceType(type.type)"
+                v-for="(type, key) in serviceTypes"
+                :key="key"
+                :class="clientPostOrderForm.serviceType === type.type ? 'service-type-buttons-active' :
+                  'service-type-buttons-inactive'"
+                outlined
+                style="height: 36px"
+                @click="changeServiceType(type.type)"
               >
-                    <span
-                        class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-2 text-sm-body-2"
-                    >{{ type.type }}</span>
+                <span
+                  class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-2 text-sm-body-2"
+                >{{ type.type }}</span>
               </v-btn>
             </v-btn-toggle>
             <br>
             <br>
             <label class="text_field_label">Level of study</label>
             <v-select
-                v-model="clientPostOrderForm.studyLevel"
-                :items="studyLevel"
-                :rules="validate.studyLevelField"
-                chips
-                class="text-field"
-                color="green"
-                data-cy='level-of-study-input'
-                deletable-chips
-                flat
-                item-text="level"
-                item-value="id"
-                label="Choose your level of study"
-                solo
-                @change="priceCalculationIsNecessary"
-            ></v-select>
+              v-model="clientPostOrderForm.studyLevel"
+              :items="studyLevel"
+              :rules="validate.studyLevelField"
+              chips
+              class="text-field"
+              color="green"
+              data-cy="level-of-study-input"
+              deletable-chips
+              flat
+              item-text="level"
+              item-value="id"
+              label="Choose your level of study"
+              solo
+              @change="priceCalculationIsNecessary"
+            />
             <br>
             <label class="text_field_label">Formatting Style</label>
             <v-select
-                v-model="clientPostOrderForm.citationStyleId"
-                :items="citationStyles"
-                :rules="validate.formattingStyleField"
-                chips
-                class="text-field"
-                color="green"
-                data-cy='formatting-style-input'
-                deletable-chips
-                flat
-                item-text="citation"
-                item-value="id"
-                label="Choose the formatting style"
-                solo
-            ></v-select>
+              v-model="clientPostOrderForm.citationStyleId"
+              :items="citationStyles"
+              :rules="validate.formattingStyleField"
+              chips
+              class="text-field"
+              color="green"
+              data-cy="formatting-style-input"
+              deletable-chips
+              flat
+              item-text="citation"
+              item-value="id"
+              label="Choose the formatting style"
+              solo
+            />
             <br>
             <label class="text_field_label">Type of Writers</label>
             <v-select
-                v-model="clientPostOrderForm.type"
-                :items="typeOfWriters"
-                :rules="validate.formattingStyleField"
-                chips
-                class="text-field"
-                color="green"
-                data-cy='formatting-style-input'
-                deletable-chips
-                flat
-                label="Choose type of writers"
-                solo
-            ></v-select>
+              v-model="clientPostOrderForm.type"
+              :items="typeOfWriters"
+              :rules="validate.formattingStyleField"
+              chips
+              class="text-field"
+              color="green"
+              data-cy="formatting-style-input"
+              deletable-chips
+              flat
+              label="Choose type of writers"
+              solo
+            />
             <br>
-            <v-layout v-if="clientPostOrderForm.type === 'public'" class="pa-2 mt-2 mb-1 price-layout" row>
+            <v-layout
+              v-if="clientPostOrderForm.type === 'public'"
+              class="pa-2 mt-2 mb-1 price-layout"
+              row
+            >
               <v-flex v-if="totalPriceLoading">
                 <v-progress-circular
                   :size="20"
                   :width="2"
                   color="#007991"
                   indeterminate
-                ></v-progress-circular>
+                />
               </v-flex>
               <v-flex v-else>
                 <v-layout wrap>
-                  <v-flex cols="3" lg="3" md="3" sm="3" xl="3">
+                  <v-flex
+                    cols="3"
+                    lg="3"
+                    md="3"
+                    sm="3"
+                    xl="3"
+                  >
                     <v-btn
                       id="price-btn-remove"
                       :disabled="clientPostOrderForm.paymentSummary.paperPrice === clientPostOrderForm.paymentSummary.leastPaperPrice"
@@ -338,8 +399,18 @@
                       <v-icon>remove</v-icon>
                     </v-btn>
                   </v-flex>
-                  <v-flex class="ml-lg-8 ml-xl-16 ml-sm-2" cols="6" lg="6" md="6" sm="6" xl="6">
-                    <span :style="{ color: totalPriceLoading ? 'grey' : 'rgba(0,0,0,0.6)' }" class="price-value mx-6">
+                  <v-flex
+                    class="ml-lg-8 ml-xl-16 ml-sm-2"
+                    cols="6"
+                    lg="6"
+                    md="6"
+                    sm="6"
+                    xl="6"
+                  >
+                    <span
+                      :style="{ color: totalPriceLoading ? 'grey' : 'rgba(0,0,0,0.6)' }"
+                      class="price-value mx-6"
+                    >
                       <span>{{ clientPostOrderForm.paymentSummary.currencyCode || 'KES' }}</span>
                       <v-text-field
                         v-model="clientPostOrderForm.paymentSummary.paperPrice"
@@ -347,21 +418,31 @@
                         flat
                         style="width: 50px; position: absolute;"
                         @keypress="validatePrice"
-                      ></v-text-field>
+                      />
                     </span>
                     <br>
                     <div v-if="Number(clientPostOrderForm.paymentSummary.discount) !== 0">
-                          <span
-                            class="text_field_label"
-                            style="font-size: 12px; background: #20ba68; padding: 2px; border-radius: 5px; color: white">
-                            {{ clientPostOrderForm.paymentSummary.discount }} % OFF
-                          </span>
-                      <span class="ml-2" style="font-size: 13px; text-decoration: line-through; color: grey">
-                          ({{ clientPostOrderForm.paymentSummary.currencyCode || 'KES' }} {{ initialPaperPrice }})
-                        </span>
+                      <span
+                        class="text_field_label"
+                        style="font-size: 12px; background: #20ba68; padding: 2px; border-radius: 5px; color: white"
+                      >
+                        {{ clientPostOrderForm.paymentSummary.discount }} % OFF
+                      </span>
+                      <span
+                        class="ml-2"
+                        style="font-size: 13px; text-decoration: line-through; color: grey"
+                      >
+                        ({{ clientPostOrderForm.paymentSummary.currencyCode || 'KES' }} {{ initialPaperPrice }})
+                      </span>
                     </div>
                   </v-flex>
-                  <v-flex cols="3" lg="3" md="3" sm="3" xl="3">
+                  <v-flex
+                    cols="3"
+                    lg="3"
+                    md="3"
+                    sm="3"
+                    xl="3"
+                  >
                     <v-btn
                       id="price-btn-add"
                       outlined
@@ -371,23 +452,36 @@
                     </v-btn>
                   </v-flex>
                   <v-flex v-if="priceError.status">
-                    <span v-if="priceError.status" class="input-error"> {{ priceError.message }} </span>
+                    <span
+                      v-if="priceError.status"
+                      class="input-error"
+                    > {{ priceError.message }} </span>
                   </v-flex>
                 </v-layout>
               </v-flex>
             </v-layout>
-            <v-layout v-else class="pa-2 mt-n3 mb-1" row>
+            <v-layout
+              v-else
+              class="pa-2 mt-n3 mb-1"
+              row
+            >
               <v-flex v-if="totalPriceLoading">
                 <v-progress-circular
                   :size="20"
                   :width="2"
                   color="#007991"
                   indeterminate
-                ></v-progress-circular>
+                />
               </v-flex>
               <v-flex v-else>
                 <v-layout wrap>
-                  <v-flex cols="12" lg="12" md="12" sm="12" xl="12">
+                  <v-flex
+                    cols="12"
+                    lg="12"
+                    md="12"
+                    sm="12"
+                    xl="12"
+                  >
                     <label class="text_field_label">CPP (KES)</label>
                     <div style="overflow: hidden; display: block">
                       <div style="float: left; width: 70%">
@@ -411,7 +505,7 @@
                             flat
                             solo
                             @keyup="validateCPP()"
-                          ></v-text-field>
+                          />
                           <v-btn
                             id="cpp-btn-add"
                             outlined
@@ -433,29 +527,36 @@
               </v-flex>
             </v-layout>
             <div v-if="cppError.status">
-              <span v-if="cppError.status" class="input-error"> {{ cppError.message }} </span>
+              <span
+                v-if="cppError.status"
+                class="input-error"
+              > {{ cppError.message }} </span>
             </div>
-            <alert-message :error="errorObject" :success="successObject"></alert-message>
+            <alert-message
+              :error="errorObject"
+              :success="successObject"
+            />
             <br>
             <v-btn
-                id="continue_btn"
-                :disabled="supportingFileUploading || selectWriterBtnDisabled"
-                @click="proceedToNextLevel()"
+              id="continue_btn"
+              :disabled="supportingFileUploading || selectWriterBtnDisabled"
+              @click="proceedToNextLevel()"
             >
-                <span
-                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+              <span
+                class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
-                >
-                  <template v-if="clientPostOrderForm.type === 'public'">
-                    Select a Writer
-                  </template>
-                  <template v-else>
-                    Assign Writer
-                  </template>
-                </span>
+              >
+                <template v-if="clientPostOrderForm.type === 'public'">
+                  Select a Writer
+                </template>
+                <template v-else>
+                  Assign Writer
+                </template>
+              </span>
               <v-icon
-                  color="white"
-              >keyboard_arrow_right
+                color="white"
+              >
+                keyboard_arrow_right
               </v-icon>
             </v-btn>
           </v-col>
@@ -484,14 +585,14 @@
         </v-snackbar>
       </div>
       <v-overlay
-          :value="overlay"
-          opacity="0.9"
+        :value="overlay"
+        opacity="0.9"
       >
         <div class="lds-ellipsis">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+          <div />
+          <div />
+          <div />
+          <div />
         </div>
       </v-overlay>
     </template>

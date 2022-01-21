@@ -3,27 +3,39 @@
   <v-app>
     <client-only>
       <template v-if="loginStatus">
-        <payment-successful v-if="clientPostOrderForm.addFunds.paymentSuccessful"></payment-successful>
-        <base-stepper v-if="clientPostOrderForm.addFunds.notYetPaid" :steps="clientPostOrderForm.type === 'private' ? stepsPrivate : stepsPublic"
-                      :step-status="clientPostOrderForm.stepStatus" :level="clientPostOrderForm.level">
+        <payment-successful v-if="clientPostOrderForm.addFunds.paymentSuccessful" />
+        <base-stepper
+          v-if="clientPostOrderForm.addFunds.notYetPaid"
+          :steps="clientPostOrderForm.type === 'private' ? stepsPrivate : stepsPublic"
+          :step-status="clientPostOrderForm.stepStatus"
+          :level="clientPostOrderForm.level"
+        >
           <template #stepper-content-step-1>
-            <place-order @progress-to-next-level="proceedToNextLevel"></place-order>
+            <place-order @progress-to-next-level="proceedToNextLevel" />
           </template>
           <template #stepper-content-step-2>
             <select-writer
               @progress-to-next-level="proceedToNextLevel"
-              :getBids="getOrderBids"
+              :get-bids="getOrderBids"
               :invite-writer-dialog="inviteWriterDialog"
-              @disable-writer-invite="disableWriterInvite">
+              @disable-writer-invite="disableWriterInvite"
+            >
               <template #back-btn>
                 <v-row no-gutters>
-                  <v-col cols="8" xl="8" lg="8" md="8" sm="8">
+                  <v-col
+                    cols="8"
+                    xl="8"
+                    lg="8"
+                    md="8"
+                    sm="8"
+                  >
                     <v-btn
                       id="back_btn_step_2"
                       @click="proceedToNextLevel(1)"
                       outlined
                     >
-                      <v-icon>keyboard_arrow_left
+                      <v-icon>
+                        keyboard_arrow_left
                       </v-icon>
                       <span
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
@@ -31,7 +43,14 @@
                       >Back</span>
                     </v-btn>
                   </v-col>
-                  <v-col cols="4" xl="4" lg="4" md="4" sm="4" class="right-0">
+                  <v-col
+                    cols="4"
+                    xl="4"
+                    lg="4"
+                    md="4"
+                    sm="4"
+                    class="right-0"
+                  >
                     <v-btn
                       id="back_btn_step_2_"
                       @click="proceedToNextLevel(3)"
@@ -42,7 +61,8 @@
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
                       >Later</span>
-                      <v-icon>keyboard_arrow_right
+                      <v-icon>
+                        keyboard_arrow_right
                       </v-icon>
                     </v-btn>
                     <v-btn
@@ -55,7 +75,8 @@
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1 mr-1"
                       >Invite</span>
-                      <v-icon>mdi-account-plus-outline
+                      <v-icon>
+                        mdi-account-plus-outline
                       </v-icon>
                     </v-btn>
                   </v-col>
@@ -63,18 +84,28 @@
               </template>
             </select-writer>
           </template>
-          <template #stepper-content-step-3 v-if="clientPostOrderForm.type === 'public'">
+          <template
+            #stepper-content-step-3
+            v-if="clientPostOrderForm.type === 'public'"
+          >
             <check-order @progress-to-next-level="proceedToNextLevel">
               <template #back-btn>
                 <br>
                 <v-row no-gutters>
-                  <v-col cols="4" xl="4" lg="4" md="4" sm="4">
+                  <v-col
+                    cols="4"
+                    xl="4"
+                    lg="4"
+                    md="4"
+                    sm="4"
+                  >
                     <v-btn
                       id="back_btn_step_3"
                       @click="proceedToNextLevel(2)"
                       outlined
                     >
-                      <v-icon>keyboard_arrow_left
+                      <v-icon>
+                        keyboard_arrow_left
                       </v-icon>
                       <span
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
@@ -86,18 +117,28 @@
               </template>
             </check-order>
           </template>
-          <template #stepper-content-step-4 v-if="clientPostOrderForm.type === 'public'">
+          <template
+            #stepper-content-step-4
+            v-if="clientPostOrderForm.type === 'public'"
+          >
             <add-funds @progress-to-next-level="proceedToNextLevel">
               <template #back-btn>
                 <br>
                 <v-row no-gutters>
-                  <v-col cols="4" xl="4" lg="4" md="4" sm="4">
+                  <v-col
+                    cols="4"
+                    xl="4"
+                    lg="4"
+                    md="4"
+                    sm="4"
+                  >
                     <v-btn
                       id="back_btn_step_4"
                       @click="proceedToNextLevel(3)"
                       outlined
                     >
-                      <v-icon>keyboard_arrow_left
+                      <v-icon>
+                        keyboard_arrow_left
                       </v-icon>
                       <span
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1

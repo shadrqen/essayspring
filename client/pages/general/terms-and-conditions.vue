@@ -1,11 +1,12 @@
 <template>
   <v-app>
-    <order-now-bar title="Terms and Conditions"></order-now-bar>
+    <order-now-bar title="Terms and Conditions" />
     <v-container>
-      <div class="row" :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
-
+      <div
+        class="row"
+        :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+      >
         <div class="text-block mt-6">
-
           <p>
             <i>
               These Terms and Conditions were last updated on 18th of November 2021.
@@ -24,9 +25,11 @@
           <p>
             By using this Site / placing an order / making payment, it is deemed that you have read and agreed to the
             following Terms and Conditions.
-            These Terms and Conditions include, and hereby incorporate by reference, the <a href="/general/privacy-policy"
-                                                                                            target="_blank">Privacy
-            Policy</a> and other relevant
+            These Terms and Conditions include, and hereby incorporate by reference, the <a
+              href="/general/privacy-policy"
+              target="_blank"
+            >Privacy
+              Policy</a> and other relevant
             agreements, located on the Site, as they may be in effect and modified from time to time.
             If you do not agree to them, do not use the Site or access the services from it.
           </p>
@@ -494,7 +497,7 @@
           <p>
             YOU EXPRESSLY AGREE THAT YOUR USE OF, OR INABILITY TO USE, WEBSITE OR ITS SERVICES IS AT YOUR SOLE RISK. THE
             WEBSITE AND ITS SERVICES ARE (EXCEPT AS EXPRESSLY STATED BY US) PROVIDED <b>'AS IS'</b> AND <b>'AS
-            AVAILABLE'</b> FOR YOUR USE, WITHOUT ANY REPRESENTATION, WARRANTIES OR CONDITIONS OF ANY KIND, EITHER
+              AVAILABLE'</b> FOR YOUR USE, WITHOUT ANY REPRESENTATION, WARRANTIES OR CONDITIONS OF ANY KIND, EITHER
             EXPRESS OR IMPLIED, INCLUDING ALL IMPLIED WARRANTIES OR CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
             FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, TITLE, AND NON-INFRINGEMENT (INCLUDING NON-INFRINGEMENT OF
             INTELLECTUAL PROPERTY).
@@ -572,9 +575,7 @@
             email to <a href="mailto:support@essayspring.com">support@essayspring.com</a>, and providing us with information
             relating to your concern.
           </p>
-
         </div>
-
       </div>
     </v-container>
   </v-app>

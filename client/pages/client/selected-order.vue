@@ -1,12 +1,21 @@
 <template>
   <v-app>
     <client-only>
-      <nav-drawer></nav-drawer>
-      <v-card v-if="order" class="ma-4">
+      <nav-drawer />
+      <v-card
+        v-if="order"
+        class="ma-4"
+      >
         <v-card-title>
-          <v-icon class="mr-2" style="cursor: pointer" @click="$router.push('/client/orders')">chevron_left</v-icon>
+          <v-icon
+            class="mr-2"
+            style="cursor: pointer"
+            @click="$router.push('/client/orders')"
+          >
+            chevron_left
+          </v-icon>
           Order &#8470; {{ order.id }}
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-chip
             v-if="order.OrderStatus"
             :color="orderProgress.filter(progress => progress.progress === order.OrderStatus.status)[0].color"
@@ -14,7 +23,8 @@
             text-color="white"
           >
             <v-avatar left>
-              <v-icon> {{
+              <v-icon>
+                {{
                   orderProgress.filter(progress => progress.progress === order.OrderStatus.status)[0].icon
                 }}
               </v-icon>
@@ -31,10 +41,10 @@
           >
             <template v-if="loadingOrder">
               <div class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+                <div />
+                <div />
+                <div />
+                <div />
               </div>
             </template>
             <template v-else>
@@ -43,10 +53,14 @@
             </template>
           </v-chip>
         </v-card-title>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-text>
           <v-row no-gutters>
-            <v-col v-for="(item, key) in headers" :key="key" v-bind="attrs">
+            <v-col
+              v-for="(item, key) in headers"
+              :key="key"
+              v-bind="attrs"
+            >
               <v-list
                 subheader
                 three-line
@@ -56,7 +70,10 @@
                     <v-list-item-title>{{ item.text }}</v-list-item-title>
                     <v-list-item-subtitle>
                       <template v-if="item.text === 'Deadline'">
-                        <assignment-deadline :deadline="deadline" color="grey"></assignment-deadline>
+                        <assignment-deadline
+                          :deadline="deadline"
+                          color="grey"
+                        />
                       </template>
                       <template v-else>
                         {{ getOrderItemDetail(item) }}
@@ -67,7 +84,7 @@
               </v-list>
             </v-col>
           </v-row>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card flat>
             <v-card-title>Instructions</v-card-title>
             <v-card-text>
@@ -79,38 +96,59 @@
               </template>
             </v-card-text>
           </v-card>
-          <v-divider></v-divider>
-          <v-card v-if="order.OrderStatus && order.OrderStatus.status === 'Undergoing revision'" flat>
+          <v-divider />
+          <v-card
+            v-if="order.OrderStatus && order.OrderStatus.status === 'Undergoing revision'"
+            flat
+          >
             <v-card-title>Revision Instructions</v-card-title>
             <v-card-text>
               <template v-if="revisionInstructions.length > 0">
-                <v-row v-for="(revision, revisionKey) in revisionInstructions" :key="revisionKey" no-gutters>
+                <v-row
+                  v-for="(revision, revisionKey) in revisionInstructions"
+                  :key="revisionKey"
+                  no-gutters
+                >
                   <v-col
-                    v-for="(instructionKey, instructionValue) in revision.revisionInstructions" :key="instructionValue"
+                    v-for="(instructionKey, instructionValue) in revision.revisionInstructions"
+                    :key="instructionValue"
                     class="my-2"
-                    v-bind="attrs12">
+                    v-bind="attrs12"
+                  >
                     <h3>{{ instructionValue }}</h3>
                     <div>
                       <template v-if="instructionKey">
                         {{ instructionKey }}
                       </template>
-                      <template v-else>N/A</template>
+                      <template v-else>
+                        N/A
+                      </template>
                     </div>
                   </v-col>
-                  <v-col class="my-2" v-bind="attrs12">
+                  <v-col
+                    class="my-2"
+                    v-bind="attrs12"
+                  >
                     <h3>Deadline</h3>
                     <div>
                       <template v-if="revision.deadline">
                         {{ revision.deadline }}
                       </template>
-                      <template v-else>N/A</template>
+                      <template v-else>
+                        N/A
+                      </template>
                     </div>
                   </v-col>
                 </v-row>
-                <v-divider></v-divider>
+                <v-divider />
                 <v-row no-gutters>
-                  <v-col class="my-2" v-bind="attrs12">
-                    <h3 class="my-2">Revision files</h3>
+                  <v-col
+                    class="my-2"
+                    v-bind="attrs12"
+                  >
+                    <h3 class="my-2">
+                      Revision files
+                    </h3>
                     <div>
                       <template v-if="revisionSupportingFiles.length > 0">
                         <v-chip
@@ -118,12 +156,13 @@
                           :key="revSupportingFileKey"
                           class="mr-2 my-1"
                           style="cursor: pointer; text-decoration: underline;"
-                          @click="getFile(revSupportingFile.fileUrl, null, 'view')">
+                          @click="getFile(revSupportingFile.fileUrl, null, 'view')"
+                        >
                           <v-img
                             :src="require(`@/assets/${regMixin.fileExtensionIcon(revSupportingFile.fileUrl.split('.').pop())}.png`)"
                             class="mr-2 my-1"
-                            sizes="20">
-                          </v-img>
+                            sizes="20"
+                          />
                           {{ formatOriginalName(revSupportingFile.originalName) }}
                         </v-chip>
                       </template>
@@ -139,7 +178,7 @@
               </template>
             </v-card-text>
           </v-card>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card flat>
             <v-card-title>Order Papers</v-card-title>
             <v-card-text>
@@ -147,54 +186,67 @@
                 <v-simple-table>
                   <template v-slot:default>
                     <thead>
-                    <tr>
-                      <th class="text-left">
-                        File
-                      </th>
-                      <th class="text-left">
-                        Uploaded At
-                      </th>
-                      <th class="text-left">
-                        Paper Order
-                      </th>
-                      <th class="text-left">
-                        Action
-                      </th>
-                    </tr>
+                      <tr>
+                        <th class="text-left">
+                          File
+                        </th>
+                        <th class="text-left">
+                          Uploaded At
+                        </th>
+                        <th class="text-left">
+                          Paper Order
+                        </th>
+                        <th class="text-left">
+                          Action
+                        </th>
+                      </tr>
                     </thead>
                     <tbody>
-                    <tr
-                      v-for="(file, fileKey) in orderPapers"
-                      :key="fileKey"
-                    >
-                      <td>
-                        <v-chip
-                          class="mr-2 my-1"
-                          style="cursor: pointer; text-decoration: underline;"
-                          @click="getFile(file.fileUrl, null, 'view')">
-                          <v-img
-                            :src="require(`@/assets/${regMixin.fileExtensionIcon(file.fileUrl.split('.').pop())}.png`)"
+                      <tr
+                        v-for="(file, fileKey) in orderPapers"
+                        :key="fileKey"
+                      >
+                        <td>
+                          <v-chip
                             class="mr-2 my-1"
-                            sizes="20">
-                          </v-img>
-                          {{ formatOriginalName(file.originalName) }}
-                        </v-chip>
-                      </td>
-                      <td>{{ file.createdAt }}</td>
-                      <td>
-                        <v-icon v-if="file.submittedPaper" color="success">mdi-check-circle-outline</v-icon>
-                        <v-icon v-else>mdi-close-circle-outline</v-icon>
-                      </td>
-                      <td class="order-paper-action">
-                        <div v-if="fileDownloading && selectedFileUrl === file.fileUrl">
-                          <v-progress-circular
-                            color="primary"
-                            indeterminate
-                          ></v-progress-circular>
-                        </div>
-                        <v-icon v-else @click="getFile(file.fileUrl, file.originalName, 'download')">mdi-file-download</v-icon>
-                      </td>
-                    </tr>
+                            style="cursor: pointer; text-decoration: underline;"
+                            @click="getFile(file.fileUrl, null, 'view')"
+                          >
+                            <v-img
+                              :src="require(`@/assets/${regMixin.fileExtensionIcon(file.fileUrl.split('.').pop())}.png`)"
+                              class="mr-2 my-1"
+                              sizes="20"
+                            />
+                            {{ formatOriginalName(file.originalName) }}
+                          </v-chip>
+                        </td>
+                        <td>{{ file.createdAt }}</td>
+                        <td>
+                          <v-icon
+                            v-if="file.submittedPaper"
+                            color="success"
+                          >
+                            mdi-check-circle-outline
+                          </v-icon>
+                          <v-icon v-else>
+                            mdi-close-circle-outline
+                          </v-icon>
+                        </td>
+                        <td class="order-paper-action">
+                          <div v-if="fileDownloading && selectedFileUrl === file.fileUrl">
+                            <v-progress-circular
+                              color="primary"
+                              indeterminate
+                            />
+                          </div>
+                          <v-icon
+                            v-else
+                            @click="getFile(file.fileUrl, file.originalName, 'download')"
+                          >
+                            mdi-file-download
+                          </v-icon>
+                        </td>
+                      </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
@@ -204,7 +256,7 @@
               </template>
             </v-card-text>
           </v-card>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card flat>
             <v-card-title>Supporting files</v-card-title>
             <v-card-text>
@@ -214,12 +266,13 @@
                   :key="fileKey__"
                   class="mr-2 my-1"
                   style="cursor: pointer; text-decoration: underline;"
-                  @click="getFile(file__.fileUrl, null,'view')">
+                  @click="getFile(file__.fileUrl, null,'view')"
+                >
                   <v-img
                     :src="require(`@/assets/${regMixin.fileExtensionIcon(file__.fileUrl.split('.').pop())}.png`)"
                     class="mr-2 my-1"
-                    sizes="20">
-                  </v-img>
+                    sizes="20"
+                  />
                   {{ formatOriginalName(file__.originalName) }}
                 </v-chip>
               </template>
@@ -228,30 +281,37 @@
               </template>
             </v-card-text>
           </v-card>
-          <v-divider></v-divider>
-          <v-card v-if="order.OrderStatus && revisableOrderStatuses.includes(order.OrderStatus.status)" flat>
+          <v-divider />
+          <v-card
+            v-if="order.OrderStatus && revisableOrderStatuses.includes(order.OrderStatus.status)"
+            flat
+          >
             <v-card-text>
-              <v-row class="mt-10" no-gutters>
+              <v-row
+                class="mt-10"
+                no-gutters
+              >
                 <v-btn
                   id="revision_order_btn"
                   @click="requestRevisionDialog = !requestRevisionDialog"
                 >
-              <span
-                class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+                  <span
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                   text-md-subtitle-1 text-sm-subtitle-1"
-              >Request Revision</span>
+                  >Request Revision</span>
                 </v-btn>
-                <v-spacer></v-spacer>
+                <v-spacer />
                 <v-btn
                   v-if="order.OrderStatus && order.OrderStatus.status === 'Submitted'"
                   id="confirm_order_btn"
                   outlined
                   @click="confirmOrderDialog =! confirmOrderDialog"
                 >
-              <span
-                class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                Confirm Order
-              </span>
+                  <span
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                  >
+                    Confirm Order
+                  </span>
                 </v-btn>
                 <v-btn
                   v-if="order.OrderStatus && order.OrderStatus.status === 'Completed' && !rated"
@@ -259,15 +319,20 @@
                   outlined
                   @click="rateWriterDialog =! rateWriterDialog"
                 >
-              <span
-                class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                Rate Writer
-              </span>
+                  <span
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                  >
+                    Rate Writer
+                  </span>
                 </v-btn>
               </v-row>
             </v-card-text>
           </v-card>
-          <alert-message v-if="bodyAlertObject" :error="errorObject" :success="successObject"></alert-message>
+          <alert-message
+            v-if="bodyAlertObject"
+            :error="errorObject"
+            :success="successObject"
+          />
         </v-card-text>
       </v-card>
       <v-dialog
@@ -276,11 +341,17 @@
         max-width="700"
       >
         <v-card>
-          <v-toolbar color="#344754" flat short>
-            <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Specify revision instructions'">
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+          <v-toolbar
+            color="#344754"
+            flat
+            short
+          >
+            <v-toolbar-title
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+              v-text="'Specify revision instructions'"
+            />
+            <v-spacer />
             <v-toolbar-items>
               <v-btn
                 dark
@@ -291,17 +362,23 @@
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
-          <v-form ref="requestRevisionForm" v-on:submit.prevent="">
+          <v-form
+            ref="requestRevisionForm"
+            @submit.prevent=""
+          >
             <v-card-text class="mt-2">
               <template v-if="!revisionRequestDone">
-                <div v-for="(checklist, checklistKey) in submissionChecklist" :key="checklistKey">
+                <div
+                  v-for="(checklist, checklistKey) in submissionChecklist"
+                  :key="checklistKey"
+                >
                   <v-switch
                     v-model="revisionForm[checklist.aspect].key"
                     :label="checklist.aspectDescription"
                     class="ml-2"
                     inset
                     @change="checkIfRevisionRequired"
-                  ></v-switch>
+                  />
                   <v-textarea
                     v-if="revisionForm[checklist.aspect].key"
                     v-model="revisionForm[checklist.aspect].val"
@@ -311,11 +388,14 @@
                     no-resize
                     placeholder="Describe revision instructions"
                     solo
-                  ></v-textarea>
+                  />
                 </div>
                 <template v-if="revisionRequired">
-                  <v-divider></v-divider>
-                  <v-row class="mb-5" no-gutters>
+                  <v-divider />
+                  <v-row
+                    class="mb-5"
+                    no-gutters
+                  >
                     <v-col v-bind="attrs6">
                       <v-menu
                         ref="deadlineDateMenu"
@@ -328,7 +408,7 @@
                         offset-y
                         transition="scale-transition"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="revisionDeadline.date"
                             :rules="validate.revisionDeadlineDate"
@@ -337,7 +417,7 @@
                             readonly
                             v-bind="attrs"
                             v-on="on"
-                          ></v-text-field>
+                          />
                         </template>
                         <v-date-picker
                           v-model="revisionDeadline.date"
@@ -347,7 +427,7 @@
                           scrollable
                           @change="selectedToday = currentDate === revisionDeadline.date"
                           @input="$refs.deadlineDateMenu.save(revisionDeadline.date)"
-                        ></v-date-picker>
+                        />
                       </v-menu>
                     </v-col>
                     <v-col v-bind="attrs6">
@@ -362,7 +442,7 @@
                         offset-y
                         transition="scale-transition"
                       >
-                        <template v-slot:activator="{ on, attrs }">
+                        <template v-slot:activator="{ on }">
                           <v-text-field
                             v-model="revisionDeadline.time"
                             :rules="validate.revisionDeadlineTime"
@@ -371,7 +451,7 @@
                             readonly
                             v-bind="attrs"
                             v-on="on"
-                          ></v-text-field>
+                          />
                         </template>
                         <v-time-picker
                           v-if="selectedToday"
@@ -381,21 +461,22 @@
                           color="#6b5b95"
                           format="24hr"
                           @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
-                        ></v-time-picker>
+                        />
                         <v-time-picker
                           v-else
                           v-model="revisionDeadline.time"
                           color="#6b5b95"
                           format="24hr"
                           @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
-                        ></v-time-picker>
+                        />
                       </v-menu>
                     </v-col>
                   </v-row>
                   <div
                     class="text_field"
                     @click="pickFile"
-                    @drop="uploadCurrentFile" @dragover.prevent
+                    @drop="uploadCurrentFile"
+                    @dragover.prevent
                     @drop.prevent
                   >
                     <input
@@ -407,16 +488,16 @@
                       @change="uploadCurrentFile"
                     >
                     <span v-if="supportingFileUploading">
-                        <v-progress-circular
-                          :size="30"
-                          color="#007991"
-                          indeterminate
-                        ></v-progress-circular>
-                      </span>
+                      <v-progress-circular
+                        :size="30"
+                        color="#007991"
+                        indeterminate
+                      />
+                    </span>
                     <span v-else>
-                <v-icon>cloud_upload</v-icon>
-                Drag file here or click to upload
-              </span>
+                      <v-icon>cloud_upload</v-icon>
+                      Drag file here or click to upload
+                    </span>
                   </div>
                   <div v-if="revisionFormSupportingFiles.length > 0">
                     <div
@@ -436,11 +517,14 @@
                 </template>
               </template>
             </v-card-text>
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-actions>
               <v-row no-gutters>
                 <v-col v-bind="attrs12">
-                  <alert-message :error="errorObject" :success="successObject"></alert-message>
+                  <alert-message
+                    :error="errorObject"
+                    :success="successObject"
+                  />
                 </v-col>
                 <v-col v-bind="attrs12">
                   <v-btn
@@ -449,17 +533,21 @@
                     outlined
                     @click="submitRevisionRequest"
                   >
-                    <div v-if="revisionRequestOngoing" class="lds-ellipsis">
-                      <div></div>
-                      <div></div>
-                      <div></div>
-                      <div></div>
+                    <div
+                      v-if="revisionRequestOngoing"
+                      class="lds-ellipsis"
+                    >
+                      <div />
+                      <div />
+                      <div />
+                      <div />
                     </div>
                     <span
                       v-else
-                      class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                <v-icon>mdi-check-circle-outline</v-icon> Submit
-              </span>
+                      class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                    >
+                      <v-icon>mdi-check-circle-outline</v-icon> Submit
+                    </span>
                   </v-btn>
                 </v-col>
               </v-row>
@@ -473,11 +561,17 @@
         max-width="600"
       >
         <v-card>
-          <v-toolbar color="#344754" flat short>
-            <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Confirm order'">
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+          <v-toolbar
+            color="#344754"
+            flat
+            short
+          >
+            <v-toolbar-title
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+              v-text="'Confirm order'"
+            />
+            <v-spacer />
             <v-toolbar-items>
               <v-btn
                 dark
@@ -494,13 +588,19 @@
               is now completed.
             </div>
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :error="errorObject" :success="successObject"></alert-message>
+                <alert-message
+                  :error="errorObject"
+                  :success="successObject"
+                />
               </v-col>
-              <v-col class="text-end" v-bind="attrs12">
+              <v-col
+                class="text-end"
+                v-bind="attrs12"
+              >
                 <v-btn
                   id="confirm-order-btn"
                   :disabled="confirmOrderBtnDisabled"
@@ -508,17 +608,21 @@
                   outlined
                   @click="confirmOrder"
                 >
-                  <div v-if="confirmOrderOngoing" class="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                  <div
+                    v-if="confirmOrderOngoing"
+                    class="lds-ellipsis"
+                  >
+                    <div />
+                    <div />
+                    <div />
+                    <div />
                   </div>
                   <span
                     v-else
-                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                <v-icon>mdi-check-circle-outline</v-icon> Confirm
-              </span>
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                  >
+                    <v-icon>mdi-check-circle-outline</v-icon> Confirm
+                  </span>
                 </v-btn>
               </v-col>
             </v-row>
@@ -531,11 +635,17 @@
         max-width="600"
       >
         <v-card>
-          <v-toolbar color="#344754" flat short>
-            <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Rate Writer'">
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+          <v-toolbar
+            color="#344754"
+            flat
+            short
+          >
+            <v-toolbar-title
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+              v-text="'Rate Writer'"
+            />
+            <v-spacer />
             <v-toolbar-items>
               <v-btn
                 dark
@@ -552,16 +662,22 @@
               background-color="#F2A737"
               color="#F2A737"
               x-large
-            ></v-rating>
+            />
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :error="errorObject" :success="successObject"></alert-message>
+                <alert-message
+                  :error="errorObject"
+                  :success="successObject"
+                />
               </v-col>
-              <v-col class="text-end" v-bind="attrs12">
-                <v-spacer></v-spacer>
+              <v-col
+                class="text-end"
+                v-bind="attrs12"
+              >
+                <v-spacer />
                 <v-btn
                   id="rate-writer-btn"
                   :disabled="rateWriterBtnDisabled"
@@ -569,17 +685,21 @@
                   outlined
                   @click="rateWriter"
                 >
-                  <div v-if="rateWriterOngoing" class="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                  <div
+                    v-if="rateWriterOngoing"
+                    class="lds-ellipsis"
+                  >
+                    <div />
+                    <div />
+                    <div />
+                    <div />
                   </div>
                   <span
                     v-else
-                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                <v-icon>mdi-check-circle-outline</v-icon> Submit
-              </span>
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                  >
+                    <v-icon>mdi-check-circle-outline</v-icon> Submit
+                  </span>
                 </v-btn>
               </v-col>
             </v-row>
@@ -594,12 +714,22 @@
         <v-card>
           <v-card-title>
             <div v-if="selectedFileUrl && selectedFileUrl.split('.').pop() === 'pdf'">
-              <v-chip id="prev" class="mx-2">Previous</v-chip>
-              <v-chip id="next" class="mx-2">Next</v-chip>
+              <v-chip
+                id="prev"
+                class="mx-2"
+              >
+                Previous
+              </v-chip>
+              <v-chip
+                id="next"
+                class="mx-2"
+              >
+                Next
+              </v-chip>
               &nbsp; &nbsp;
-              <span style="font-size: 14px">Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+              <span style="font-size: 14px">Page: <span id="page_num" /> / <span id="page_count" /></span>
             </div>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               id="close-file"
               color="red"
@@ -615,20 +745,27 @@
               <h2>Error while loading file</h2>
             </template>
             <template v-else>
-              <v-img v-if="selectedFileUrl && ['jpeg', 'jpg', 'png'].includes(selectedFileUrl.split('.').pop())"
-                     :src="selectedFile"></v-img>
+              <v-img
+                v-if="selectedFileUrl && ['jpeg', 'jpg', 'png'].includes(selectedFileUrl.split('.').pop())"
+                :src="selectedFile"
+              />
               <div style="text-align: center">
-                <canvas id="the-canvas" style="display: inline;"></canvas>
+                <canvas
+                  id="the-canvas"
+                  style="display: inline;"
+                />
               </div>
-              <iframe v-if="selectedFileUrl && ['doc', 'docx'].includes(selectedFileUrl.split('.').pop())"
-                      :src="selectedFile"
-                      class="word-doc"></iframe>
+              <iframe
+                v-if="selectedFileUrl && ['doc', 'docx'].includes(selectedFileUrl.split('.').pop())"
+                :src="selectedFile"
+                class="word-doc"
+              />
               <template v-if="!selectedFile">
                 <div class="lds-ellipsis">
-                  <div class="lds-local"></div>
-                  <div class="lds-local"></div>
-                  <div class="lds-local"></div>
-                  <div class="lds-local"></div>
+                  <div class="lds-local" />
+                  <div class="lds-local" />
+                  <div class="lds-local" />
+                  <div class="lds-local" />
                 </div>
               </template>
             </template>
@@ -637,14 +774,14 @@
       </v-dialog>
     </client-only>
     <v-overlay
-        :value="overlay"
-        opacity="0.9"
+      :value="overlay"
+      opacity="0.9"
     >
       <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </v-app>

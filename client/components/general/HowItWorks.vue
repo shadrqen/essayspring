@@ -1,17 +1,38 @@
 <template>
-  <v-card flat id="how_it_works_card" class="rounded-0">
+  <v-card
+    id="how_it_works_card"
+    class="rounded-0"
+    flat
+  >
     <v-container>
       <v-card-text>
-        <v-row no-gutters id="how_it_works_row" :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
-          <v-col cols="12" xl="12" lg="12" md="12" sm="12" class="text-center title_col">
+        <v-row
+          id="how_it_works_row"
+          :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+          no-gutters
+        >
+          <v-col
+            class="text-center title_col"
+            cols="12"
+            lg="12"
+            md="12"
+            sm="12"
+            xl="12"
+          >
             <span class="text-h5 text-xl-h5 text-lg-h5 text-lg-h5 text-md-h5 text-sm-h5">How it Works</span>
           </v-col>
-          <v-col cols="12" :xl="viewport_size" :lg="viewport_size" :md="viewport_size" :sm="viewport_size"
-                 class="how_it_works_chips"
-                 v-for="(process, id) in clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? content : contentPrivate"
-                 :key="id">
+          <v-col
+            v-for="(process, id) in clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? content : contentPrivate"
+            :key="id"
+            :lg="viewportSize"
+            :md="viewportSize"
+            :sm="viewportSize"
+            :xl="viewportSize"
+            class="how_it_works_chips"
+            cols="12"
+          >
             <v-chip
-                class="ma-2"
+              class="ma-2"
             >
               {{ process.step }}
             </v-chip>
@@ -33,9 +54,19 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'HowItWorkComponent',
-  props: ['content', 'viewport_size', 'contentPrivate'],
-  data () {
-    return {}
+  props: {
+    content: {
+      type: Array,
+      required: true
+    },
+    contentPrivate: {
+      type: Array,
+      required: true
+    },
+    viewportSize: {
+      type: Number,
+      required: true
+    }
   },
   computed: {
     ...mapGetters(['clientPostOrderForm']),
@@ -57,7 +88,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/mixins/general";
 

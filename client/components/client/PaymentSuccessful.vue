@@ -4,13 +4,26 @@
   <v-app>
     <v-row no-gutters>
       <v-col
-          v-bind="attrs"
-          style="display: flex; justify-content: center;"
+        v-bind="attrs"
+        style="display: flex; justify-content: center;"
       >
-        <v-card elevation="4" class="ma-2 mt-6" :min-width="minWidth" max-height="630">
+        <v-card
+          elevation="4"
+          class="ma-2 mt-6"
+          :min-width="minWidth"
+          max-height="630"
+        >
           <v-card-text class="mt-16 text-center">
-            <img alt="success-icon" height="60" width="60" :src="require('@/assets/done.png')" />
-            <div class="mt-4" id="payment-successful-div">
+            <img
+              alt="success-icon"
+              height="60"
+              width="60"
+              :src="require('@/assets/done.png')"
+            >
+            <div
+              class="mt-4"
+              id="payment-successful-div"
+            >
               <template v-if="clientPostOrderForm.type === 'public'">
                 Payment successful
               </template>
@@ -18,17 +31,30 @@
                 Order Placement Successful
               </template>
             </div>
-            <div class="mt-2 mb-10" id="thank-you">Thank you for being awesome!</div>
+            <div
+              class="mt-2 mb-10"
+              id="thank-you"
+            >
+              Thank you for being awesome!
+            </div>
             <div class="mt-13 mb-13">
-              <v-chip id="open-my-orders-chip" @click="redirectToOrders">
+              <v-chip
+                id="open-my-orders-chip"
+                @click="redirectToOrders"
+              >
                 <b id="open-my-orders-b">Open my orders</b> <v-icon>keyboard_arrow_right</v-icon>
               </v-chip>
             </div>
-            <v-divider></v-divider>
+            <v-divider />
             <div class="mt-13">
               Payment is made through
             </div>
-            <img alt="success-icon" height="60" width="60" :src="require('@/assets/mpesa.png')" />
+            <img
+              alt="success-icon"
+              height="60"
+              width="60"
+              :src="require('@/assets/mpesa.png')"
+            >
             <div>Support: <b>support@essayspring.com</b></div>
           </v-card-text>
         </v-card>

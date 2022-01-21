@@ -1,77 +1,112 @@
 <template>
-  <v-stepper v-model="level" light :non-linear="true" class="elevation-0">
-    <v-card class="elevation-0 rounded-0 main-card" height="50">
+  <v-stepper
+    v-model="level"
+    :non-linear="true"
+    class="elevation-0"
+    light
+  >
+    <v-card
+      class="elevation-0 rounded-0 main-card"
+      height="50"
+    >
       <v-container>
-<!--        The margins are a bit messy at the moment, that's why you see a lot of dynamic styling -->
-<!--        FIXME: Add a cleaner way of dynamic styling for the stepper -->
-        <v-stepper-header class="elevation-0" v-if="['xl', 'lg', 'md'].includes(viewport_code)" :style="xl ? 'margin-top: -23px; margin-left: 12vw; margin-right: 11vw;' : 'margin-top: -23px;'">
-<!--          TODO: Also, add dynamic steps by using one array that is loopable-->
+        <!--        The margins are a bit messy at the moment, that's why you see a lot of dynamic styling -->
+        <!--        FIXME: Add a cleaner way of dynamic styling for the stepper -->
+        <v-stepper-header
+          v-if="['xl', 'lg', 'md'].includes(viewport_code)"
+          :style="xl ? 'margin-top: -23px; margin-left: 12vw; margin-right: 11vw;' : 'margin-top: -23px;'"
+          class="elevation-0"
+        >
+          <!--          TODO: Also, add dynamic steps by using one array that is loopable-->
           <v-stepper-step
-              step="1"
-              :complete="level > 1"
-              color="#007991"
+            :complete="level > 1"
+            color="#007991"
+            step="1"
           >
             {{ steps.step1 }}
           </v-stepper-step>
 
-          <v-divider></v-divider>
+          <v-divider />
 
           <v-stepper-step
-              step="2"
-              :complete="level > 2"
-              color="#007991"
+            :complete="level > 2"
+            color="#007991"
+            step="2"
           >
             {{ steps.step2 }}
           </v-stepper-step>
 
-<!--          We only have two steps above for a private writer-->
+          <!--          We only have two steps above for a private writer-->
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'"></v-divider>
+          <v-divider v-if="clientPostOrderForm.type === 'public'" />
 
           <v-stepper-step
-              step="3"
-              :complete="level > 3"
-              color="#007991"
-              v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'public'"
+            :complete="level > 3"
+            color="#007991"
+            step="3"
           >
             {{ steps.step3 }}
           </v-stepper-step>
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'"></v-divider>
+          <v-divider v-if="clientPostOrderForm.type === 'public'" />
 
           <v-stepper-step
-              step="4"
-              :complete="level > 4"
-              color="#007991"
-              v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'public'"
+            :complete="level > 4"
+            color="#007991"
+            step="4"
           >
             {{ steps.step4 }}
           </v-stepper-step>
         </v-stepper-header>
-<!--        We are using a progress circular for mobile devices-->
-        <div v-if="['xs', 'sm'].includes(viewport_code)" style="margin-top: -6px;">
-          <v-progress-circular size="40" rotate="270" :value="mobile_progress_value" color="#007991">
+        <!--        We are using a progress circular for mobile devices-->
+        <div
+          v-if="['xs', 'sm'].includes(viewport_code)"
+          style="margin-top: -6px;"
+        >
+          <v-progress-circular
+            :value="mobile_progress_value"
+            color="#007991"
+            rotate="270"
+            size="40"
+          >
             <span style="font-size: 10px; color: black">{{ level }} of 4</span>
           </v-progress-circular>
-          <span style="margin-top: 5px; margin-left: 10px" v-if="stepStatus.step3"> {{ mobile_step }} </span>
-          <span style="margin-top: 5px; margin-left: 10px; color: red" v-else> <v-icon color="red">mdi-alert</v-icon> {{ mobile_step }} </span>
+          <span
+            v-if="stepStatus.step3"
+            style="margin-top: 5px; margin-left: 10px"
+          > {{ mobile_step }} </span>
+          <span
+            v-else
+            style="margin-top: 5px; margin-left: 10px; color: red"
+          > <v-icon color="red">mdi-alert</v-icon> {{ mobile_step }} </span>
         </div>
       </v-container>
     </v-card>
     <v-container>
       <v-stepper-items :style="{ 'margin-right': stepper_item_margin_right }">
-        <v-stepper-content step="1" style="margin-left: -42px;">
-          <slot name="stepper-content-step-1"></slot>
+        <v-stepper-content
+          step="1"
+          style="margin-left: -42px;"
+        >
+          <slot name="stepper-content-step-1" />
         </v-stepper-content>
         <v-stepper-content step="2">
-          <slot name="stepper-content-step-2"></slot>
+          <slot name="stepper-content-step-2" />
         </v-stepper-content>
-<!--        We only have two steps above for a private writer-->
-        <v-stepper-content step="3" v-if="clientPostOrderForm.type === 'public'">
-          <slot name="stepper-content-step-3"></slot>
+        <!--        We only have two steps above for a private writer-->
+        <v-stepper-content
+          v-if="clientPostOrderForm.type === 'public'"
+          step="3"
+        >
+          <slot name="stepper-content-step-3" />
         </v-stepper-content>
-        <v-stepper-content step="4" v-if="clientPostOrderForm.type === 'public'">
-          <slot name="stepper-content-step-4"></slot>
+        <v-stepper-content
+          v-if="clientPostOrderForm.type === 'public'"
+          step="4"
+        >
+          <slot name="stepper-content-step-4" />
         </v-stepper-content>
       </v-stepper-items>
     </v-container>
@@ -84,7 +119,16 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'ClientPlaceOrderBar',
-  props: ['steps', 'level', 'type'],
+  props: {
+    steps: {
+      type: Object,
+      required: true
+    },
+    level: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
       stepper_item_margin_right: '68px'

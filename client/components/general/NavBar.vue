@@ -12,37 +12,51 @@
       <template v-if="!!localLoginStatus">
         <v-container :style="xl ? 'margin-left: 15vw; margin-right: 15vw;' : ''">
           <v-row no-gutters>
-            <v-col lg="6" md="6" sm="6" xl="6" xs="4">
+            <v-col
+              lg="6"
+              md="6"
+              sm="6"
+              xl="6"
+              xs="4"
+            >
               <v-toolbar-title
                 :class="'mt-1 toolbar_title ' + iconTitleClass"
                 @click="redirect_to_url('/')"
-              >EssaySpring
+              >
+                EssaySpring
               </v-toolbar-title>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col lg="6" md="6" sm="6" style="justify-content: center" xl="6" xs="8">
+            <v-spacer />
+            <v-col
+              lg="6"
+              md="6"
+              sm="6"
+              style="justify-content: center"
+              xl="6"
+              xs="8"
+            >
               <client-only>
                 <v-row class="toolbar_row mt-1">
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-toolbar-items>
                     <div class="text-center">
                       <v-menu
                         offset-y
                       >
                         <template v-slot:activator="{ on }">
-                    <span
-                      style="cursor:pointer;"
-                      v-on="on"
-                    >
-                      <v-chip
-                        id="userEmailChip"
-                        outlined
-                      >
-                        <v-icon>person</v-icon>
-                        <span :class="emailClass">{{ formattedEmail }}</span>
-                        <v-icon>expand_more</v-icon>
-                      </v-chip>
-                    </span>
+                          <span
+                            style="cursor:pointer;"
+                            v-on="on"
+                          >
+                            <v-chip
+                              id="userEmailChip"
+                              outlined
+                            >
+                              <v-icon>person</v-icon>
+                              <span :class="emailClass">{{ formattedEmail }}</span>
+                              <v-icon>expand_more</v-icon>
+                            </v-chip>
+                          </span>
                         </template>
                         <v-card>
                           <v-list
@@ -58,10 +72,10 @@
                                 @click="actOnNavBarClientItems(item.action)"
                               >
                                 <v-list-item-icon>
-                                  <v-icon v-text="item.icon"></v-icon>
+                                  <v-icon v-text="item.icon" />
                                 </v-list-item-icon>
                                 <v-list-item-content style="padding-right: 30px">
-                                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                                  <v-list-item-title v-text="item.text" />
                                 </v-list-item-content>
                               </v-list-item>
                               <v-list-item
@@ -70,10 +84,10 @@
                                 @click="logoutClient()"
                               >
                                 <v-list-item-icon>
-                                  <v-icon v-text="'mdi-logout'"></v-icon>
+                                  <v-icon v-text="'mdi-logout'" />
                                 </v-list-item-icon>
                                 <v-list-item-content style="padding-right: 30px">
-                                  <v-list-item-title v-text="'Logout'"></v-list-item-title>
+                                  <v-list-item-title v-text="'Logout'" />
                                 </v-list-item-content>
                               </v-list-item>
                             </v-list-item-group>
@@ -91,51 +105,119 @@
       <template v-else>
         <v-container :style="xl ? 'margin-left: 15vw; margin-right: 15vw;' : ''">
           <v-row no-gutters>
-            <v-col lg="6" md="6" sm="6" xl="6" xs="4">
-              <v-toolbar-title :class="'toolbar_title ' + iconTitleClass" @click="redirect_to_url('/')">EssaySpring
+            <v-col
+              lg="6"
+              md="6"
+              sm="6"
+              xl="6"
+              xs="4"
+            >
+              <v-toolbar-title
+                :class="'toolbar_title ' + iconTitleClass"
+                @click="redirect_to_url('/')"
+              >
+                EssaySpring
               </v-toolbar-title>
             </v-col>
-            <v-spacer></v-spacer>
-            <v-col lg="6" md="6" sm="6" style="justify-content: center" xl="6" xs="8">
+            <v-spacer />
+            <v-col
+              lg="6"
+              md="6"
+              sm="6"
+              style="justify-content: center"
+              xl="6"
+              xs="8"
+            >
               <v-row class="toolbar_row mt-1">
-                <v-toolbar-items v-if="['md', 'lg', 'xl'].includes(viewport_code)" class="toolbar_items"
-                                 @click="redirect_to_url('/general/how-it-works')">How It Works
+                <v-toolbar-items
+                  v-if="['md', 'lg', 'xl'].includes(viewportCode)"
+                  class="toolbar_items"
+                  @click="redirect_to_url('/general/how-it-works')"
+                >
+                  How It Works
                 </v-toolbar-items>
-                <v-spacer></v-spacer>
-                <v-toolbar-items v-if="['md', 'lg', 'xl'].includes(viewport_code)" class="toolbar_items"
-                                 @click="redirect_to_url('/general/faq')">FAQ
+                <v-spacer />
+                <v-toolbar-items
+                  v-if="['md', 'lg', 'xl'].includes(viewportCode)"
+                  class="toolbar_items"
+                  @click="redirect_to_url('/general/faq')"
+                >
+                  FAQ
                 </v-toolbar-items>
-                <v-spacer></v-spacer>
-                <v-toolbar-items v-if="['md', 'lg', 'xl'].includes(viewport_code)" class="toolbar_items"
-                                 @click="redirect_to_url('/general/about')">About
+                <v-spacer />
+                <v-toolbar-items
+                  v-if="['md', 'lg', 'xl'].includes(viewportCode)"
+                  class="toolbar_items"
+                  @click="redirect_to_url('/general/about')"
+                >
+                  About
                 </v-toolbar-items>
-                <v-spacer></v-spacer>
-                <v-toolbar-items v-if="inner_width>=300 && localLoginStatus === false" class="toolbar_items">
-                <span id="login_span" @click="redirect_to_url('login')">
-                  Log In
-                </span>
+                <v-spacer />
+                <v-toolbar-items
+                  v-if="inner_width>=300 && localLoginStatus === false"
+                  class="toolbar_items"
+                >
+                  <span
+                    id="login_span"
+                    @click="redirect_to_url('login')"
+                  >
+                    Log In
+                  </span>
                 </v-toolbar-items>
-                <v-spacer></v-spacer>
-                <v-toolbar-items v-if="['xs', 'sm'].includes(viewport_code) && localLoginStatus === false">
-                  <v-app-bar-nav-icon id="app_bar_nav_icon" @click="navbarIcon = !navbarIcon"></v-app-bar-nav-icon>
+                <v-spacer />
+                <v-toolbar-items v-if="['xs', 'sm'].includes(viewportCode) && localLoginStatus === false">
+                  <v-app-bar-nav-icon
+                    id="app_bar_nav_icon"
+                    @click="navbarIcon = !navbarIcon"
+                  />
                 </v-toolbar-items>
               </v-row>
             </v-col>
           </v-row>
         </v-container>
-        <v-row v-if="show_navbar_dialog()" app no-gutters style="position: absolute; top: 0; left: 0; width: 100%;">
-          <v-col v-for="(url, id) in navbarUrls" :key="id" cols="12" lg="2" md="2" sm="2" xl="2">
-            <v-card class="rounded-0 navbar_link_card" light @click="redirect_to_url(url.url)">
-              <v-card-text v-if="url.icon" class="white--text text-center">
-                <v-icon color="white">{{ url.icon }}</v-icon>
+        <v-row
+          v-if="show_navbar_dialog()"
+          app
+          no-gutters
+          style="position: absolute; top: 0; left: 0; width: 100%;"
+        >
+          <v-col
+            v-for="(url, id) in navbarUrls"
+            :key="id"
+            cols="12"
+            lg="2"
+            md="2"
+            sm="2"
+            xl="2"
+          >
+            <v-card
+              class="rounded-0 navbar_link_card"
+              light
+              @click="redirect_to_url(url.url)"
+            >
+              <v-card-text
+                v-if="url.icon"
+                class="white--text text-center"
+              >
+                <v-icon color="white">
+                  {{ url.icon }}
+                </v-icon>
               </v-card-text>
-              <v-card-text v-else class="white--text text-center"> {{ url.text }}</v-card-text>
+              <v-card-text
+                v-else
+                class="white--text text-center"
+              >
+                {{ url.text }}
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
       </template>
       <client-only>
-        <general-dialogs v-if="reportProblemDialog || loginDialog" :viewport_code="viewport_code"></general-dialogs>
+        <base-dialogs
+          v-if="reportProblemDialog || loginDialog"
+          :viewport-code="viewportCode"
+        />
       </client-only>
     </v-app-bar>
     <v-overlay
@@ -145,10 +227,10 @@
       <div
         class="lds-ellipsis"
       >
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </div>
@@ -163,7 +245,7 @@ import { bus } from '../../plugins/bus'
 export default {
   name: 'NavBar',
   components: {
-    GeneralDialogs: () => import('./GeneralDialogs')
+    BaseDialogs: () => import('./BaseDialogs')
   },
   data () {
     return {
@@ -188,14 +270,14 @@ export default {
       emailClass: 'text-caption text-xl-body-2 text-lg-body-2 text-md-body-2\n' +
           'text-sm-body-2 font-weight-regular',
       localLoginStatus: this.$store.state.user.loginStatus,
-      viewport_code: null,
+      viewportCode: null,
       overlay: false
     }
   },
   async fetch () {
     this.localLoginStatus = null
     this.inner_width = 300
-    this.viewport_code = 'xs'
+    this.viewportCode = 'xs'
   },
   computed: {
     ...mapGetters({
@@ -207,7 +289,7 @@ export default {
       clientPostOrderForm: 'clientPostOrderForm'
     }),
     formattedEmail () {
-      if (this.viewport_code === 'xs') {
+      if (this.viewportCode === 'xs') {
         return this.email.split('@')[0]
       } else {
         return this.email
@@ -235,7 +317,7 @@ export default {
       'changeReportProblemDialog', 'changeClientPostOrderForm']),
     /* Function to determine whether to show the navbar dialog or not */
     show_navbar_dialog () {
-      return this.navbarIcon && ['xs', 'sm'].includes(this.viewport_code)
+      return this.navbarIcon && ['xs', 'sm'].includes(this.viewportCode)
     },
     /* Function to open links after clicking one in the navbar */
     /* Function works to redirect requests to the requested clicked link */
@@ -291,7 +373,7 @@ export default {
     /* I am using the window innerwidth in the toolbar ( particularly for the login link ) */
     set_window_inner_width () {
       if (process.browser) {
-        this.viewport_code = this.$store.state.design.viewport_code
+        this.viewportCode = this.$store.state.design.viewport_code
         this.inner_width = window.innerWidth
       }
     },
@@ -321,7 +403,7 @@ export default {
   },
   mounted () {
     this.localLoginStatus = this.$store.state.user.loginStatus
-    this.viewport_code = this.$store.state.design.viewport_code
+    this.viewportCode = this.$store.state.design.viewport_code
     this.changeLoginDialog(false)
     if (process.browser) {
       window.addEventListener('resize', this.set_window_inner_width)
@@ -335,7 +417,7 @@ export default {
   },
   created () {
     this.localLoginStatus = this.$store.state.user.loginStatus
-    this.viewport_code = this.$store.state.design.viewport_code
+    this.viewportCode = this.$store.state.design.viewport_code
     this.set_window_inner_width()
   }
 }

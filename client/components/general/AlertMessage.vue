@@ -1,19 +1,19 @@
 <template>
   <div>
     <v-alert
-        :value="success.value"
-        dense
-        text
-        type="success"
-        dismissible
+      :value="success.value"
+      dense
+      dismissible
+      text
+      type="success"
     >
       {{ success.message }}
     </v-alert>
     <v-alert
-        :value="error.value"
-        text
-        type="error"
-        dismissible
+      :value="error.value"
+      dismissible
+      text
+      type="error"
     >
       {{ error.message }}
     </v-alert>
@@ -24,6 +24,15 @@
 
 export default {
   name: 'AlertMessage',
-  props: ['success', 'error']
+  props: {
+    success: {
+      type: Object,
+      required: true
+    },
+    error: {
+      type: Object,
+      required: true
+    }
+  }
 }
 </script>

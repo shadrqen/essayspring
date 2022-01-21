@@ -1,8 +1,11 @@
 <template>
   <v-app>
-    <order-now-bar title="Cookie Policy"></order-now-bar>
+    <order-now-bar title="Cookie Policy" />
     <v-container>
-      <div class="row" :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
+      <div
+        class="row"
+        :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+      >
         <div class="text-block privacy-wrap">
           <p class="mt-6">
             <i>

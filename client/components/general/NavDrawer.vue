@@ -1,27 +1,30 @@
 <template>
   <div>
     <v-navigation-drawer
-        app
-        clipped
-        v-model="drawer"
+      v-model="drawer"
+      app
+      clipped
     >
       <v-list>
-        <v-divider></v-divider>
+        <v-divider />
         <v-list-item-group
-            v-model="selectedItem"
-            color="#007991"
+          v-model="selectedItem"
+          color="#007991"
         >
           <v-list-item
-              v-for="(item, i) in items"
-              :key="i"
-              style="border-bottom: 1px solid #f1e9e9"
-              @click="openLink(item.link)"
+            v-for="(item, i) in items"
+            :key="i"
+            style="border-bottom: 1px solid #f1e9e9"
+            @click="openLink(item.link)"
           >
             <v-list-item-icon>
-              <v-icon v-text="item.icon" color="#007991"></v-icon>
+              <v-icon
+                color="#007991"
+                v-text="item.icon"
+              />
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
+              <v-list-item-title v-text="item.title" />
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -36,7 +39,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'NavDrawer',
-  props: ['drawer'],
+  props: {
+    drawer: {
+      type: Boolean,
+      required: true
+    }
+  },
   data () {
     return {
       mini: true,

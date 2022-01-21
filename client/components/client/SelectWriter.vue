@@ -1,7 +1,10 @@
 <!--2nd component in the client order posting step that allows client to select writers either from the public-->
 <!--pool or private writers-->
 <template>
-  <v-card flat :style="xl ? 'margin-top: -7px; margin-left: 12vw;' : 'margin-top: -7px'">
+  <v-card
+    :style="xl ? 'margin-top: -7px; margin-left: 12vw;' : 'margin-top: -7px'"
+    flat
+  >
     <label class="text-subtitle-1 text-xl-h5 text-lg-h5 text-md-h5 text-sm-h5 blinking-message">
       {{ selectWritersMainTitle }}
     </label>
@@ -11,47 +14,71 @@
       <v-container>
         <v-row no-gutters>
           <v-col
-              v-bind="attrs"
-              v-for="(writer, key) in writerBids"
-              :key="key"
+            v-for="(writer, key) in writerBids"
+            :key="key"
+            v-bind="attrs"
           >
             <v-card
-                min-width="250"
-                max-width="350"
-                flat
-                class="writer-proposal"
+              class="writer-proposal"
+              flat
+              max-width="350"
+              min-width="250"
             >
               <v-list-item>
-<!--                For now we are showing a static avatar of writers-->
-<!--                TODO: To add dynamic images of writers-->
-                <v-list-item-avatar color="grey darken-3" size="55">
-                  <v-img :src="require('~/assets/images/avatars/my.png')"></v-img>
+                <!--                For now we are showing a static avatar of writers-->
+                <!--                TODO: To add dynamic images of writers-->
+                <v-list-item-avatar
+                  color="grey darken-3"
+                  size="55"
+                >
+                  <v-img :src="require('~/assets/images/avatars/my.png')" />
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title style="font-size: 14px; font-weight: bold">
                     {{ writer.Writer.surname }} {{ writer.Writer.otherNames }}
-                    <v-icon style="cursor: pointer; float: right">close</v-icon>
+                    <v-icon style="cursor: pointer; float: right">
+                      close
+                    </v-icon>
                   </v-list-item-title>
                   <v-list-item-subtitle style="font-size: 12px; margin-top: -10px">
                     Done {{ writer.Writer.WriterOrder.length }} Papers
                     <br>
                     <v-row no-gutters>
-                      <v-col cols="1" xl="1" lg="1" md="1" sm="1">
+                      <v-col
+                        cols="1"
+                        lg="1"
+                        md="1"
+                        sm="1"
+                        xl="1"
+                      >
                         <span style="color: black"> {{ rating }} </span>
                       </v-col>
-                      <v-col cols="6" xl="6" lg="6" md="6" sm="6">
+                      <v-col
+                        cols="6"
+                        lg="6"
+                        md="6"
+                        sm="6"
+                        xl="6"
+                      >
                         <v-rating
-                            length="5"
-                            id="our_benefits_rating"
-                            dense
-                            readonly
-                            v-model="rating"
-                            background-color="#F2A737"
-                            color="#F2A737"
-                            x-small
-                        ></v-rating>
+                          id="our_benefits_rating"
+                          v-model="rating"
+                          background-color="#F2A737"
+                          color="#F2A737"
+                          dense
+                          length="5"
+                          readonly
+                          x-small
+                        />
                       </v-col>
-                      <v-col cols="5" xl="5" lg="5" md="5" sm="5" v-if="clientPostOrderForm.type === 'public'">
+                      <v-col
+                        v-if="clientPostOrderForm.type === 'public'"
+                        cols="5"
+                        lg="5"
+                        md="5"
+                        sm="5"
+                        xl="5"
+                      >
                         <span style="color: #FF3400">{{ clientPostOrderForm.paymentSummary.currencyCode }} {{ clientPostOrderForm.paymentSummary.totalPrice }}</span>
                       </v-col>
                     </v-row>
@@ -59,39 +86,40 @@
                 </v-list-item-content>
               </v-list-item>
               <v-card-subtitle
-                  :style="{
+                v-if="clientPostOrderForm.type === 'public'"
+                :ref="`cardSubtitle${key}`"
+                :style="{
                   'overflow': 'hidden',
                   'white-space': writerQuoteWhiteSpace(key),
                   'text-overflow': 'ellipsis',
                   'width': '200px'
                 }"
-                  :ref="`cardSubtitle${key}`"
-                  v-if="clientPostOrderForm.type === 'public'"
               >
-<!--                We are also showing a static message from a writer-->
-<!--                TODO: To add dynamic messages from writers-->
+                <!--                We are also showing a static message from a writer-->
+                <!--                TODO: To add dynamic messages from writers-->
                 Hello Prof, I can do your order in record time, with the highest quality possible
               </v-card-subtitle>
               <v-icon
-                  class="mt-n10"
-                  style="position: absolute; right: 0; cursor: pointer"
-                  @click="expandWriterQuote(key)"
-                  v-html="writerQuoteWhiteSpace(key) === 'nowrap' ? 'expand_more' : 'expand_less'"
-                  v-if="clientPostOrderForm.type === 'public'"
-              >
-              </v-icon>
-              <span class="mx-16"></span>
+                v-if="clientPostOrderForm.type === 'public'"
+                class="mt-n10"
+                style="position: absolute; right: 0; cursor: pointer"
+                @click="expandWriterQuote(key)"
+                v-html="writerQuoteWhiteSpace(key) === 'nowrap' ? 'expand_more' : 'expand_less'"
+              />
+              <span class="mx-16" />
               <v-card-actions>
                 <v-btn
-                    outlined
-                    class="chat-btn"
-                    @click="openChat"
-                >Chat</v-btn>
-                <v-spacer></v-spacer>
+                  class="chat-btn"
+                  outlined
+                  @click="openChat"
+                >
+                  Chat
+                </v-btn>
+                <v-spacer />
                 <v-btn
-                    outlined
-                    class="accept-btn"
-                    @click="acceptBid(writer)"
+                  class="accept-btn"
+                  outlined
+                  @click="acceptBid(writer)"
                 >
                   <template v-if="clientPostOrderForm.type === 'public'">
                     Accept
@@ -104,40 +132,45 @@
             </v-card>
           </v-col>
           <v-col
-              v-bind="attrs"
-              style="padding-right: 15px; padding-bottom: 15px"
-              v-if="clientPostOrderForm.type === 'public' || (clientPostOrderForm.type === 'private' && writerBids.length === 0)"
+            v-if="clientPostOrderForm.type === 'public' || (clientPostOrderForm.type === 'private' && writerBids.length === 0)"
+            style="padding-right: 15px; padding-bottom: 15px"
+            v-bind="attrs"
           >
             <v-skeleton-loader
-                width="300"
-                v-bind="attrs"
-                type="list-item-avatar, divider, list-item, actions"
-            ></v-skeleton-loader>
+              type="list-item-avatar, divider, list-item, actions"
+              width="300"
+            />
           </v-col>
         </v-row>
       </v-container>
-      <overlay-loader :overlay="overlay"></overlay-loader>
+      <overlay-loader :overlay="overlay" />
     </v-form>
     <br>
-    <slot name="back-btn"></slot>
-    <slot name="next-btn"></slot>
+    <slot name="back-btn" />
+    <slot name="next-btn" />
     <v-dialog
       v-model="inviteWriterDialog"
+      :fullscreen="viewport_code === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="viewport_code === 'xs'"
     >
       <v-card>
-        <v-toolbar color="#344754" flat short>
-          <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Enter email address'">
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
+        <v-toolbar
+          color="#344754"
+          flat
+          short
+        >
+          <v-toolbar-title
+            class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+            v-text="'Enter email address'"
+          />
+          <v-spacer />
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="disableWriterInvite"
             >
               <v-icon>mdi-close</v-icon>
@@ -145,37 +178,49 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-text style="padding-bottom: 20px">
-          <v-form ref="inviteWriterForm" v-on:submit.prevent="">
+          <v-form
+            ref="inviteWriterForm"
+            @submit.prevent=""
+          >
             <br>
             <v-text-field
-              type="email"
-              flat
-              solo
-              class="text-field"
-              label="Enter email address"
-              :rules="validate.emailField"
               id="loginEmail"
               v-model="inviteWriterForm.email"
+              :rules="validate.emailField"
+              class="text-field"
+              flat
+              label="Enter email address"
+              solo
+              type="email"
               @keyup.enter="inviteWriter"
-            ></v-text-field>
+            />
             <br>
-            <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                           :error="errorObject"></alert-message>
+            <alert-message
+              v-if="successObject.value || errorObject.value"
+              :error="errorObject"
+              :success="successObject"
+              class="mt-4"
+            />
             <v-btn
-              outlined
               id="submit_email_btn"
-              @click="inviteWriter"
-              :disabled="inviteWriterOngoing"
               ref="continueEmail"
+              :disabled="inviteWriterOngoing"
+              outlined
+              @click="inviteWriter"
             >
-              <div v-if="inviteWriterOngoing" class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+              <div
+                v-if="inviteWriterOngoing"
+                class="lds-ellipsis"
+              >
+                <div />
+                <div />
+                <div />
+                <div />
               </div>
-              <span v-else
-                    class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"> Send Invitation </span>
+              <span
+                v-else
+                class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"
+              > Send Invitation </span>
             </v-btn>
             <div>
               <p class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption pt-3">
@@ -190,14 +235,14 @@
       <v-snackbar
         v-model="snackbar"
         :timeout="timeout"
-        top
-        right
         color="teal"
         elevation="24"
+        right
+        top
       >
         {{ text }}
 
-        <template v-slot:action="{ attrs }">
+        <template>
           <v-btn
             color="white"
             text
@@ -229,7 +274,18 @@ import CloseIconSvg from '../../assets/close.svg'
 
 export default {
   name: 'SelectWriter',
-  props: ['getBids', 'inviteWriterDialog'],
+  props: {
+    getBids: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    inviteWriterDialog: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
   components: {
     OverlayLoader,
     AlertMessage: () => import('../../components/general/AlertMessage')
@@ -621,7 +677,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/mixins/general";
 

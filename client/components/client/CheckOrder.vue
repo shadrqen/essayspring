@@ -1,14 +1,14 @@
 <!--Component to help user confirm an order's details before proceeding to checkout-->
 <template>
-  <v-card flat class="elevation-0">
+  <v-card class="elevation-0" flat>
 <!--    Form that loads only when this component has been called or reached on the stepper-->
 <!--    This helps to ensure that local variables have been initialized prior to rendering some elements on -->
 <!--    the DOM-->
-    <v-form ref="clientPostOrderForm" v-if="pageReached">
+    <v-form v-if="pageReached" ref="clientPostOrderForm">
 <!--      The left and right margins are dynamically assigned depending on the xl status of the screen-->
-      <v-row no-gutters :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''">
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6" class="main-col">
-          <v-card flat class="main-card" style=" height: 410px">
+      <v-row :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''" no-gutters>
+        <v-col class="main-col" cols="12" lg="4" md="6" sm="6" xl="4">
+          <v-card class="main-card" flat style=" height: 410px">
             <v-card-title class="grey lighten-4">
               <span class="card-title">Paper Summary</span>
             </v-card-title>
@@ -30,7 +30,7 @@
                   :class="paperSummaryTextClass"
               >
                 <template v-if="deadline">
-                  <deadline color="black" :deadline="deadline"></deadline>
+                  <assignment-deadline :deadline="deadline" color="black"></assignment-deadline>
                 </template>
               </p>
               <label>Subject</label>
@@ -48,8 +48,8 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6" class="main-col">
-          <v-card flat class="main-card" style=" height: 410px">
+        <v-col class="main-col" cols="12" lg="4" md="6" sm="6" xl="4">
+          <v-card class="main-card" flat style=" height: 410px">
             <v-card-title class="grey lighten-4">
               <span class="card-title">Some Extras</span>
             </v-card-title>
@@ -59,21 +59,21 @@
               >
                 <v-list-item-group
                     v-model="settings"
-                    multiple
                     active-class=""
+                    multiple
                 >
 <!--                  Looping through the extra services-->
                   <v-list-item
-                      class="extras-list-item"
                       v-for="(extra, key) in extraOrderServices"
                       :key="key"
+                      class="extras-list-item"
                       @click="updateExtras(extra.id, extra.type, extra.price, extra.Currency.currencyCode)"
                   >
                     <template>
                       <v-list-item-action>
                         <v-checkbox
-                            color="#007991"
                             :input-value="clientPostOrderForm.paymentSummary.extrasList.some(outerExtra => outerExtra.type === extra.type)"
+                            color="#007991"
                         ></v-checkbox>
                       </v-list-item-action>
 
@@ -94,8 +94,8 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6">
-          <v-card flat class="main-card" :style="{ 'height': mainClassHeight }">
+        <v-col cols="12" lg="4" md="6" sm="6" xl="4">
+          <v-card :style="{ 'height': mainClassHeight }" class="main-card" flat>
             <v-card-title class="grey lighten-4">
               <span class="card-title">Payment Summary</span>
             </v-card-title>
@@ -125,13 +125,13 @@
                     </v-list-item-content>
                   </v-list-item>
                   <v-divider v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0"></v-divider>
-                  <v-list-item id="extras-summary-list-item" v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0">
+                  <v-list-item v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0" id="extras-summary-list-item">
                     <v-list-item-content id="extras-summary-list-action-title">
                       <v-list-item-title style="display: block; width: 100%">
-                        <div style="float: left;" class="text-left text-xl-end text-lg-end text-md-start text-sm-start">
+                        <div class="text-left text-xl-end text-lg-end text-md-start text-sm-start" style="float: left;">
                           Extras
                         </div>
-                        <div style="float: right" class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
+                        <div class="text-end text-xl-end text-lg-end text-md-end text-sm-end" style="float: right">
                           {{ clientPostOrderForm.paymentSummary.currencyCode }} {{ clientPostOrderForm.paymentSummary.extrasTotalPrice }}
                         </div>
                       </v-list-item-title>
@@ -164,8 +164,8 @@
                   <v-list-item class="payment-summary-list-item">
                     <v-list-item-content>
                     <span
-                      class="grey--text text--darken-1 text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
                       id="payment-summary-list-item-funds-will-remain"
+                      class="grey--text text--darken-1 text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
                     >
                       The funds will remain in your account until you release them
                     </span>
@@ -173,10 +173,10 @@
                   </v-list-item>
                 </v-list-item-group>
               </v-list>
-              <alert-message :success="successObject" :error="errorObject"></alert-message>
+              <alert-message :error="errorObject" :success="successObject"></alert-message>
               <v-btn
-                outlined
                 class="payment-btn"
+                outlined
                 @click="proceedToNextLevel()"
               >
                 <v-icon
@@ -188,8 +188,8 @@
                     text-md-subtitle-1 text-sm-subtitle-1"
                 >Proceed to Checkout</span>
               </v-btn>
-              <p class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
-                 id="proceed-to-checkout-caption"
+              <p id="proceed-to-checkout-caption"
+                 class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
               >
                 By clicking "Proceed to Checkout", you agree to our terms of service.
               </p>
@@ -219,13 +219,13 @@ import { mapGetters, mapMutations } from 'vuex'
 import api from '@/api/api.ts'
 import { bus } from '@/plugins/bus'
 import TimeMixin from '@/mixins/time'
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import AlertMessage from '@/components/general/AlertMessage'
 
 export default {
   name: 'CheckOrder',
   components: {
-    Deadline,
+    AssignmentDeadline,
     AlertMessage
   },
   data () {
@@ -428,7 +428,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/general/general";
 

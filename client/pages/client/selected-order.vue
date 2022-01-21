@@ -2,15 +2,15 @@
   <v-app>
     <client-only>
       <nav-drawer></nav-drawer>
-      <v-card class="ma-4" v-if="order">
+      <v-card v-if="order" class="ma-4">
         <v-card-title>
-          <v-icon style="cursor: pointer" class="mr-2" @click="$router.push('/client/orders')">chevron_left</v-icon>
+          <v-icon class="mr-2" style="cursor: pointer" @click="$router.push('/client/orders')">chevron_left</v-icon>
           Order &#8470; {{ order.id }}
           <v-spacer></v-spacer>
           <v-chip
-            class="ma-2"
             v-if="order.OrderStatus"
             :color="orderProgress.filter(progress => progress.progress === order.OrderStatus.status)[0].color"
+            class="ma-2"
             text-color="white"
           >
             <v-avatar left>
@@ -22,12 +22,12 @@
             {{ order.OrderStatus.status }}
           </v-chip>
           <v-chip
-            style="cursor: pointer"
-            class="ma-2"
             v-if="order.OrderStatus && resumableOrders.includes(order.OrderStatus.status)"
-            @click="getOrderDetail"
+            class="ma-2"
             color="primary"
+            style="cursor: pointer"
             text-color="white"
+            @click="getOrderDetail"
           >
             <template v-if="loadingOrder">
               <div class="lds-ellipsis">
@@ -46,7 +46,7 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-row no-gutters>
-            <v-col v-bind="attrs" v-for="(item, key) in headers" :key="key">
+            <v-col v-for="(item, key) in headers" :key="key" v-bind="attrs">
               <v-list
                 subheader
                 three-line
@@ -56,7 +56,7 @@
                     <v-list-item-title>{{ item.text }}</v-list-item-title>
                     <v-list-item-subtitle>
                       <template v-if="item.text === 'Deadline'">
-                        <deadline color="grey" :deadline="deadline"></deadline>
+                        <assignment-deadline :deadline="deadline" color="grey"></assignment-deadline>
                       </template>
                       <template v-else>
                         {{ getOrderItemDetail(item) }}
@@ -80,15 +80,15 @@
             </v-card-text>
           </v-card>
           <v-divider></v-divider>
-          <v-card flat v-if="order.OrderStatus && order.OrderStatus.status === 'Undergoing revision'">
+          <v-card v-if="order.OrderStatus && order.OrderStatus.status === 'Undergoing revision'" flat>
             <v-card-title>Revision Instructions</v-card-title>
             <v-card-text>
               <template v-if="revisionInstructions.length > 0">
-                <v-row no-gutters v-for="(revision, revisionKey) in revisionInstructions" :key="revisionKey">
+                <v-row v-for="(revision, revisionKey) in revisionInstructions" :key="revisionKey" no-gutters>
                   <v-col
-                    v-bind="attrs12" class="my-2"
-                    v-for="(instructionKey, instructionValue) in revision.revisionInstructions"
-                    :key="instructionValue">
+                    v-for="(instructionKey, instructionValue) in revision.revisionInstructions" :key="instructionValue"
+                    class="my-2"
+                    v-bind="attrs12">
                     <h3>{{ instructionValue }}</h3>
                     <div>
                       <template v-if="instructionKey">
@@ -97,7 +97,7 @@
                       <template v-else>N/A</template>
                     </div>
                   </v-col>
-                  <v-col v-bind="attrs12" class="my-2">
+                  <v-col class="my-2" v-bind="attrs12">
                     <h3>Deadline</h3>
                     <div>
                       <template v-if="revision.deadline">
@@ -109,7 +109,7 @@
                 </v-row>
                 <v-divider></v-divider>
                 <v-row no-gutters>
-                  <v-col v-bind="attrs12" class="my-2">
+                  <v-col class="my-2" v-bind="attrs12">
                     <h3 class="my-2">Revision files</h3>
                     <div>
                       <template v-if="revisionSupportingFiles.length > 0">
@@ -117,12 +117,12 @@
                           v-for="(revSupportingFile, revSupportingFileKey) in revisionSupportingFiles"
                           :key="revSupportingFileKey"
                           class="mr-2 my-1"
-                          @click="getFile(revSupportingFile.fileUrl, null, 'view')"
-                          style="cursor: pointer; text-decoration: underline;">
+                          style="cursor: pointer; text-decoration: underline;"
+                          @click="getFile(revSupportingFile.fileUrl, null, 'view')">
                           <v-img
-                            sizes="20"
+                            :src="require(`@/assets/${regMixin.fileExtensionIcon(revSupportingFile.fileUrl.split('.').pop())}.png`)"
                             class="mr-2 my-1"
-                            :src="require(`@/assets/${regMixin.fileExtensionIcon(revSupportingFile.fileUrl.split('.').pop())}.png`)">
+                            sizes="20">
                           </v-img>
                           {{ formatOriginalName(revSupportingFile.originalName) }}
                         </v-chip>
@@ -170,12 +170,12 @@
                       <td>
                         <v-chip
                           class="mr-2 my-1"
-                          @click="getFile(file.fileUrl, null, 'view')"
-                          style="cursor: pointer; text-decoration: underline;">
+                          style="cursor: pointer; text-decoration: underline;"
+                          @click="getFile(file.fileUrl, null, 'view')">
                           <v-img
-                            sizes="20"
+                            :src="require(`@/assets/${regMixin.fileExtensionIcon(file.fileUrl.split('.').pop())}.png`)"
                             class="mr-2 my-1"
-                            :src="require(`@/assets/${regMixin.fileExtensionIcon(file.fileUrl.split('.').pop())}.png`)">
+                            sizes="20">
                           </v-img>
                           {{ formatOriginalName(file.originalName) }}
                         </v-chip>
@@ -188,8 +188,8 @@
                       <td class="order-paper-action">
                         <div v-if="fileDownloading && selectedFileUrl === file.fileUrl">
                           <v-progress-circular
-                            indeterminate
                             color="primary"
+                            indeterminate
                           ></v-progress-circular>
                         </div>
                         <v-icon v-else @click="getFile(file.fileUrl, file.originalName, 'download')">mdi-file-download</v-icon>
@@ -213,12 +213,12 @@
                   v-for="(file__, fileKey__) in supportingFiles"
                   :key="fileKey__"
                   class="mr-2 my-1"
-                  @click="getFile(file__.fileUrl, null,'view')"
-                  style="cursor: pointer; text-decoration: underline;">
+                  style="cursor: pointer; text-decoration: underline;"
+                  @click="getFile(file__.fileUrl, null,'view')">
                   <v-img
-                    sizes="20"
+                    :src="require(`@/assets/${regMixin.fileExtensionIcon(file__.fileUrl.split('.').pop())}.png`)"
                     class="mr-2 my-1"
-                    :src="require(`@/assets/${regMixin.fileExtensionIcon(file__.fileUrl.split('.').pop())}.png`)">
+                    sizes="20">
                   </v-img>
                   {{ formatOriginalName(file__.originalName) }}
                 </v-chip>
@@ -229,9 +229,9 @@
             </v-card-text>
           </v-card>
           <v-divider></v-divider>
-          <v-card flat v-if="order.OrderStatus && revisableOrderStatuses.includes(order.OrderStatus.status)">
+          <v-card v-if="order.OrderStatus && revisableOrderStatuses.includes(order.OrderStatus.status)" flat>
             <v-card-text>
-              <v-row no-gutters class="mt-10">
+              <v-row class="mt-10" no-gutters>
                 <v-btn
                   id="revision_order_btn"
                   @click="requestRevisionDialog = !requestRevisionDialog"
@@ -243,10 +243,10 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
-                  outlined
-                  id="confirm_order_btn"
-                  @click="confirmOrderDialog =! confirmOrderDialog"
                   v-if="order.OrderStatus && order.OrderStatus.status === 'Submitted'"
+                  id="confirm_order_btn"
+                  outlined
+                  @click="confirmOrderDialog =! confirmOrderDialog"
                 >
               <span
                 class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
@@ -254,10 +254,10 @@
               </span>
                 </v-btn>
                 <v-btn
-                  outlined
-                  id="confirm_order_btn_2"
-                  @click="rateWriterDialog =! rateWriterDialog"
                   v-if="order.OrderStatus && order.OrderStatus.status === 'Completed' && !rated"
+                  id="confirm_order_btn_2"
+                  outlined
+                  @click="rateWriterDialog =! rateWriterDialog"
                 >
               <span
                 class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
@@ -267,7 +267,7 @@
               </v-row>
             </v-card-text>
           </v-card>
-          <alert-message v-if="bodyAlertObject" :success="successObject" :error="errorObject"></alert-message>
+          <alert-message v-if="bodyAlertObject" :error="errorObject" :success="successObject"></alert-message>
         </v-card-text>
       </v-card>
       <v-dialog
@@ -283,8 +283,8 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <v-btn
-                icon
                 dark
+                icon
                 @click="requestRevisionDialog = !requestRevisionDialog"
               >
                 <v-icon>mdi-close</v-icon>
@@ -296,98 +296,98 @@
               <template v-if="!revisionRequestDone">
                 <div v-for="(checklist, checklistKey) in submissionChecklist" :key="checklistKey">
                   <v-switch
-                    class="ml-2"
                     v-model="revisionForm[checklist.aspect].key"
-                    inset
                     :label="checklist.aspectDescription"
+                    class="ml-2"
+                    inset
                     @change="checkIfRevisionRequired"
                   ></v-switch>
                   <v-textarea
                     v-if="revisionForm[checklist.aspect].key"
+                    v-model="revisionForm[checklist.aspect].val"
+                    class="text-area"
                     flat
                     height="200"
-                    class="text-area"
                     no-resize
                     placeholder="Describe revision instructions"
                     solo
-                    v-model="revisionForm[checklist.aspect].val"
                   ></v-textarea>
                 </div>
                 <template v-if="revisionRequired">
                   <v-divider></v-divider>
-                  <v-row no-gutters class="mb-5">
+                  <v-row class="mb-5" no-gutters>
                     <v-col v-bind="attrs6">
                       <v-menu
+                        ref="deadlineDateMenu"
+                        v-model="deadlineDateMenu"
                         :close-on-content-click="false"
                         :return-value.sync="revisionDeadline.date"
                         full-width
                         lazy
                         min-width="290px"
                         offset-y
-                        ref="deadlineDateMenu"
                         transition="scale-transition"
-                        v-model="deadlineDateMenu"
                       >
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
+                            v-model="revisionDeadline.date"
+                            :rules="validate.revisionDeadlineDate"
                             label="Deadline date"
                             prepend-icon="event"
                             readonly
                             v-bind="attrs"
                             v-on="on"
-                            v-model="revisionDeadline.date"
-                            :rules="validate.revisionDeadlineDate"
                           ></v-text-field>
                         </template>
                         <v-date-picker
-                          @change="selectedToday = currentDate === revisionDeadline.date"
-                          @input="$refs.deadlineDateMenu.save(revisionDeadline.date)"
+                          v-model="revisionDeadline.date"
+                          :min="currentDate"
+                          :show-current="currentDate"
                           no-title
                           scrollable
-                          :show-current="currentDate"
-                          :min="currentDate"
-                          v-model="revisionDeadline.date"
+                          @change="selectedToday = currentDate === revisionDeadline.date"
+                          @input="$refs.deadlineDateMenu.save(revisionDeadline.date)"
                         ></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col v-bind="attrs6">
                       <v-menu
+                        ref="deadlineTimeMenu"
+                        v-model="deadlineTimeMenu"
                         :close-on-content-click="false"
                         :return-value.sync="revisionDeadline.time"
                         full-width
                         lazy
                         min-width="290px"
                         offset-y
-                        ref="deadlineTimeMenu"
                         transition="scale-transition"
-                        v-model="deadlineTimeMenu"
                       >
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
+                            v-model="revisionDeadline.time"
+                            :rules="validate.revisionDeadlineTime"
                             label="Deadline time"
                             prepend-icon="access_time"
                             readonly
                             v-bind="attrs"
                             v-on="on"
-                            v-model="revisionDeadline.time"
-                            :rules="validate.revisionDeadlineTime"
                           ></v-text-field>
                         </template>
                         <v-time-picker
                           v-if="selectedToday"
-                          @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
-                          color="#6b5b95"
-                          :show-current="currentTime"
-                          :min="currentTime"
                           v-model="revisionDeadline.time"
+                          :min="currentTime"
+                          :show-current="currentTime"
+                          color="#6b5b95"
                           format="24hr"
+                          @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
                         ></v-time-picker>
                         <v-time-picker
                           v-else
-                          @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
-                          color="#6b5b95"
                           v-model="revisionDeadline.time"
+                          color="#6b5b95"
                           format="24hr"
+                          @input="$refs.deadlineTimeMenu.save(revisionDeadline.time)"
                         ></v-time-picker>
                       </v-menu>
                     </v-col>
@@ -395,15 +395,15 @@
                   <div
                     class="text_field"
                     @click="pickFile"
-                    @dragover.prevent @drop.prevent
-                    @drop="uploadCurrentFile"
+                    @drop="uploadCurrentFile" @dragover.prevent
+                    @drop.prevent
                   >
                     <input
-                      type="file"
-                      style="display: none"
-                      ref="image"
                       id="file"
+                      ref="image"
                       accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, .xls, .xlsx, .odt, .csv, .txt, video/*, audio/*"
+                      style="display: none"
+                      type="file"
                       @change="uploadCurrentFile"
                     >
                     <span v-if="supportingFileUploading">
@@ -420,14 +420,14 @@
                   </div>
                   <div v-if="revisionFormSupportingFiles.length > 0">
                     <div
-                      style="font-size: 15px; color: #403d3d;"
                       v-for="(file, key) in revisionFormSupportingFiles"
                       :key="key"
+                      style="font-size: 15px; color: #403d3d;"
                     >
                       <v-chip
-                        @click:close="removeFile(file)"
                         class="ma-2"
                         close
+                        @click:close="removeFile(file)"
                       >
                         {{ file.originalName }}
                       </v-chip>
@@ -440,14 +440,14 @@
             <v-card-actions>
               <v-row no-gutters>
                 <v-col v-bind="attrs12">
-                  <alert-message :success="successObject" :error="errorObject"></alert-message>
+                  <alert-message :error="errorObject" :success="successObject"></alert-message>
                 </v-col>
                 <v-col v-bind="attrs12">
                   <v-btn
-                    outlined
                     id="submit-revision-btn"
-                    @click="submitRevisionRequest"
                     :disabled="submitRevisionBtnDisabled"
+                    outlined
+                    @click="submitRevisionRequest"
                   >
                     <div v-if="revisionRequestOngoing" class="lds-ellipsis">
                       <div></div>
@@ -480,8 +480,8 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <v-btn
-                icon
                 dark
+                icon
                 @click="confirmOrderDialog = !confirmOrderDialog"
               >
                 <v-icon>mdi-close</v-icon>
@@ -498,15 +498,15 @@
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :success="successObject" :error="errorObject"></alert-message>
+                <alert-message :error="errorObject" :success="successObject"></alert-message>
               </v-col>
-              <v-col v-bind="attrs12" class="text-end">
+              <v-col class="text-end" v-bind="attrs12">
                 <v-btn
-                  class="my-2"
                   id="confirm-order-btn"
+                  :disabled="confirmOrderBtnDisabled"
+                  class="my-2"
                   outlined
                   @click="confirmOrder"
-                  :disabled="confirmOrderBtnDisabled"
                 >
                   <div v-if="confirmOrderOngoing" class="lds-ellipsis">
                     <div></div>
@@ -538,8 +538,8 @@
             <v-spacer></v-spacer>
             <v-toolbar-items>
               <v-btn
-                icon
                 dark
+                icon
                 @click="rateWriterDialog = !rateWriterDialog"
               >
                 <v-icon>mdi-close</v-icon>
@@ -558,16 +558,16 @@
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :success="successObject" :error="errorObject"></alert-message>
+                <alert-message :error="errorObject" :success="successObject"></alert-message>
               </v-col>
-              <v-col v-bind="attrs12" class="text-end">
+              <v-col class="text-end" v-bind="attrs12">
                 <v-spacer></v-spacer>
                 <v-btn
-                  class="my-2"
                   id="rate-writer-btn"
+                  :disabled="rateWriterBtnDisabled"
+                  class="my-2"
                   outlined
                   @click="rateWriter"
-                  :disabled="rateWriterBtnDisabled"
                 >
                   <div v-if="rateWriterOngoing" class="lds-ellipsis">
                     <div></div>
@@ -588,23 +588,23 @@
       </v-dialog>
       <v-dialog
         v-model="fileDialog"
-        eager
         :fullscreen="getViewPortCode === 'xs'"
+        eager
       >
         <v-card>
           <v-card-title>
             <div v-if="selectedFileUrl && selectedFileUrl.split('.').pop() === 'pdf'">
-              <v-chip class="mx-2" id="prev">Previous</v-chip>
-              <v-chip class="mx-2" id="next">Next</v-chip>
+              <v-chip id="prev" class="mx-2">Previous</v-chip>
+              <v-chip id="next" class="mx-2">Next</v-chip>
               &nbsp; &nbsp;
               <span style="font-size: 14px">Page: <span id="page_num"></span> / <span id="page_count"></span></span>
             </div>
             <v-spacer></v-spacer>
             <v-btn
+              id="close-file"
+              color="red"
               icon
               outlined
-              color="red"
-              id="close-file"
               @click="fileDialog = !fileDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -618,11 +618,11 @@
               <v-img v-if="selectedFileUrl && ['jpeg', 'jpg', 'png'].includes(selectedFileUrl.split('.').pop())"
                      :src="selectedFile"></v-img>
               <div style="text-align: center">
-                <canvas style="display: inline;" id="the-canvas"></canvas>
+                <canvas id="the-canvas" style="display: inline;"></canvas>
               </div>
-              <iframe class="word-doc"
-                      v-if="selectedFileUrl && ['doc', 'docx'].includes(selectedFileUrl.split('.').pop())"
-                      :src="selectedFile"></iframe>
+              <iframe v-if="selectedFileUrl && ['doc', 'docx'].includes(selectedFileUrl.split('.').pop())"
+                      :src="selectedFile"
+                      class="word-doc"></iframe>
               <template v-if="!selectedFile">
                 <div class="lds-ellipsis">
                   <div class="lds-local"></div>
@@ -655,7 +655,7 @@
 import { mapGetters } from 'vuex'
 import api from '@/api/api'
 import { deadline, deadlineHoursAmPm } from '@/mixins/time'
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import AlertMessage from '@/components/general/AlertMessage'
 import registrationMixin from '@/mixins/registration'
 import Time from '@/utils/time'
@@ -686,7 +686,7 @@ export default {
   mixins: [filesMixin],
   components: {
     NavDrawer,
-    Deadline,
+    AssignmentDeadline,
     AlertMessage
   },
   data () {

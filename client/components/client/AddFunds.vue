@@ -3,21 +3,21 @@
   <v-card>
     <v-row no-gutters>
       <v-col
-        cols="12"
-        xl="6"
-        offset-xl="3"
-        lg="6"
-        offset-lg="3"
-        md="6"
-        offset-md="3"
-        sm="8"
-        offset-sm="2"
         v-if="orderForm.addFunds.notYetPaid"
+        cols="12"
+        lg="6"
+        md="6"
+        offset-lg="3"
+        offset-md="3"
+        offset-sm="2"
+        offset-xl="3"
+        sm="8"
+        xl="6"
       >
         <v-form ref="orderPaymentForm">
           <h5
-            class="text-h6 text-lg-h5 text-md-h5 text-sm-h5"
             id="header"
+            class="text-h6 text-lg-h5 text-md-h5 text-sm-h5"
           >
             Pay via MPESA
           </h5>
@@ -26,12 +26,12 @@
           <br>
           <label class="text_field_label">Mobile number</label>
           <v-text-field
-            flat
-            class="text-field"
-            label="Mobile number"
-            :rules="validation.mobileNumberField"
-            solo
             v-model="paymentForm.mobile"
+            :rules="validation.mobileNumberField"
+            class="text-field"
+            flat
+            label="Mobile number"
+            solo
           />
           <br>
           <span
@@ -49,20 +49,20 @@
           <v-row no-gutters>
             <v-col
               cols="6"
-              xl="6"
               lg="6"
               md="6"
               sm="6"
+              xl="6"
             >
               <slot name="back-btn" />
             </v-col>
             <v-col
+              class="text-end"
               cols="6"
-              xl="6"
               lg="6"
               md="6"
               sm="6"
-              class="text-end"
+              xl="6"
             >
               <v-btn
                 id="pay-now-btn"
@@ -100,8 +100,8 @@
             <v-spacer />
             <v-toolbar-items>
               <v-btn
-                icon
                 dark
+                icon
                 @click="confirmPaymentDialog = !confirmPaymentDialog"
               >
                 <v-icon>mdi-close</v-icon>
@@ -115,17 +115,17 @@
             >
               <v-row no-gutters>
                 <v-col
-                  v-bind="attrs12"
                   class="mt-4"
+                  v-bind="attrs12"
                 >
                   <v-text-field
-                    flat
-                    class="text-field"
-                    label="Mobile number"
+                    v-model="paymentForm.mobile"
                     :rules="validation.mobileNoField"
+                    class="text-field"
+                    flat
+                    label="Mobile number"
                     solo
                     @keyup.enter="payNow"
-                    v-model="paymentForm.mobile"
                   />
                 </v-col>
               </v-row>
@@ -133,8 +133,8 @@
             <v-divider />
             <v-row no-gutters>
               <v-col
-                v-bind="attrs6"
                 class="text-end"
+                v-bind="attrs6"
               >
                 <v-btn
                   id="initiate_payment"
@@ -170,6 +170,9 @@ import DefaultFormMixin from '../../mixins/defaultRegistrationForm'
 
 export default {
   name: 'AddFunds',
+  components: {
+    OverlayLoader
+  },
   mixins: [DefaultFormMixin],
   data () {
     return {
@@ -215,14 +218,14 @@ export default {
       client: false
     }
   },
-  components: {
-    OverlayLoader
-  },
   computed: {
     ...mapGetters({
       orderForm: 'clientPostOrderForm',
       email: 'email'
     })
+  },
+  created () {
+    this.getClientMobile()
   },
   methods: {
     ...mapMutations(['resetClientPostOrderForm', 'changeClientPostOrderForm', 'changeWholeClientPostOrderForm',
@@ -415,14 +418,11 @@ export default {
         }
       }
     }
-  },
-  created () {
-    this.getClientMobile()
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/mixins/general";
 

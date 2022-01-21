@@ -167,6 +167,12 @@ export default {
       this.set_stepper_margin_right()
     }
   },
+  created () {
+    this.set_stepper_margin_right()
+  },
+  mounted () {
+    window.addEventListener('resize', this.set_stepper_margin_right)
+  },
   methods: {
     set_stepper_margin_right () {
       const marginVsViewportVsLevel = {
@@ -201,12 +207,6 @@ export default {
       }
       this.stepper_item_margin_right = marginVsViewportVsLevel[this.level][this.viewport_code]
     }
-  },
-  created () {
-    this.set_stepper_margin_right()
-  },
-  mounted () {
-    window.addEventListener('resize', this.set_stepper_margin_right)
   }
 }
 </script>

@@ -4,13 +4,13 @@
     <client-only>
       <nav-drawer />
       <v-card
-        class="ma-4"
         v-if="writer"
+        class="ma-4"
       >
         <v-card-title>
           <v-icon
-            style="cursor: pointer"
             class="mr-2"
+            style="cursor: pointer"
             @click="$router.push('/client/writers')"
           >
             chevron_left
@@ -18,11 +18,11 @@
           Writer &#8470; {{ client.selectedWriter }}
           <v-spacer />
           <v-chip
-            class="ma-2"
             v-if="connectionNotConfirmed"
+            class="ma-2"
             color="teal lighten-1"
-            text-color="white"
             style="cursor: pointer"
+            text-color="white"
             @click="confirmWriterApprovalDialog = true"
           >
             <v-avatar left>
@@ -37,9 +37,9 @@
         <v-card-text>
           <v-row no-gutters>
             <v-col
-              v-bind="attrs"
               v-for="(item, key) in headers"
               :key="key"
+              v-bind="attrs"
             >
               <v-list
                 subheader
@@ -68,8 +68,8 @@
           </v-row>
           <alert-message
             v-if="bodyAlertObject"
-            :success="successObject"
             :error="errorObject"
+            :success="successObject"
           />
         </v-card-text>
       </v-card>
@@ -92,8 +92,8 @@
             <v-spacer />
             <v-toolbar-items>
               <v-btn
-                icon
                 dark
+                icon
                 @click="confirmWriterApprovalDialog = !confirmWriterApprovalDialog"
               >
                 <v-icon>mdi-close</v-icon>
@@ -110,20 +110,20 @@
             <v-row no-gutters>
               <v-col v-bind="attrs12">
                 <alert-message
-                  :success="successObject"
                   :error="errorObject"
+                  :success="successObject"
                 />
               </v-col>
               <v-col
-                v-bind="attrs12"
                 class="text-end"
+                v-bind="attrs12"
               >
                 <v-btn
-                  class="my-2"
                   id="approve-writer-btn"
+                  :disabled="approveWriterBtnDisabled"
+                  class="my-2"
                   outlined
                   @click="approveWriter"
-                  :disabled="approveWriterBtnDisabled"
                 >
                   <div
                     v-if="approveWriterOngoing"
@@ -171,16 +171,6 @@ import authMixin from '../../utils/auth'
 
 export default {
   name: 'SelectedWriter',
-  head: {
-    title: 'Selected Writer',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Selected Writer. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
-      }
-    ]
-  },
   components: {
     NavDrawer,
     AlertMessage: () => import('../../components/general/AlertMessage')
@@ -242,6 +232,18 @@ export default {
   },
   computed: {
     ...mapGetters(['client', 'getViewPortCode'])
+  },
+  created () {
+    if (process.env.VUE_ENV === 'client') {
+      if (!authMixin.tokenIsValid()) {
+        this.$router.push('/')
+      }
+    }
+    this.getWriter()
+  },
+  mounted () {
+    document.body.scrollTop = 0 // For Safari
+    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
   },
   methods: {
     ordersDone () {
@@ -329,17 +331,15 @@ export default {
         })
     }
   },
-  created () {
-    if (process.env.VUE_ENV === 'client') {
-      if (!authMixin.tokenIsValid()) {
-        this.$router.push('/')
+  head: {
+    title: 'Selected Writer',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Selected Writer. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
       }
-    }
-    this.getWriter()
-  },
-  mounted () {
-    document.body.scrollTop = 0 // For Safari
-    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+    ]
   }
 }
 </script>

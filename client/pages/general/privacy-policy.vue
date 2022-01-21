@@ -292,16 +292,6 @@ import OrderNowBar from '@/components/general/OrderNowBar'
 
 export default {
   name: 'PrivacyPolicy',
-  head: {
-    title: 'Privacy Policy',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Policies governing users\' privacy'
-      }
-    ]
-  },
   components: {
     OrderNowBar
   },
@@ -321,6 +311,16 @@ export default {
   mounted () {
     document.body.scrollTop = 0 // For Safari
     document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+  },
+  head: {
+    title: 'Privacy Policy',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Policies governing users\' privacy'
+      }
+    ]
   }
 }
 </script>

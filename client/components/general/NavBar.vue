@@ -247,6 +247,11 @@ export default {
   components: {
     BaseDialogs: () => import('./BaseDialogs')
   },
+  async fetch () {
+    this.localLoginStatus = null
+    this.inner_width = 300
+    this.viewportCode = 'xs'
+  },
   data () {
     return {
       inner_width: 0,
@@ -273,11 +278,6 @@ export default {
       viewportCode: null,
       overlay: false
     }
-  },
-  async fetch () {
-    this.localLoginStatus = null
-    this.inner_width = 300
-    this.viewportCode = 'xs'
   },
   computed: {
     ...mapGetters({
@@ -311,6 +311,25 @@ export default {
     loginStatus () {
       this.localLoginStatus = this.loginStatus
     }
+  },
+  created () {
+    this.localLoginStatus = this.$store.state.user.loginStatus
+    this.viewportCode = this.$store.state.design.viewport_code
+    this.set_window_inner_width()
+  },
+  mounted () {
+    this.localLoginStatus = this.$store.state.user.loginStatus
+    this.viewportCode = this.$store.state.design.viewport_code
+    this.changeLoginDialog(false)
+    if (process.browser) {
+      window.addEventListener('resize', this.set_window_inner_width)
+    }
+    bus.$on('changeNavOverlay', val => {
+      this.overlay = val
+    })
+    bus.$on('changeNavOverlay', val => {
+      this.overlay = val
+    })
   },
   methods: {
     ...mapMutations(['changeLoginDialog', 'resetUserState', 'resetRegistrationState', 'changeLoginDialogContents',
@@ -400,25 +419,6 @@ export default {
           break
       }
     }
-  },
-  mounted () {
-    this.localLoginStatus = this.$store.state.user.loginStatus
-    this.viewportCode = this.$store.state.design.viewport_code
-    this.changeLoginDialog(false)
-    if (process.browser) {
-      window.addEventListener('resize', this.set_window_inner_width)
-    }
-    bus.$on('changeNavOverlay', val => {
-      this.overlay = val
-    })
-    bus.$on('changeNavOverlay', val => {
-      this.overlay = val
-    })
-  },
-  created () {
-    this.localLoginStatus = this.$store.state.user.loginStatus
-    this.viewportCode = this.$store.state.design.viewport_code
-    this.set_window_inner_width()
   }
 }
 </script>

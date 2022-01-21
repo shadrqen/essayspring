@@ -803,29 +803,12 @@ import filesMixin from '../../mixins/filesMixin'
 
 export default {
   name: 'SelectedOrder',
-  head: {
-    title: 'Selected Order',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Selected Order. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
-      }
-    ],
-    script: [
-      {
-        hid: 'pdfjs',
-        src: 'https://mozilla.github.io/pdf.js/build/pdf.js',
-        defer: true
-      }
-    ]
-  },
-  mixins: [filesMixin],
   components: {
     NavDrawer,
     AssignmentDeadline,
     AlertMessage
   },
+  mixins: [filesMixin],
   data () {
     return {
       headers: [
@@ -981,6 +964,21 @@ export default {
     rating () {
       this.rateWriterBtnDisabled = this.rating === 0
     }
+  },
+  created () {
+    if (process.env.VUE_ENV === 'client') {
+      if (!authMixin.tokenIsValid()) {
+        this.$router.push('/')
+      }
+    }
+    const dateTime = new Time.DateTime()
+    this.currentDate = dateTime.date()
+    this.currentTime = dateTime.time24Hr
+    this.getOrder()
+  },
+  mounted () {
+    document.body.scrollTop = 0 // For Safari
+    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
   },
   methods: {
     formatOriginalName (name) {
@@ -1471,20 +1469,22 @@ export default {
       }
     }
   },
-  created () {
-    if (process.env.VUE_ENV === 'client') {
-      if (!authMixin.tokenIsValid()) {
-        this.$router.push('/')
+  head: {
+    title: 'Selected Order',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Selected Order. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
       }
-    }
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
-    this.currentTime = dateTime.time24Hr
-    this.getOrder()
-  },
-  mounted () {
-    document.body.scrollTop = 0 // For Safari
-    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+    ],
+    script: [
+      {
+        hid: 'pdfjs',
+        src: 'https://mozilla.github.io/pdf.js/build/pdf.js',
+        defer: true
+      }
+    ]
   }
 }
 </script>

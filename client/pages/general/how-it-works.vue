@@ -16,16 +16,6 @@ import HowItWorksComponent from '@/components/general/HowItWorks'
 
 export default {
   name: 'HowItWorks',
-  head: {
-    title: 'How it Works',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'How posting of orders works'
-      }
-    ]
-  },
   components: {
     OrderNowBar,
     HowItWorksComponent
@@ -82,6 +72,16 @@ export default {
         }
       ]
     }
+  },
+  head: {
+    title: 'How it Works',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'How posting of orders works'
+      }
+    ]
   }
 }
 </script>

@@ -587,16 +587,6 @@ import OrderNowBar from '@/components/general/OrderNowBar'
 
 export default {
   name: 'TermsAndConditions',
-  head: {
-    title: 'Terms and Conditions',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'The Terms and Conditions governing the use of the platform'
-      }
-    ]
-  },
   components: {
     OrderNowBar
   },
@@ -616,6 +606,16 @@ export default {
   mounted () {
     document.body.scrollTop = 0 // For Safari
     document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+  },
+  head: {
+    title: 'Terms and Conditions',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'The Terms and Conditions governing the use of the platform'
+      }
+    ]
   }
 }
 </script>

@@ -68,6 +68,13 @@ export default {
       required: true
     }
   },
+  async fetch () {
+    this.client_post_order_card_text_padding = '50px'
+    this.text_caption = 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption'
+    this.text_h5 = 'text-h5 text-xl-h4 text-lg-h4 text-md-h5 text-sm-h5'
+    this.text_sub_title_1 = 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1'
+    this.text_button = 'text-button text-xl-button text-lg-button text-md-button text-sm-button'
+  },
   data () {
     return {
       break_point_name: null,
@@ -77,13 +84,6 @@ export default {
       text_sub_title_1: null,
       text_button: null
     }
-  },
-  async fetch () {
-    this.client_post_order_card_text_padding = '50px'
-    this.text_caption = 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption'
-    this.text_h5 = 'text-h5 text-xl-h4 text-lg-h4 text-md-h5 text-sm-h5'
-    this.text_sub_title_1 = 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1'
-    this.text_button = 'text-button text-xl-button text-lg-button text-md-button text-sm-button'
   },
   methods: {}
 }

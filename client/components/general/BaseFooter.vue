@@ -84,16 +84,16 @@
             style="justify-content: flex-end"
           >
             <v-select
-              :items="['Private', 'Public']"
               v-model="type"
+              :items="['Private', 'Public']"
               label="Type"
               @change="changeType"
             />
           </v-col>
           <v-spacer />
           <v-col
-            cols="12"
             id="media_follow_us_on"
+            cols="12"
             class="text-center white--text"
           >
             <span id="follow_us_on">Follow us on</span>

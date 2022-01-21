@@ -752,6 +752,31 @@ export default {
       }
     }
   },
+  created () {
+    if (!this.clientPostOrderForm.paymentSummary.currencyCode) {
+      this.changeClientPostOrderForm({
+        key: 'paymentSummary',
+        subKey: 'currencyCode',
+        val: 'KES',
+        option: null
+      })
+    }
+  },
+  mounted () {
+    const dateTime = new Time.DateTime()
+    this.currentDate = dateTime.date()
+    this.setTextAreaHeight()
+    if (/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      this.isMobile = true
+    }
+    this.disablePossibleDeadlineTimes()
+    window.scrollTo(0, 0)
+    document.body.scrollTop = 0 // For Safari
+    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+    /* setTimeout(() => {
+      this.snackbar = true
+    }, 5000) */
+  },
   methods: {
     ...mapMutations(['changeClientPostOrderForm', 'changeLoginDialog']),
     pickFile () {
@@ -1231,31 +1256,6 @@ export default {
           })
       }
     }
-  },
-  created () {
-    if (!this.clientPostOrderForm.paymentSummary.currencyCode) {
-      this.changeClientPostOrderForm({
-        key: 'paymentSummary',
-        subKey: 'currencyCode',
-        val: 'KES',
-        option: null
-      })
-    }
-  },
-  mounted () {
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
-    this.setTextAreaHeight()
-    if (/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      this.isMobile = true
-    }
-    this.disablePossibleDeadlineTimes()
-    window.scrollTo(0, 0)
-    document.body.scrollTop = 0 // For Safari
-    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
-    /* setTimeout(() => {
-      this.snackbar = true
-    }, 5000) */
   }
 }
 </script>

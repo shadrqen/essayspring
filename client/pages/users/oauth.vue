@@ -27,20 +27,10 @@ import login from '../../mixins/login'
 
 export default {
   name: 'OAuth',
-  head: {
-    title: 'OAuth',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'OAuth'
-      }
-    ]
-  },
-  mixins: [login],
   components: {
     Index
   },
+  mixins: [login],
   data () {
     return {
       overlay: false,
@@ -53,6 +43,9 @@ export default {
         message: null
       }
     }
+  },
+  mounted () {
+    this.processGoogleOAuth()
   },
   methods: {
     ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeUserType', 'changeClient',
@@ -107,13 +100,20 @@ export default {
       this.overlay = false
     }
   },
-  mounted () {
-    this.processGoogleOAuth()
+  head: {
+    title: 'OAuth',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'OAuth'
+      }
+    ]
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import '../../styles/general/general';
 

@@ -4,25 +4,25 @@
   <v-app>
     <v-row no-gutters>
       <v-col
-        v-bind="attrs"
         style="display: flex; justify-content: center;"
+        v-bind="attrs"
       >
         <v-card
-          elevation="4"
-          class="ma-2 mt-6"
           :min-width="minWidth"
+          class="ma-2 mt-6"
+          elevation="4"
           max-height="630"
         >
           <v-card-text class="mt-16 text-center">
             <img
+              :src="require('@/assets/done.png')"
               alt="success-icon"
               height="60"
               width="60"
-              :src="require('@/assets/done.png')"
             >
             <div
-              class="mt-4"
               id="payment-successful-div"
+              class="mt-4"
             >
               <template v-if="clientPostOrderForm.type === 'public'">
                 Payment successful
@@ -32,8 +32,8 @@
               </template>
             </div>
             <div
-              class="mt-2 mb-10"
               id="thank-you"
+              class="mt-2 mb-10"
             >
               Thank you for being awesome!
             </div>
@@ -50,10 +50,10 @@
               Payment is made through
             </div>
             <img
+              :src="require('@/assets/mpesa.png')"
               alt="success-icon"
               height="60"
               width="60"
-              :src="require('@/assets/mpesa.png')"
             >
             <div>Support: <b>support@essayspring.com</b></div>
           </v-card-text>
@@ -100,6 +100,10 @@ export default {
       this.setNewViewPortCode()
     }
   },
+  mounted () {
+    window.scrollTo(0, 0)
+    this.setNewViewPortCode()
+  },
   methods: {
     ...mapMutations(['changeOrderPostingDone', 'changeWholeClientPostOrderForm', 'changeClientPostOrderForm']),
     setNewViewPortCode () {
@@ -142,10 +146,6 @@ export default {
         location.reload()
       }, 3000)
     }
-  },
-  mounted () {
-    window.scrollTo(0, 0)
-    this.setNewViewPortCode()
   }
 }
 </script>

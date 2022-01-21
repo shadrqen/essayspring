@@ -5,30 +5,30 @@
       <nav-drawer :drawer="drawer" />
       <v-container fluid>
         <base-table
-          :table-data="{ headers: headers, items: items, title: orderStatusTitle }"
           :drawer="drawer"
           :selected-order="false"
+          :table-data="{ headers: headers, items: items, title: orderStatusTitle }"
         >
           <template #table-filters>
             <v-row
-              no-gutters
               class="mb-n3"
+              no-gutters
             >
               <v-col
-                v-bind="attrs"
                 class="pr-1"
+                v-bind="attrs"
               >
                 <v-text-field
                   v-model="search"
                   append-icon="mdi-magnify"
+                  hide-details
                   label="Search"
                   single-line
-                  hide-details
                 />
               </v-col>
               <v-col
-                v-bind="attrs"
                 class="pl-1"
+                v-bind="attrs"
               >
                 <v-select
                   :items="['Time', 'Order Type']"
@@ -36,15 +36,15 @@
                 />
               </v-col>
               <v-col
-                v-bind="attrs"
                 class="pl-1"
+                v-bind="attrs"
               >
                 <v-select
+                  v-model="selectedOrder"
                   :items="orderStatusTypes"
                   item-text="status"
                   item-value="id"
                   label="Orders"
-                  v-model="selectedOrder"
                   @change="getWriters()"
                 />
               </v-col>
@@ -78,16 +78,6 @@ import authMixin from '../../utils/auth'
 
 export default {
   name: 'Writers',
-  head: {
-    title: 'Writers',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'EssaySpring Writers'
-      }
-    ]
-  },
   components: { NavDrawer, BaseTable },
   data () {
     return {
@@ -142,21 +132,6 @@ export default {
       return val
     }
   },
-  methods: {
-    ...mapMutations(['changeFormsStateSet']),
-    ...mapActions(['getOrderStatusTypes']),
-    async getWriters (completed) {
-      this.overlay = true
-      await api.getRequest('users/v1/get_writers')
-        .then(response => {
-          this.items = response.writers
-          this.overlay = false
-        })
-        .catch(() => {
-          this.overlay = false
-        })
-    }
-  },
   created () {
     if (process.env.VUE_ENV === 'client') {
       this.drawer = !this.mini
@@ -179,6 +154,31 @@ export default {
     if (process.env.VUE_ENV === 'client') {
       window.scrollTo(0, 0)
     }
+  },
+  methods: {
+    ...mapMutations(['changeFormsStateSet']),
+    ...mapActions(['getOrderStatusTypes']),
+    async getWriters (completed) {
+      this.overlay = true
+      await api.getRequest('users/v1/get_writers')
+        .then(response => {
+          this.items = response.writers
+          this.overlay = false
+        })
+        .catch(() => {
+          this.overlay = false
+        })
+    }
+  },
+  head: {
+    title: 'Writers',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'EssaySpring Writers'
+      }
+    ]
   }
 }
 </script>

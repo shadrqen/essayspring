@@ -22,13 +22,13 @@
 
 <script>
 export default {
+  name: 'SuccessCheckMark',
   props: {
     show: {
       type: Boolean,
       required: true
     }
-  },
-  name: 'SuccessCheckMark'
+  }
 }
 </script>
 

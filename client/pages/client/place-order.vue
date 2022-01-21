@@ -6,33 +6,33 @@
         <payment-successful v-if="clientPostOrderForm.addFunds.paymentSuccessful" />
         <base-stepper
           v-if="clientPostOrderForm.addFunds.notYetPaid"
-          :steps="clientPostOrderForm.type === 'private' ? stepsPrivate : stepsPublic"
-          :step-status="clientPostOrderForm.stepStatus"
           :level="clientPostOrderForm.level"
+          :step-status="clientPostOrderForm.stepStatus"
+          :steps="clientPostOrderForm.type === 'private' ? stepsPrivate : stepsPublic"
         >
           <template #stepper-content-step-1>
             <place-order @progress-to-next-level="proceedToNextLevel" />
           </template>
           <template #stepper-content-step-2>
             <select-writer
-              @progress-to-next-level="proceedToNextLevel"
               :get-bids="getOrderBids"
               :invite-writer-dialog="inviteWriterDialog"
+              @progress-to-next-level="proceedToNextLevel"
               @disable-writer-invite="disableWriterInvite"
             >
               <template #back-btn>
                 <v-row no-gutters>
                   <v-col
                     cols="8"
-                    xl="8"
                     lg="8"
                     md="8"
                     sm="8"
+                    xl="8"
                   >
                     <v-btn
                       id="back_btn_step_2"
-                      @click="proceedToNextLevel(1)"
                       outlined
+                      @click="proceedToNextLevel(1)"
                     >
                       <v-icon>
                         keyboard_arrow_left
@@ -44,18 +44,18 @@
                     </v-btn>
                   </v-col>
                   <v-col
+                    class="right-0"
                     cols="4"
-                    xl="4"
                     lg="4"
                     md="4"
                     sm="4"
-                    class="right-0"
+                    xl="4"
                   >
                     <v-btn
-                      id="back_btn_step_2_"
-                      @click="proceedToNextLevel(3)"
-                      outlined
                       v-if="clientPostOrderForm.type === 'public'"
+                      id="back_btn_step_2_"
+                      outlined
+                      @click="proceedToNextLevel(3)"
                     >
                       <span
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
@@ -66,10 +66,10 @@
                       </v-icon>
                     </v-btn>
                     <v-btn
-                      id="back_btn_step_2__"
-                      @click="inviteWriterDialog = true"
-                      outlined
                       v-else
+                      id="back_btn_step_2__"
+                      outlined
+                      @click="inviteWriterDialog = true"
                     >
                       <span
                         class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
@@ -85,8 +85,8 @@
             </select-writer>
           </template>
           <template
-            #stepper-content-step-3
             v-if="clientPostOrderForm.type === 'public'"
+            #stepper-content-step-3
           >
             <check-order @progress-to-next-level="proceedToNextLevel">
               <template #back-btn>
@@ -94,15 +94,15 @@
                 <v-row no-gutters>
                   <v-col
                     cols="4"
-                    xl="4"
                     lg="4"
                     md="4"
                     sm="4"
+                    xl="4"
                   >
                     <v-btn
                       id="back_btn_step_3"
-                      @click="proceedToNextLevel(2)"
                       outlined
+                      @click="proceedToNextLevel(2)"
                     >
                       <v-icon>
                         keyboard_arrow_left
@@ -118,8 +118,8 @@
             </check-order>
           </template>
           <template
-            #stepper-content-step-4
             v-if="clientPostOrderForm.type === 'public'"
+            #stepper-content-step-4
           >
             <add-funds @progress-to-next-level="proceedToNextLevel">
               <template #back-btn>
@@ -127,15 +127,15 @@
                 <v-row no-gutters>
                   <v-col
                     cols="4"
-                    xl="4"
                     lg="4"
                     md="4"
                     sm="4"
+                    xl="4"
                   >
                     <v-btn
                       id="back_btn_step_4"
-                      @click="proceedToNextLevel(3)"
                       outlined
+                      @click="proceedToNextLevel(3)"
                     >
                       <v-icon>
                         keyboard_arrow_left
@@ -175,17 +175,6 @@ import DefaultFormMixin from '../../mixins/defaultRegistrationForm'
 
 export default {
   name: 'ClientPlaceOrder',
-  head: {
-    title: 'Customer Place Order',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Place Your Order Within 2 minutes. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
-      }
-    ]
-  },
-  mixins: [DefaultFormMixin],
   components: {
     BaseStepper,
     PlaceOrder,
@@ -194,6 +183,7 @@ export default {
     AddFunds,
     PaymentSuccessful
   },
+  mixins: [DefaultFormMixin],
   data () {
     return {
       stepsPublic: {
@@ -221,6 +211,25 @@ export default {
       email: 'email',
       orderPostingDone: 'orderPostingDone'
     })
+  },
+  created () {
+    if (process.env.VUE_ENV === 'client') {
+      if (!authMixin.tokenIsValid()) {
+        this.$router.push('/')
+      } else {
+        /* Check if the level is  */
+        if (this.clientPostOrderForm.level === 2 && this.clientPostOrderForm.type === 'public') {
+          this.getOrderBids = true
+          setTimeout(() => {
+            this.getOrderBids = false
+          }, 500)
+        }
+        this.getStates()
+        if (process.env.VUE_ENV === 'client') {
+          window.scrollTo(0, 0)
+        }
+      }
+    }
   },
   methods: {
     ...mapActions(['getDisciplines', 'getTime', 'getServiceType', 'getExtraServiceTypes',
@@ -526,29 +535,20 @@ export default {
       }
     }
   },
-  created () {
-    if (process.env.VUE_ENV === 'client') {
-      if (!authMixin.tokenIsValid()) {
-        this.$router.push('/')
-      } else {
-        /* Check if the level is  */
-        if (this.clientPostOrderForm.level === 2 && this.clientPostOrderForm.type === 'public') {
-          this.getOrderBids = true
-          setTimeout(() => {
-            this.getOrderBids = false
-          }, 500)
-        }
-        this.getStates()
-        if (process.env.VUE_ENV === 'client') {
-          window.scrollTo(0, 0)
-        }
+  head: {
+    title: 'Customer Place Order',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Place Your Order Within 2 minutes. Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
       }
-    }
+    ]
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/mixins/general";
 

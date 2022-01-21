@@ -440,6 +440,9 @@ export default {
       return val
     }
   },
+  mounted () {
+    this.currentUrl = window.location.pathname
+  },
   methods: {
     ...mapMutations(['changeClient', 'changeOrderPostingDone', 'changeClientPostOrderForm',
       'resetClientPostOrderForm']),
@@ -558,9 +561,6 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    this.currentUrl = window.location.pathname
   }
 }
 </script>

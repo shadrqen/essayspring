@@ -2,17 +2,17 @@
 <!--Currently accommodating orders and writers-->
 <template>
   <v-card :class="selectedOrder ? '' : 'my-3'" elevation="5">
-      <v-card-title style="background-color: #f3f1f1" v-if="!selectedOrder">
-        <v-app-bar-nav-icon color="#007991" v-if="mini" @click.stop="turnOnOffDrawer"></v-app-bar-nav-icon>
+      <v-card-title v-if="!selectedOrder" style="background-color: #f3f1f1">
+        <v-app-bar-nav-icon v-if="mini" color="#007991" @click.stop="turnOnOffDrawer"></v-app-bar-nav-icon>
         <div>
           {{ tableData.title }}
         </div>
         <v-spacer></v-spacer>
         <v-btn
+            v-if="currentUrl === '/client/writers'"
             id="invite-writer-btn"
             outlined
             @click="inviteWriterDialog = true"
-            v-if="currentUrl === '/client/writers'"
         >
           <v-icon>mdi-account-plus-outline
           </v-icon>
@@ -22,11 +22,11 @@
           >Invite Writer</span>
         </v-btn>
         <v-btn
+            v-else
             id="new-order-btn"
+            :disabled="postNewOrderOngoing"
             outlined
             @click="postNewOrder"
-            :disabled="postNewOrderOngoing"
-            v-else
         >
           <div v-if="postNewOrderOngoing" class="lds-ellipsis">
             <div style="background: #007991"></div>
@@ -71,8 +71,8 @@
                 <tr
                   v-for="(item, itemKey) in tableData.items"
                   :key="itemKey"
-                  @click="openOrder(item.id)"
                   :style="selectedOrder ? '' : 'cursor: pointer'"
+                  @click="openOrder(item.id)"
                 >
 <!--                  While here we loop through table headers-->
                   <td
@@ -97,8 +97,8 @@
                     <template v-else>
 <!--                      There are also scenarios where we need to call functions such as in processing deadline-->
                       <div v-if="itemHeader.text === 'DEADLINE'">
-                        <deadline
-                          :deadline="deadline_(item.deadlineDate, deadlineHours(item.TimeAmPm.time))"></deadline>
+                        <assignment-deadline
+                          :deadline="deadline_(item.deadlineDate, deadlineHours(item.TimeAmPm.time))"></assignment-deadline>
                       </div>
                       <div v-else>
                         {{ item[itemHeader.value] ? item[itemHeader.value] : null }}
@@ -111,8 +111,8 @@
                 <tr
                   v-for="(item, itemKey) in tableData.items"
                   :key="itemKey"
-                  @click="openSelectedWriter(item.Writer.id)"
                   :style="selectedOrder ? '' : 'cursor: pointer'"
+                  @click="openSelectedWriter(item.Writer.id)"
                 >
                   <td
                     v-for="(itemHeader, itemHeaderKey) in tableData.headers"
@@ -152,10 +152,10 @@
       </v-card-text>
     <v-dialog
       v-model="inviteWriterDialog"
+      :fullscreen="getViewPortCode === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="getViewPortCode === 'xs'"
     >
       <v-card>
         <v-toolbar color="#344754" flat short>
@@ -165,8 +165,8 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="inviteWriterDialog = !inviteWriterDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -177,25 +177,25 @@
           <v-form ref="inviteWriterForm" v-on:submit.prevent="">
             <br>
             <v-text-field
-              type="email"
-              flat
-              solo
-              class="text-field"
-              label="Enter email address"
-              :rules="validate.emailField"
               id="loginEmail"
               v-model="inviteWriterForm.email"
+              :rules="validate.emailField"
+              class="text-field"
+              flat
+              label="Enter email address"
+              solo
+              type="email"
               @keyup.enter="inviteWriter"
             ></v-text-field>
             <br>
-            <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                           :error="errorObject"></alert-message>
+            <alert-message v-if="successObject.value || errorObject.value" :error="errorObject" :success="successObject"
+                           class="mt-4"></alert-message>
             <v-btn
-              outlined
               id="submit_email_btn"
-              @click="inviteWriter"
-              :disabled="inviteWriterOngoing"
               ref="continueEmail"
+              :disabled="inviteWriterOngoing"
+              outlined
+              @click="inviteWriter"
             >
               <div v-if="inviteWriterOngoing" class="lds-ellipsis">
                 <div></div>
@@ -217,10 +217,10 @@
     </v-dialog>
     <v-dialog
       v-model="inviteWriterPromptDialog"
+      :fullscreen="getViewPortCode === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="getViewPortCode === 'xs'"
     >
       <v-card>
         <v-toolbar color="#344754" flat short>
@@ -230,8 +230,8 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="inviteWriterPromptDialog = !inviteWriterPromptDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -241,18 +241,18 @@
         <v-card-text style="padding-bottom: 20px">
           <v-form ref="promptInviteWriterForm" v-on:submit.prevent="">
             <br>
-            <p v-text="inviteWriterNotification" style="margin-top: 20px;"
-               class="text-h4 text-md-h6 text-sm-h5">
+            <p class="text-h4 text-md-h6 text-sm-h5" style="margin-top: 20px;"
+               v-text="inviteWriterNotification">
             </p>
             <br>
-            <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                           :error="errorObject"></alert-message>
+            <alert-message v-if="successObject.value || errorObject.value" :error="errorObject" :success="successObject"
+                           class="mt-4"></alert-message>
             <v-btn
+              v-if="inviteWriterNotification === 'Kindly invite at least one writer and approve to continue'"
+              ref="continueEmail"
+              :disabled="launchInviteWriterOngoing"
               outlined
               @click="launchInviteWriter"
-              :disabled="launchInviteWriterOngoing"
-              ref="continueEmail"
-              v-if="inviteWriterNotification === 'Kindly invite at least one writer and approve to continue'"
             >
               <div v-if="launchInviteWriterOngoing" class="lds-ellipsis">
                 <div></div>
@@ -271,10 +271,10 @@
       <v-snackbar
         v-model="snackbar"
         :timeout="timeout"
-        top
-        right
         color="teal"
         elevation="24"
+        right
+        top
       >
         {{ text }}
 
@@ -298,7 +298,7 @@
 
 import { mapGetters, mapMutations } from 'vuex'
 import { deadline, deadlineHoursAmPm } from '@/mixins/time'
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import api from '../../api/api'
 import Validation from '../../plugins/Validation'
 import { bus } from '@/plugins/bus'
@@ -306,7 +306,7 @@ import { bus } from '@/plugins/bus'
 export default {
   name: 'BaseTable',
   components: {
-    Deadline,
+    AssignmentDeadline,
     OverlayLoader: () => import('../../components/general/OverlayLoader'),
     AlertMessage: () => import('../../components/general/AlertMessage')
   },

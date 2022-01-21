@@ -7,6 +7,10 @@ module.exports = {
     'plugin:vue/essential',
     'standard'
   ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly'
+  },
   parserOptions: {
     ecmaVersion: 12,
     parser: '@typescript-eslint/parser',

@@ -8,10 +8,10 @@
 <!--    notifications. Every field in this dialog is dynamic, including the title-->
     <v-dialog
       v-model="loginDialog"
+      :fullscreen="viewport_code === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="viewport_code === 'xs'"
     >
       <v-card>
         <v-toolbar color="#344754" flat short>
@@ -21,8 +21,8 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="closeLoginDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -35,25 +35,25 @@
             <v-form ref="submitEmailForm" v-on:submit.prevent="">
               <br>
               <v-text-field
-                type="email"
-                flat
-                solo
-                class="text-field"
-                label="Enter your email"
-                :rules="validate.emailField"
                 id="loginEmail"
                 v-model="loginForm.email"
+                :rules="validate.emailField"
+                class="text-field"
+                flat
+                label="Enter your email"
+                solo
+                type="email"
                 @keyup.enter="submitEmail"
               ></v-text-field>
               <br>
-              <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                             :error="errorObject"></alert-message>
+              <alert-message v-if="successObject.value || errorObject.value" :error="errorObject" :success="successObject"
+                             class="mt-4"></alert-message>
               <v-btn
-                outlined
                 id="submit_email_btn"
-                @click="submitEmail"
-                :disabled="submitEmailOngoing"
                 ref="continueEmail"
+                :disabled="submitEmailOngoing"
+                outlined
+                @click="submitEmail"
               >
                 <div v-if="submitEmailOngoing" class="lds-ellipsis">
                   <div></div>
@@ -76,9 +76,9 @@
               </div>
               <div class="pt-6">
                 <v-btn
-                  outlined
                   id="continue_with_google"
                   :disabled="disableLoginGoogle"
+                  outlined
                   @click="loginGoogle">
                   <div v-if="disableLoginGoogle" class="lds-ellipsis">
                     <div style="background: #007991"></div>
@@ -88,7 +88,7 @@
                   </div>
                   <div v-else>
                     <div style="float: left;">
-                      <v-img max-height="26" max-width="26" :src="require('~/assets/google.png')"></v-img>
+                      <v-img :src="require('~/assets/google.png')" max-height="26" max-width="26"></v-img>
                     </div>
                     <div style="margin-top: 3px; margin-left: 30px">
                       <b class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-2 text-sm-body-2">
@@ -101,10 +101,10 @@
                 <!--                  <div class="fb-login-button" data-width="" data-size="large" data-button-type="continue_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>-->
                 <v-btn
                   id="continue_with_facebook"
-                  outlined
                   :disabled="disableLoginFacebook"
-                  @click="loginFacebook"
                   class="mb-2"
+                  outlined
+                  @click="loginFacebook"
                 >
                   <div v-if="disableLoginFacebook" class="lds-ellipsis">
                     <div style="background: #007991"></div>
@@ -114,7 +114,7 @@
                   </div>
                   <div v-else>
                     <div style="float: left;">
-                      <v-img max-height="26" max-width="26" :src="require('~/assets/facebook.png')"></v-img>
+                      <v-img :src="require('~/assets/facebook.png')" max-height="26" max-width="26"></v-img>
                     </div>
                     <div style="margin-top: 3px; margin-left: 30px">
                       <b class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-2 text-sm-body-2">
@@ -128,44 +128,44 @@
           <template v-if="loginDialogContents.dialogContent.setPassword">
             <v-form ref="changePasswordForm" v-on:submit.prevent="">
               <v-text-field
-                class="mt-2"
-                label="OTP Code"
-                :rules="validate.optCodeField"
                 id="otpCode"
                 v-model="setPasswordForm.otpCode"
+                :rules="validate.optCodeField"
+                class="mt-2"
+                label="OTP Code"
                 @keyup.enter="setPassword"
               ></v-text-field>
               <v-text-field
                 id="setPassword"
-                style="padding-bottom: 10px"
-                label="Password"
-                :rules="validate.registerPasswordField"
-                :type="showPassword ? 'text' : 'password'"
                 v-model="setPasswordForm.password"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :rules="validate.registerPasswordField"
+                :type="showPassword ? 'text' : 'password'"
+                label="Password"
+                style="padding-bottom: 10px"
                 @click:append="showPassword = !showPassword"
                 @keyup.enter="setPassword"
               ></v-text-field>
               <v-text-field
                 id="setPasswordRepeat"
-                style="padding-bottom: 10px"
-                label="Confirm Password"
-                :rules="validate.repeatPasswordField"
-                :type="showConfirmPassword ? 'text' : 'password'"
                 v-model="setPasswordForm.repeatPassword"
                 :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                @click:append="showConfirmPassword = !showConfirmPassword"
+                :rules="validate.repeatPasswordField"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                label="Confirm Password"
+                style="padding-bottom: 10px"
                 @keyup="checkPasswordSimilarity"
+                @click:append="showConfirmPassword = !showConfirmPassword"
                 @keyup.enter="setPassword"
               ></v-text-field>
-              <alert-message class="mt-4" :success="successObject" :error="errorObject"></alert-message>
+              <alert-message :error="errorObject" :success="successObject" class="mt-4"></alert-message>
               <div class="mt-4">
                 <v-alert
                   :value="true"
                   dense
+                  dismissible
                   text
                   type="success"
-                  dismissible
                 >
                   {{ emailNotification }}
                 </v-alert>
@@ -174,11 +174,11 @@
                 <v-spacer></v-spacer>
                 <v-btn
                   id="resendCodeBtn"
+                  ref="resendCode"
+                  :disabled="resendCodeOngoing"
+                  class="mr-3 mb-3"
                   outlined
                   @click="resendCode"
-                  :disabled="resendCodeOngoing"
-                  ref="resendCode"
-                  class="mr-3 mb-3"
                 >
                   <div v-if="resendCodeOngoing" class="lds-ellipsis">
                     <div style="background: #007991"></div>
@@ -190,11 +190,11 @@
                 </v-btn>
               </v-row>
               <v-btn
-                outlined
                 id="changePasswordBtn"
-                @click="setPassword"
-                :disabled="setPasswordOngoing"
                 ref="setPassword"
+                :disabled="setPasswordOngoing"
+                outlined
+                @click="setPassword"
               >
                 <div v-if="setPasswordOngoing" class="lds-ellipsis">
                   <div></div>
@@ -214,9 +214,9 @@
                 class="mb-6"
               >
                 <v-chip
+                  id="userEmailLoginChip"
                   color="#007991"
                   outlined
-                  id="userEmailLoginChip"
                   @click="goBackToSubmitEmail"
                 >
                   <v-icon>person</v-icon>
@@ -225,15 +225,15 @@
                 </v-chip>
               </div>
               <v-text-field
-                flat
-                solo
-                class="text-field"
                 id="loginPassword"
-                style="padding-bottom: 10px"
-                label="Password"
-                :type="showPassword ? 'text' : 'password'"
                 v-model="loginForm.password"
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="showPassword ? 'text' : 'password'"
+                class="text-field"
+                flat
+                label="Password"
+                solo
+                style="padding-bottom: 10px"
                 @click:append="showPassword = !showPassword"
                 @keyup.enter="startLoggingIn(false)"
               ></v-text-field>
@@ -241,22 +241,22 @@
                     Password is required
                   </span>
               <br>
-              <alert-message :success="successObject" :error="errorObject"></alert-message>
+              <alert-message :error="errorObject" :success="successObject"></alert-message>
               <v-alert
+                v-if="loginDialogContents.dialogTitle === 'Kindly log in by email'"
                 :value="true"
+                dismissible
                 text
                 type="error"
-                v-if="loginDialogContents.dialogTitle === 'Kindly log in by email'"
-                dismissible
               >
                 {{ loginDialogContents.dialogTitle }}
               </v-alert>
               <v-btn
-                outlined
                 id="login_btn"
-                @click="startLoggingIn(false)"
                 :disabled="loginOngoing"
                 class="mt-2"
+                outlined
+                @click="startLoggingIn(false)"
               >
                 <div v-if="loginOngoing" class="lds-ellipsis">
                   <div></div>
@@ -271,11 +271,11 @@
               <v-row class="mt-3 mb-n4">
                 <v-col
                   class="text-start text-xl-start text-lg-start text-sm-start text-md-start"
-                  xl="5"
+                  cols="6"
                   lg="5"
                   md="5"
                   sm="5"
-                  cols="6"
+                  xl="5"
                 >
                      <span
                        id="forgotPassword"
@@ -283,8 +283,8 @@
                      >
                        <template v-if="forgotPasswordOngoing" class="lds-ellipsis">
                          <v-progress-linear
-                           indeterminate
                            color="#007991"
+                           indeterminate
                          ></v-progress-linear>
                       </template>
                        <template v-else>
@@ -302,8 +302,8 @@
             </v-form>
           </template>
           <template v-if="loginDialogContents.dialogContent.notification">
-            <p v-text="loginDialogContents.dialogContent.notificationMessage" style="margin-top: 20px;"
-               class="text-h4 text-md-h6 text-sm-h5">
+            <p class="text-h4 text-md-h6 text-sm-h5" style="margin-top: 20px;"
+               v-text="loginDialogContents.dialogContent.notificationMessage">
             </p>
           </template>
         </v-card-text>
@@ -322,8 +322,8 @@
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="closeReportProblemDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -337,26 +337,26 @@
             </template>
             <template v-else>
               <v-textarea
+                v-model="problemForm.description"
+                class="text-area"
                 flat
                 height="220"
-                class="text-area"
                 no-resize
                 placeholder="Describe problem"
                 solo
-                v-model="problemForm.description"
               ></v-textarea>
               <div
                 class="text_field mt-6"
                 @click="pickFile"
-                @dragover.prevent @drop.prevent
-                @drop="uploadFile"
+                @drop="uploadFile" @dragover.prevent
+                @drop.prevent
               >
                 <input
-                  type="file"
-                  style="display: none"
-                  ref="image"
                   id="problemFile"
+                  ref="image"
                   accept=".pdf, .jpg, .jpeg, .png, .doc, .docx, video/*, audio/*"
+                  style="display: none"
+                  type="file"
                   @change="uploadFile"
                 >
                 <span v-if="supportingFileUploading">
@@ -373,14 +373,14 @@
               </div>
               <div v-if="problemForm.supportingFiles.length > 0" class="mt-4">
                 <div
-                  style="font-size: 15px; color: #403d3d;"
                   v-for="(file, key) in problemForm.supportingFiles"
                   :key="key"
+                  style="font-size: 15px; color: #403d3d;"
                 >
                   <v-chip
-                    @click:close="removeFile(file)"
                     class="ma-2"
                     close
+                    @click:close="removeFile(file)"
                   >
                     {{ file.originalName }}
                   </v-chip>
@@ -392,14 +392,14 @@
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :success="successObject" :error="errorObject"></alert-message>
+                <alert-message :error="errorObject" :success="successObject"></alert-message>
               </v-col>
               <v-col v-bind="attrs12">
                 <v-spacer></v-spacer>
                 <v-btn
-                  outlined
                   id="submit-problem-btn"
                   :disabled="reportProblemBtnDisabled"
+                  outlined
                   @click="submitProblem"
                 >
                   <div v-if="reportProblemOngoing" class="lds-ellipsis">
@@ -434,7 +434,7 @@ import registrationMixin from '../../mixins/registration'
 import login from '../../mixins/login'
 
 export default {
-  name: 'Dialogs',
+  name: 'GeneralDialogs',
   props: ['viewport_code'],
   components: {
     SuccessCheckMark: () => import('../../components/general/SuccessCheckMark'),
@@ -1163,10 +1163,100 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import '../../styles/general/general';
 
 @import "../../styles/mixins/general";
+
+#submit_email_btn, #changePasswordBtn{
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#login_btn{
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#continue_with_facebook{
+  @include commonBtnConfig('auto', 100%, #1877f2, white)
+}
+
+#continue_with_google{
+  @include commonBtnConfig('auto', 100%, rgb(0 97 235), white)
+}
+
+#continue_with_google2 {
+  @include commonBtnConfig('auto', 100%, white, #4283E8);
+  margin-bottom: 20px;
+}
+
+#submit-problem-btn {
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#resendCodeBtn {
+  @include darkGreenBlueBtnConfig(auto, $primaryDarkGreenBlueColor, white);
+}
+
+#forgotPassword{
+  position: relative;
+  cursor: pointer;
+  color: $footerColor;
+}
+
+#userEmailLoginChip{
+  cursor: pointer;
+}
+
+#userEmailChip {
+  cursor: pointer;
+}
+
+#or-login-separator {
+  overflow: hidden;
+  text-align: center;
+}
+
+#or-login-separator:before,
+#or-login-separator:after {
+  background-color: #e0e0e0;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+#or-login-separator:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+.text_field {
+  border: 1px dashed $primaryDarkGreenBlueColor;
+  border-radius: 5px;
+  height: 82px;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  span{
+    position: relative;
+    top: 25px;
+    padding: 20px;
+    font-size: 14px;
+    color: #cac8c8;
+  }
+}
+
+#or-login-separator:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+
+.tos_privacy {
+  text-decoration: underline;
+  cursor: pointer
+}
 
 </style>

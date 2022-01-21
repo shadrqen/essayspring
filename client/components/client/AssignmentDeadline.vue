@@ -46,7 +46,7 @@
 
 <script>
 export default {
-  name: 'Deadline',
+  name: 'AssignmentDeadline',
   props: ['deadline', 'color']
 }
 </script>

@@ -1,34 +1,34 @@
 <!--The hero image of the application.-->
 <template>
-  <v-card flat class="hero_image rounded-0">
+  <v-card class="hero_image rounded-0" flat>
     <v-card-text>
       <v-container>
-        <v-row no-gutters :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
-          <v-col cols="12" xl="5" lg="5" md="5" sm="4">
-            <p :class="textH5"
-               id="sit_back_relax"> {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }} </p>
-            <p :class="textSubTitle1"
-               id="we_offer_exemplary_service">
+        <v-row :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''" no-gutters>
+          <v-col cols="12" lg="5" md="5" sm="4" xl="5">
+            <p id="sit_back_relax"
+               :class="textH5"> {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }} </p>
+            <p id="we_offer_exemplary_service"
+               :class="textSubTitle1">
               {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? subHeroPub : subHero }}
               <br>
               {{ subHeroNewLine }}
             </p>
             <client-only>
-              <v-row justify="center" v-if="viewportCode !== 'xs'">
+              <v-row v-if="viewportCode !== 'xs'" justify="center">
                 <v-img
                   :height="clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? null : 300"
-                  class="mt-4"
                   :src="require('~/assets/exams.svg')"
+                  class="mt-4"
                 >
                   <template v-slot:placeholder>
                     <v-row
-                      class="fill-height ma-0"
                       align="center"
+                      class="fill-height ma-0"
                       justify="center"
                     >
                       <v-progress-circular
-                        indeterminate
                         color="teal darken-3"
+                        indeterminate
                       ></v-progress-circular>
                     </v-row>
                   </template>
@@ -36,12 +36,12 @@
               </v-row>
             </client-only>
           </v-col>
-          <v-col cols="12" xl="2" lg="2" md="1" sm="1"></v-col>
-          <v-col cols="12" xl="5" lg="5" md="6" sm="7">
+          <v-col cols="12" lg="2" md="1" sm="1" xl="2"></v-col>
+          <v-col cols="12" lg="5" md="6" sm="7" xl="5">
             <v-card id="client_post_order_card" flat>
-              <v-card-title :style="{ 'padding-left': clientPostOrderCardTextPadding,
-                            'padding-right': clientPostOrderCardTextPadding}"
-                            :class="textH5" id="client_post_order_card_title">
+              <v-card-title id="client_post_order_card_title"
+                            :class="textH5" :style="{ 'padding-left': clientPostOrderCardTextPadding,
+                            'padding-right': clientPostOrderCardTextPadding}">
                 <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
                   Boost Your Grades
                 </template>
@@ -52,19 +52,19 @@
               <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
               <v-form ref="clientPostOrderForm" v-on:submit.prevent="">
                 <v-card-text id="client_post_order_card_text"
-                             class="mt-n4"
                              :style="{ 'padding-left': clientPostOrderCardTextPadding,
                             'padding-right': clientPostOrderCardTextPadding,
-                            'padding-bottom': clientPostOrderCardTextPadding}">
+                            'padding-bottom': clientPostOrderCardTextPadding}"
+                             class="mt-n4">
                   <label class="text_field_label">Email</label>
                   <v-text-field
-                    flat
-                    class="text-field"
-                    label="Enter your email address"
                     v-model="clientPostOrderForm.email"
                     :rules="validate.emailField"
-                    type="email"
+                    class="text-field"
+                    flat
+                    label="Enter your email address"
                     solo
+                    type="email"
                     @keyup.enter="proceedToPlaceOrder"
                   ></v-text-field>
 <!--                  It is broken down into two instances: Public and private-->
@@ -74,18 +74,18 @@
                       <br>
                       <label class="text_field_label">Assignment Type</label>
                       <v-select
-                        flat
-                        :items="assignmentTypes"
-                        item-text="type"
-                        discipline-input
-                        data-cy="assignment-type-input-hero"
-                        item-value="id"
-                        class="text-field"
-                        label="Select the assignment type"
                         v-model="clientPostOrderForm.assignmentType"
+                        :items="assignmentTypes"
                         :rules="validate.assignmentTypeField"
                         chips
+                        class="text-field"
+                        data-cy="assignment-type-input-hero"
                         deletable-chips
+                        discipline-input
+                        flat
+                        item-text="type"
+                        item-value="id"
+                        label="Select the assignment type"
                         solo
                       ></v-select>
                       <br>
@@ -97,19 +97,19 @@
                         style="width: 100%"
                       >
                         <v-btn
+                          :disabled="clientPostOrderForm.pageCount === 1"
                           class="num-of-pages-buttons"
                           outlined
-                          :disabled="clientPostOrderForm.pageCount === 1"
                           @click="changePageCount('remove')"
                         >
                           <v-icon>remove</v-icon>
                         </v-btn>
                         <v-text-field
-                          flat
-                          class="num-of-pages-text-field"
                           v-model="clientPostOrderForm.pageCount"
-                          @keypress="validateNumOfPages"
+                          class="num-of-pages-text-field"
+                          flat
                           solo
+                          @keypress="validateNumOfPages"
                         ></v-text-field>
                         <v-btn
                           id="num-of-pages-buttons-client-add-hero"
@@ -125,57 +125,57 @@
                       <br>
                       <label class="text_field_label">
                         Deadline:
-                        <deadline color="#007991" :deadline="deadline"></deadline>
+                        <assignment-deadline :deadline="deadline" color="#007991"></assignment-deadline>
                       </label>
                       <v-row no-gutters>
-                        <v-col cols="6" xl="6" lg="6" md="6" sm="6">
+                        <v-col cols="6" lg="6" md="6" sm="6" xl="6">
                           <v-menu
                             ref="deadline_date_menu"
                             v-model="deadlineDateMenu"
                             :close-on-content-click="false"
-                            transition="scale-transition"
-                            offset-y
                             max-width="400"
+                            offset-y
+                            transition="scale-transition"
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
                                 v-model="clientPostOrderForm.deadlineDate"
+                                :rules="validate.deadlineDate"
+                                append-icon="mdi-calendar"
+                                class="text-field"
+                                color="#007991"
+                                flat
+                                label="Date"
                                 readonly
+                                solo
                                 v-bind="attrs"
                                 v-on="on"
-                                flat
-                                class="text-field"
-                                label="Date"
-                                :rules="validate.deadlineDate"
-                                solo
-                                color="#007991"
-                                append-icon="mdi-calendar"
                               ></v-text-field>
                             </template>
                             <v-date-picker
                               v-model="clientPostOrderForm.deadlineDate"
-                              @input="deadlineDateMenu = false"
                               :min="currentDate"
-                              no-title
                               color="#007991"
+                              no-title
+                              @input="deadlineDateMenu = false"
                             ></v-date-picker>
                           </v-menu>
                         </v-col>
-                        <v-col cols="1" xl="1" lg="1" md="1" sm="1"></v-col>
-                        <v-col cols="5" xl="5" lg="5" md="5" sm="5">
+                        <v-col cols="1" lg="1" md="1" sm="1" xl="1"></v-col>
+                        <v-col cols="5" lg="5" md="5" sm="5" xl="5">
                           <v-select
+                            id="deadline-time"
                             v-model="clientPostOrderForm.deadlineTime"
-                            append-icon="schedule"
-                            :items="computedItems"
                             :disabled="!clientPostOrderForm.deadlineDate"
-                            item-text="time"
-                            item-value="id"
-                            flat
+                            :items="computedItems"
+                            :rules="validate.deadlineTime"
+                            append-icon="schedule"
+                            class="text-field"
                             color="#007991"
                             data-cy="deadline-time-input-hero"
-                            class="text-field"
-                            :rules="validate.deadlineTime"
-                            id="deadline-time"
+                            flat
+                            item-text="time"
+                            item-value="id"
                             label="Time"
                             solo
                             style="height: 50px"
@@ -188,34 +188,34 @@
                       <br>
                       <label class="text_field_label">Assignment Type</label>
                       <v-text-field
-                        flat
                         class="text-field"
+                        flat
                         label="Select the assignment type"
-                        type="text"
                         solo
+                        type="text"
                       ></v-text-field>
                       <br>
                       <label class="text_field_label">Number of pages</label>
                       <br>
                       <v-text-field
-                        flat
                         class="text-field"
+                        flat
                         label="Number of pages"
-                        type="text"
                         solo
+                        type="text"
                       ></v-text-field>
                       <br>
                       <label class="text_field_label"></label>
                       Deadline:
                       <v-text-field
-                        flat
                         class="text-field"
+                        flat
                         label="Deadline date"
-                        type="text"
                         solo
+                        type="text"
                       ></v-text-field>
                       <v-row no-gutters>
-                        <v-col cols="12" xl="12" lg="12" md="12" sm="12">
+                        <v-col cols="12" lg="12" md="12" sm="12" xl="12">
                           <p id="by_clicking_paragraph2" :class="textCaption">
                             By clicking "Get Started", you agree to our Terms of Service and Privacy Policy. You also
                             agree
@@ -228,7 +228,7 @@
 <!--                  While the private instance only requires an email address-->
                   <template>
                     <v-row no-gutters>
-                      <v-col cols="12" xl="12" lg="12" md="12" sm="12" id="continue_btn_col">
+                      <v-col id="continue_btn_col" cols="12" lg="12" md="12" sm="12" xl="12">
                         <v-btn id="continue_btn"
                                @click="proceedToPlaceOrder()"
                         >
@@ -237,8 +237,8 @@
                           <v-icon color="white">keyboard_arrow_right</v-icon>
                         </v-btn>
                       </v-col>
-                      <v-col cols="12" xl="12" lg="12" md="12" sm="12">
-                        <p class="by_clicking_paragraph" :class="textCaption">
+                      <v-col cols="12" lg="12" md="12" sm="12" xl="12">
+                        <p :class="textCaption" class="by_clicking_paragraph">
                           By clicking "Get Started", you agree to our Terms of Service and Privacy Policy. You also
                           agree
                           to receive bonuses, discounts and promotional materials.
@@ -285,7 +285,7 @@ import { mapGetters, mapActions, mapMutations } from 'vuex'
 import { bus } from '@/plugins/bus'
 import api from '@/api/api.ts'
 
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import TimeMixin from '@/mixins/time'
 import DeadlineTimeDisabler from '../../mixins/deadlineTimeDisabler'
 import login from '../../mixins/login'
@@ -295,7 +295,7 @@ export default {
   props: ['textCaption', 'textH5', 'textSubTitle1', 'subHero', 'mainHero', 'clientPostOrderCardTextPadding',
     'viewportCode', 'pageFullyLoaded', 'mainHeroPub', 'subHeroPub'],
   components: {
-    Deadline
+    AssignmentDeadline
   },
   mixins: [DeadlineTimeDisabler, login],
   data () {
@@ -726,7 +726,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import '../../styles/general/general';
 

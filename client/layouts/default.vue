@@ -22,7 +22,7 @@ import { mapMutations } from 'vuex'
 export default Vue.extend({
   name: 'App',
   components: {
-    GeneralFooter: () => import('../components/general/Footer.vue')
+    GeneralFooter: () => import('../components/general/GeneralFooter.vue')
   },
   data () {
     return {

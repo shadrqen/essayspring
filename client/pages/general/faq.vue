@@ -12,10 +12,10 @@
           flat
         >
           <v-expansion-panel
-            id="expansion_panel"
-            class="rounded-0"
             v-for="(item,i) in qas"
+            id="expansion_panel"
             :key="i"
+            class="rounded-0"
           >
             <v-expansion-panel-header> {{ item.question }} </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -34,16 +34,6 @@ import OrderNowBar from '@/components/general/OrderNowBar'
 
 export default {
   name: 'FAQ',
-  head: {
-    title: 'FAQs',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Questions and answers about our products and/or services'
-      }
-    ]
-  },
   components: {
     OrderNowBar
   },
@@ -133,6 +123,16 @@ export default {
   },
   mounted () {
     window.scrollTo(0, 0)
+  },
+  head: {
+    title: 'FAQs',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Questions and answers about our products and/or services'
+      }
+    ]
   }
 }
 </script>

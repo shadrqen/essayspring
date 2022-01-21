@@ -338,6 +338,15 @@ export default {
       return val
     }
   },
+  /* Here we are using the created hook because we want access to the component instance and we have
+* no concern at the moment for manipulating the DOM */
+  created () {
+    /* FIXME: To remove such listeners */
+    bus.$on('updatePricesOnCheckOrder', () => {
+      this.loadStates()
+    })
+    this.loadStates()
+  },
   methods: {
     ...mapMutations(['changeClientPostOrderForm', 'resetRegistrationState', 'resetUserState']),
     async proceedToNextLevel () {
@@ -475,15 +484,6 @@ export default {
       this.updatePaymentSummaryHeight()
       this.pageReached = true
     }
-  },
-  /* Here we are using the created hook because we want access to the component instance and we have
-  * no concern at the moment for manipulating the DOM */
-  created () {
-    /* FIXME: To remove such listeners */
-    bus.$on('updatePricesOnCheckOrder', () => {
-      this.loadStates()
-    })
-    this.loadStates()
   }
 }
 </script>

@@ -29,6 +29,17 @@ export default Vue.extend({
       pageLoaded: false
     }
   },
+  mounted () {
+    if (process.env.VUE_ENV === 'client') {
+      window.addEventListener('resize', this.set_viewport_code)
+      window.addEventListener('load', () => {
+        this.pageLoaded = true
+      })
+    }
+  },
+  created () {
+    this.set_viewport_code()
+  },
   methods: {
     ...mapMutations({
       changeViewPortCode: 'changeViewPortCode'
@@ -56,17 +67,6 @@ export default Vue.extend({
           break
       }
     }
-  },
-  mounted () {
-    if (process.env.VUE_ENV === 'client') {
-      window.addEventListener('resize', this.set_viewport_code)
-      window.addEventListener('load', () => {
-        this.pageLoaded = true
-      })
-    }
-  },
-  created () {
-    this.set_viewport_code()
   }
 })
 </script>

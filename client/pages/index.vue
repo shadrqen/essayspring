@@ -42,22 +42,95 @@ import authMixin from '../utils/auth'
 
 export default {
   name: 'Index',
-  head: {
-    title: 'Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
-      }
-    ]
-  },
   components: {
     HeroImage,
     HowItWorks,
     OurBenefits: () => import('@/components/general/OurBenefits'),
     WhatOurWritersSay: () => import('@/components/general/WhatTheySay'),
     WhoWeAre: () => import('@/components/general/WhoWeAre')
+  },
+  /* As an SSR, it is important to use the asyncData attribute to initialize variables that might be quite
+  * necessary and critical towards the initial loading of an application. This is because the data
+  * attribute is not accessible on the serverside */
+  async asyncData () {
+    const textCaption = 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption'
+    const textH5 = 'text-h5 text-xl-h5 text-lg-h5 text-md-h5 text-sm-h5'
+    const textSubTitle1 = 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1'
+    const mainHero = 'Manage your writers and orders professionally'
+    const subHero = 'Your one-stop writing companion for managing writers and orders'
+    const howItWorks = [
+      {
+        step: 1,
+        title: 'Get Started',
+        text: 'Create an account with us by providing your email address alone.'
+      },
+      {
+        step: 2,
+        title: 'Send Invites',
+        text: 'Invite your writers by sending them invites. The writers will then register under your account.'
+      },
+      {
+        step: 3,
+        title: 'Assign Orders',
+        text: 'Assign and reassign any number of orders to your writers seamlessly.'
+      },
+      {
+        step: 4,
+        title: 'Manage Orders',
+        text: 'Organize your orders, writers and finances round the clock'
+      }
+    ]
+    const ourBenefits = [
+      {
+        title: 'Professional Writers',
+        text: 'Get access to our team of experienced and trusted professional writers to assist \n' +
+          ' in your coursework'
+      },
+      {
+        title: 'High Quality',
+        text: 'High standards are applied to achieve the highest quality possible of your paper'
+      },
+      {
+        title: 'Time Saving',
+        text: 'Get your order started in less than 2 minutes'
+      },
+      {
+        title: 'Low Cost',
+        text: 'Enjoy unbelievably low prices for your orders, ranging from writing, rewriting to editing.'
+      },
+      {
+        title: 'Boost your Grade',
+        text: 'Improve your performance by receiving the ideal responses to your coursework'
+      },
+      {
+        title: '24/7 Support',
+        text: 'Get access to instant support services every hour and day of the week'
+      }
+    ]
+    const whatTheySayTitle = 'What our Customers Say'
+    const ratingText = 'Excellent work from the writer. Did the paper in record time and in the highest quality possible.\n' +
+      'I can recommend 100%, and will surely seek the same in future.'
+    const timeRatingAdded = '14 hours ago'
+    const clientPostOrderCardTextPadding = '50px'
+    const viewportCode = 'xs'
+    const pageFullyLoaded = false
+    const viewportSize = 3
+    return {
+      textCaption,
+      textH5,
+      textSubTitle1,
+      mainHero,
+      subHero,
+      howItWorks,
+      ourBenefits,
+      whatTheySayTitle,
+      ratingText,
+      timeRatingAdded,
+      clientPostOrderCardTextPadding,
+      viewportCode,
+      pageFullyLoaded,
+      viewportSize
+    }
   },
   data () {
     return {
@@ -158,89 +231,6 @@ export default {
       viewportSize: 3
     }
   },
-  /* As an SSR, it is important to use the asyncData attribute to initialize variables that might be quite
-  * necessary and critical towards the initial loading of an application. This is because the data
-  * attribute is not accessible on the serverside */
-  async asyncData () {
-    const textCaption = 'text-caption text-xl-caption text-lg-caption text-lg-caption text-md-caption text-sm-caption'
-    const textH5 = 'text-h5 text-xl-h5 text-lg-h5 text-md-h5 text-sm-h5'
-    const textSubTitle1 = 'text-subtitle-1 text-xl-h6 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1'
-    const mainHero = 'Manage your writers and orders professionally'
-    const subHero = 'Your one-stop writing companion for managing writers and orders'
-    const howItWorks = [
-      {
-        step: 1,
-        title: 'Get Started',
-        text: 'Create an account with us by providing your email address alone.'
-      },
-      {
-        step: 2,
-        title: 'Send Invites',
-        text: 'Invite your writers by sending them invites. The writers will then register under your account.'
-      },
-      {
-        step: 3,
-        title: 'Assign Orders',
-        text: 'Assign and reassign any number of orders to your writers seamlessly.'
-      },
-      {
-        step: 4,
-        title: 'Manage Orders',
-        text: 'Organize your orders, writers and finances round the clock'
-      }
-    ]
-    const ourBenefits = [
-      {
-        title: 'Professional Writers',
-        text: 'Get access to our team of experienced and trusted professional writers to assist \n' +
-          ' in your coursework'
-      },
-      {
-        title: 'High Quality',
-        text: 'High standards are applied to achieve the highest quality possible of your paper'
-      },
-      {
-        title: 'Time Saving',
-        text: 'Get your order started in less than 2 minutes'
-      },
-      {
-        title: 'Low Cost',
-        text: 'Enjoy unbelievably low prices for your orders, ranging from writing, rewriting to editing.'
-      },
-      {
-        title: 'Boost your Grade',
-        text: 'Improve your performance by receiving the ideal responses to your coursework'
-      },
-      {
-        title: '24/7 Support',
-        text: 'Get access to instant support services every hour and day of the week'
-      }
-    ]
-    const whatTheySayTitle = 'What our Customers Say'
-    const ratingText = 'Excellent work from the writer. Did the paper in record time and in the highest quality possible.\n' +
-      'I can recommend 100%, and will surely seek the same in future.'
-    const timeRatingAdded = '14 hours ago'
-    const clientPostOrderCardTextPadding = '50px'
-    const viewportCode = 'xs'
-    const pageFullyLoaded = false
-    const viewportSize = 3
-    return {
-      textCaption,
-      textH5,
-      textSubTitle1,
-      mainHero,
-      subHero,
-      howItWorks,
-      ourBenefits,
-      whatTheySayTitle,
-      ratingText,
-      timeRatingAdded,
-      clientPostOrderCardTextPadding,
-      viewportCode,
-      pageFullyLoaded,
-      viewportSize
-    }
-  },
   computed: {
     ...mapGetters(['pageLoaded', 'clientPostOrderForm'])
   },
@@ -251,6 +241,16 @@ export default {
   },
   created () {
     authMixin.tokenIsValid()
+  },
+  mounted () {
+    this.setViewportCode()
+    if (process.env.VUE_ENV === 'client') {
+      this.pageFullyLoaded = this.pageLoaded
+      window.addEventListener('resize', this.setViewportCode)
+      window.addEventListener('load', () => {
+        this.changePageLoaded(true)
+      })
+    }
   },
   methods: {
     ...mapMutations(['changePageLoaded']),
@@ -298,15 +298,15 @@ export default {
       }
     }
   },
-  mounted () {
-    this.setViewportCode()
-    if (process.env.VUE_ENV === 'client') {
-      this.pageFullyLoaded = this.pageLoaded
-      window.addEventListener('resize', this.setViewportCode)
-      window.addEventListener('load', () => {
-        this.changePageLoaded(true)
-      })
-    }
+  head: {
+    title: 'Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Essay Writing Service - Freelance Academic Writing Assistance EssaySpring.com - EssaySpring.com'
+      }
+    ]
   }
 }
 </script>

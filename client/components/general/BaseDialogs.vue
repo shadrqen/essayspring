@@ -540,17 +540,17 @@ import login from '../../mixins/login'
 
 export default {
   name: 'GeneralDialogs',
+  components: {
+    SuccessCheckMark: () => import('../../components/general/SuccessCheckMark'),
+    AlertMessage: () => import('../../components/general/AlertMessage')
+  },
+  mixins: [login],
   props: {
     viewportCode: {
       type: String,
       required: true
     }
   },
-  components: {
-    SuccessCheckMark: () => import('../../components/general/SuccessCheckMark'),
-    AlertMessage: () => import('../../components/general/AlertMessage')
-  },
-  mixins: [login],
   data () {
     return {
       validate: Validation,

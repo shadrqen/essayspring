@@ -6,8 +6,8 @@
     <v-container>
       <v-card-text>
         <v-row
-          no-gutters
           id="who_we_are_row"
+          no-gutters
           :style="xl ? 'margin-left: 12vw; margin-right: 17vw;' : ''"
         >
           <v-col
@@ -21,16 +21,16 @@
             <span class="text-h5 text-xl-h5 text-lg-h5 text-lg-h5 text-md-h5 text-sm-h5 white--text">Who we are</span>
           </v-col>
           <v-col
+            id="who_we_are_col"
             cols="12"
             xl="12"
             lg="12"
             md="12"
             sm="12"
-            id="who_we_are_col"
           >
             <span
-              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1 white--text"
               id="sub_title"
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1 white--text"
             >
               EssaySpring is an academic writing assistance company. We provide our help to the numerous clients looking for a
               professional writing service.

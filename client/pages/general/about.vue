@@ -53,16 +53,6 @@ import OrderNowBar from '@/components/general/OrderNowBar'
 
 export default {
   name: 'About',
-  head: {
-    title: 'About Us',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'About EssaySpring'
-      }
-    ]
-  },
   components: {
     OrderNowBar
   },
@@ -81,6 +71,16 @@ export default {
   },
   mounted () {
     window.scrollTo(0, 0)
+  },
+  head: {
+    title: 'About Us',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'About EssaySpring'
+      }
+    ]
   }
 }
 </script>

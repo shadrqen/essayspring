@@ -104,8 +104,10 @@
                 class="mt-n10"
                 style="position: absolute; right: 0; cursor: pointer"
                 @click="expandWriterQuote(key)"
-                v-html="writerQuoteWhiteSpace(key) === 'nowrap' ? 'expand_more' : 'expand_less'"
               />
+              <!--          TODO: To find a way of integrating the code below without having to use v-html
+              because it could lead to XSS attacks
+              "writerQuoteWhiteSpace(key) === 'nowrap' ? 'expand_more' : 'expand_less'" -->
               <span class="mx-16" />
               <v-card-actions>
                 <v-btn
@@ -274,6 +276,10 @@ import CloseIconSvg from '../../assets/close.svg'
 
 export default {
   name: 'SelectWriter',
+  components: {
+    OverlayLoader,
+    AlertMessage: () => import('../../components/general/AlertMessage')
+  },
   props: {
     getBids: {
       type: Boolean,
@@ -285,10 +291,6 @@ export default {
       required: true,
       default: false
     }
-  },
-  components: {
-    OverlayLoader,
-    AlertMessage: () => import('../../components/general/AlertMessage')
   },
   data () {
     return {
@@ -417,6 +419,34 @@ export default {
         this.getOrderBids()
       }
     }
+  },
+  mounted () {
+    this.selectWritersMainTitle = this.clientPostOrderForm.type === 'public' ? 'Writers who best meet your requirements' : 'Your Writers'
+    if (this.clientPostOrderForm.type === 'public') {
+      if (this.getBids) {
+        this.getOrderBids()
+      }
+      bus.$on('getOrderBids', () => {
+        this.getOrderBids()
+      })
+      bus.$on('changeBiddingMessage', () => {
+        this.selectWritersMainTitle = 'Writers who best meet your requirements'
+        setTimeout(() => {
+          if (this.writerBids.length === 0) {
+            this.selectWritersMainTitle = 'Still working out to get the best writers'
+          }
+        }, 15000)
+        setTimeout(() => {
+          if (this.writerBids.length === 0) {
+            this.selectWritersMainTitle = 'Almost there, just a moment'
+          }
+        }, 30000)
+      })
+    } else {
+      this.getPersonalWriters()
+    }
+    document.body.scrollTop = 0 // For Safari
+    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
   },
   methods: {
     ...mapMutations(['changeClientPostOrderForm']),
@@ -645,34 +675,6 @@ export default {
     disableWriterInvite () {
       this.$emit('disable-writer-invite')
     }
-  },
-  mounted () {
-    this.selectWritersMainTitle = this.clientPostOrderForm.type === 'public' ? 'Writers who best meet your requirements' : 'Your Writers'
-    if (this.clientPostOrderForm.type === 'public') {
-      if (this.getBids) {
-        this.getOrderBids()
-      }
-      bus.$on('getOrderBids', () => {
-        this.getOrderBids()
-      })
-      bus.$on('changeBiddingMessage', () => {
-        this.selectWritersMainTitle = 'Writers who best meet your requirements'
-        setTimeout(() => {
-          if (this.writerBids.length === 0) {
-            this.selectWritersMainTitle = 'Still working out to get the best writers'
-          }
-        }, 15000)
-        setTimeout(() => {
-          if (this.writerBids.length === 0) {
-            this.selectWritersMainTitle = 'Almost there, just a moment'
-          }
-        }, 30000)
-      })
-    } else {
-      this.getPersonalWriters()
-    }
-    document.body.scrollTop = 0 // For Safari
-    document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
   }
 }
 </script>

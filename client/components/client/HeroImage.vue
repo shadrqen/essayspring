@@ -390,6 +390,10 @@ import login from '../../mixins/login'
 
 export default {
   name: 'HeroImageClient',
+  components: {
+    AssignmentDeadline
+  },
+  mixins: [DeadlineTimeDisabler, login],
   props: {
     textCaption: {
       type: String,
@@ -431,9 +435,6 @@ export default {
       type: String,
       required: true
     }
-  },
-  components: {
-    AssignmentDeadline
   },
   mixins: [DeadlineTimeDisabler, login],
   data () {
@@ -510,6 +511,23 @@ export default {
         this.disablePossibleDeadlineTimes()
       }
     }
+  },
+  mounted () {
+    if (this.clientPostOrderForm.type === 'public') {
+      /* We only get the states if the type of client is public */
+      this.getStates()
+    }
+    const dateTime = new Time.DateTime()
+    this.currentDate = dateTime.date()
+    bus.$on('registerClient', (val, email) => {
+      if (!this.registerClientCalled) {
+        this.registerClientCalled = true
+        if (val) {
+          this.registerClient(true, email)
+        }
+      }
+    })
+    this.disablePossibleDeadlineTimes()
   },
   methods: {
     ...mapActions({
@@ -845,23 +863,6 @@ export default {
           this.reGetStates()
         })
     }
-  },
-  mounted () {
-    if (this.clientPostOrderForm.type === 'public') {
-      /* We only get the states if the type of client is public */
-      this.getStates()
-    }
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
-    bus.$on('registerClient', (val, email) => {
-      if (!this.registerClientCalled) {
-        this.registerClientCalled = true
-        if (val) {
-          this.registerClient(true, email)
-        }
-      }
-    })
-    this.disablePossibleDeadlineTimes()
   }
 }
 </script>

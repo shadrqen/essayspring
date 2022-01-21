@@ -4,30 +4,30 @@
       <nav-drawer :drawer="drawer" />
       <v-container fluid>
         <base-table
-          :table-data="{ headers: headers, items: orders, title: orderStatusTitle }"
           :drawer="drawer"
           :selected-order="false"
+          :table-data="{ headers: headers, items: orders, title: orderStatusTitle }"
         >
           <template #table-filters>
             <v-row
-              no-gutters
               class="mb-n3"
+              no-gutters
             >
               <v-col
-                v-bind="attrs"
                 class="pr-1"
+                v-bind="attrs"
               >
                 <v-text-field
                   v-model="search"
                   append-icon="mdi-magnify"
+                  hide-details
                   label="Search"
                   single-line
-                  hide-details
                 />
               </v-col>
               <v-col
-                v-bind="attrs"
                 class="pl-1"
+                v-bind="attrs"
               >
                 <v-select
                   :items="['Time', 'Order Type']"
@@ -35,15 +35,15 @@
                 />
               </v-col>
               <v-col
-                v-bind="attrs"
                 class="pl-1"
+                v-bind="attrs"
               >
                 <v-select
+                  v-model="selectedOrder"
                   :items="orderStatusTypes"
                   item-text="status"
                   item-value="id"
                   label="Orders"
-                  v-model="selectedOrder"
                   @change="getOrders(false)"
                 />
               </v-col>
@@ -77,16 +77,6 @@ import authMixin from '../../utils/auth'
 
 export default {
   name: 'Orders',
-  head: {
-    title: 'Orders',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'EssaySpring Orders'
-      }
-    ]
-  },
   components: { NavDrawer, BaseTable },
   data () {
     return {
@@ -143,6 +133,29 @@ export default {
       return val
     }
   },
+  created () {
+    if (process.env.VUE_ENV === 'client') {
+      this.drawer = !this.mini
+      if (!authMixin.tokenIsValid()) {
+        this.$router.push('/')
+      }
+    }
+  },
+  mounted () {
+    this.changeFormsStateSet(false)
+    this.getOrders(true)
+    this.getOrderStatusTypes()
+    bus.$on('getOrders', (orderId) => {
+      this.selectedOrder = orderId
+      this.getOrders(false)
+    })
+    bus.$on('mutateDrawer', () => {
+      this.drawer = !this.drawer
+    })
+    if (process.env.VUE_ENV === 'client') {
+      window.scrollTo(0, 0)
+    }
+  },
   methods: {
     ...mapMutations(['changeFormsStateSet']),
     ...mapActions(['getOrderStatusTypes']),
@@ -169,28 +182,15 @@ export default {
         })
     }
   },
-  created () {
-    if (process.env.VUE_ENV === 'client') {
-      this.drawer = !this.mini
-      if (!authMixin.tokenIsValid()) {
-        this.$router.push('/')
+  head: {
+    title: 'Orders',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'EssaySpring Orders'
       }
-    }
-  },
-  mounted () {
-    this.changeFormsStateSet(false)
-    this.getOrders(true)
-    this.getOrderStatusTypes()
-    bus.$on('getOrders', (orderId) => {
-      this.selectedOrder = orderId
-      this.getOrders(false)
-    })
-    bus.$on('mutateDrawer', () => {
-      this.drawer = !this.drawer
-    })
-    if (process.env.VUE_ENV === 'client') {
-      window.scrollTo(0, 0)
-    }
+    ]
   }
 }
 </script>

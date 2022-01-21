@@ -54,16 +54,6 @@ import OrderNowBar from '@/components/general/OrderNowBar'
 
 export default {
   name: 'CookiePolicy',
-  head: {
-    title: 'Cookie Policy - EssaySpring',
-    meta: [
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Policies governing the use of cookies'
-      }
-    ]
-  },
   components: {
     OrderNowBar
   },
@@ -83,6 +73,16 @@ export default {
   mounted () {
     document.body.scrollTop = 0 // For Safari
     document.documentElement.scrollTop = 0 // For Chrome, Firefox, IE and Opera
+  },
+  head: {
+    title: 'Cookie Policy - EssaySpring',
+    meta: [
+      {
+        hid: 'description',
+        name: 'description',
+        content: 'Policies governing the use of cookies'
+      }
+    ]
   }
 }
 </script>

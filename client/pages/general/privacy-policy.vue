@@ -1,9 +1,12 @@
 <template>
   <v-app>
-    <order-now-bar title="Privacy Policy"></order-now-bar>
+    <order-now-bar title="Privacy Policy" />
     <v-container>
       <div class="row">
-        <div class="text-block privacy-wrap" :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''">
+        <div
+          class="text-block privacy-wrap"
+          :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+        >
           <p class="mt-6">
             <i>
               This Privacy Policy was last updated on 9th of November 2021.
@@ -90,7 +93,8 @@
             information under their own policies, thus We recommend you to get acquainted with their pertinent privacy
             rules before authorizing any payments. We are partnering with various payment services providers, the actual
             list thereof may be provided to you upon your request via an email to <a
-            href="mailto:support@essayspring.com">support@essayspring.com</a>. The payment services providers will not
+              href="mailto:support@essayspring.com"
+            >support@essayspring.com</a>. The payment services providers will not
             keep your payment information for any longer than is required in light of the reason(s) for which it was
             initially collected. However, it will be kept until a relevant legal basis or legal obligation exists
             (including a need for payment services providers to establish or defend their legal rights).
@@ -252,7 +256,8 @@
           <p>
             If you have agreed to receive advertisements by email or otherwise from Us or Our partners, you can
             unsubscribe at any time by contacting Us at <a
-            href="mailto:support@essayspring.com">support@essayspring.com</a>, by contacting them as indicated in their
+              href="mailto:support@essayspring.com"
+            >support@essayspring.com</a>, by contacting them as indicated in their
             pertinent advertisements, by sending Us a request via the Website or by using unsubscribe link provided in
             pertinent advertisements.
           </p>

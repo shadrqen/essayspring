@@ -3,31 +3,33 @@
     <v-card flat>
       <br>
       <v-btn
-          v-if="buttonType === 'outline'"
-          outlined
-          id="outline-btn"
+        v-if="buttonType === 'outline'"
+        id="outline-btn"
+        outlined
       >
-      <span
+        <span
           class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
           text-md-subtitle-1 text-sm-subtitle-1"
-      >{{ buttonText }}</span>
+        >{{ buttonText }}</span>
         <v-icon
-            color="white"
-        >keyboard_arrow_right
+          color="white"
+        >
+          keyboard_arrow_right
         </v-icon>
       </v-btn>
       <v-btn
-          v-else-if="buttonType === 'filled'"
-          id="filled-btn"
-          @click="triggerParentMethod"
+        v-else-if="buttonType === 'filled'"
+        id="filled-btn"
+        @click="triggerParentMethod"
       >
-      <span
+        <span
           class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
           text-md-subtitle-1 text-sm-subtitle-1"
-      >{{ buttonText }}</span>
+        >{{ buttonText }}</span>
         <v-icon
-            color="white"
-        >keyboard_arrow_right
+          color="white"
+        >
+          keyboard_arrow_right
         </v-icon>
       </v-btn>
     </v-card>
@@ -38,7 +40,20 @@
 
 export default {
   name: 'ColoredButton',
-  props: ['buttonType', 'buttonText', 'parentEvent'],
+  props: {
+    buttonType: {
+      type: String,
+      required: true
+    },
+    buttonText: {
+      type: String,
+      required: true
+    },
+    parentEvent: {
+      type: String,
+      required: true
+    }
+  },
   methods: {
     triggerParentMethod () {
       this.$emit(this.parentEvent)
@@ -47,7 +62,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/mixins/general";
 

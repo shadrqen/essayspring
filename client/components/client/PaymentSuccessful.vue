@@ -4,13 +4,26 @@
   <v-app>
     <v-row no-gutters>
       <v-col
-          v-bind="attrs"
-          style="display: flex; justify-content: center;"
+        v-bind="attrs"
+        style="display: flex; justify-content: center;"
       >
-        <v-card elevation="4" class="ma-2 mt-6" :min-width="minWidth" max-height="630">
+        <v-card
+          elevation="4"
+          class="ma-2 mt-6"
+          :min-width="minWidth"
+          max-height="630"
+        >
           <v-card-text class="mt-16 text-center">
-            <img alt="success-icon" height="60" width="60" :src="require('@/assets/done.png')" />
-            <div class="mt-4" id="payment-successful-div">
+            <img
+              alt="success-icon"
+              height="60"
+              width="60"
+              :src="require('@/assets/done.png')"
+            >
+            <div
+              class="mt-4"
+              id="payment-successful-div"
+            >
               <template v-if="clientPostOrderForm.type === 'public'">
                 Payment successful
               </template>
@@ -18,17 +31,30 @@
                 Order Placement Successful
               </template>
             </div>
-            <div class="mt-2 mb-10" id="thank-you">Thank you for being awesome!</div>
+            <div
+              class="mt-2 mb-10"
+              id="thank-you"
+            >
+              Thank you for being awesome!
+            </div>
             <div class="mt-13 mb-13">
-              <v-chip id="open-my-orders-chip" @click="redirectToOrders">
+              <v-chip
+                id="open-my-orders-chip"
+                @click="redirectToOrders"
+              >
                 <b id="open-my-orders-b">Open my orders</b> <v-icon>keyboard_arrow_right</v-icon>
               </v-chip>
             </div>
-            <v-divider></v-divider>
+            <v-divider />
             <div class="mt-13">
               Payment is made through
             </div>
-            <img alt="success-icon" height="60" width="60" :src="require('@/assets/mpesa.png')" />
+            <img
+              alt="success-icon"
+              height="60"
+              width="60"
+              :src="require('@/assets/mpesa.png')"
+            >
             <div>Support: <b>support@essayspring.com</b></div>
           </v-card-text>
         </v-card>
@@ -40,9 +66,11 @@
 <script>
 
 import { mapGetters, mapMutations } from 'vuex'
+import DefaultFormMixin from '../../mixins/defaultRegistrationForm'
 
 export default {
   name: 'PaymentSuccessful',
+  mixins: [DefaultFormMixin],
   data () {
     return {
       attrs: {
@@ -97,58 +125,8 @@ export default {
     async redirectToOrders () {
       this.changeOrderPostingDone(true)
       const email = this.clientPostOrderForm.email
-      /* TODO: To make this object re-usable */
-      const defaultForm = {
-        level: 1,
-        orderPostingStep: 1,
-        email: '',
-        paperSubject: '',
-        assignmentType: '',
-        topic: '',
-        pageCount: 1,
-        sources: 0,
-        wordCount: 1,
-        deadlineDate: '',
-        deadlineTime: '',
-        studyLevel: '',
-        citationStyleId: '',
-        serviceType: 'Writing',
-        supportingFiles: [],
-        instructions: '',
-        orderId: 0,
-        writerBids: [],
-        selectedWriter: {
-          name: '',
-          id: ''
-        },
-        paymentSummary: {
-          cpp: 0,
-          currencyCode: '',
-          paperPrice: 0,
-          leastPaperPrice: 0,
-          totalPrice: 0,
-          discount: 0,
-          extrasList: [],
-          extrasTotalPrice: 0
-        },
-        orderSavingProgress: {
-          details: false,
-          payment: false
-        },
-        stepStatus: {
-          step1: true,
-          step2: true,
-          step3: true,
-          step4: true
-        },
-        addFunds: {
-          paymentSuccessful: false,
-          paymentFailed: false,
-          notYetPaid: true
-        }
-      }
       /* Resetting the registration state */
-      this.changeWholeClientPostOrderForm(defaultForm)
+      this.changeWholeClientPostOrderForm(this.defaultForm)
       /* Before setting the client email. This is important because we need it when the client wants to post another order */
       this.changeClientPostOrderForm({
         key: 'email',

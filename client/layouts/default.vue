@@ -6,11 +6,11 @@
     </template>
     <template #default>
       <v-main>
-        <router-view></router-view>
+        <router-view />
       </v-main>
     </template>
     <template #footer>
-      <GeneralFooter v-if="pageLoaded"></GeneralFooter>
+      <GeneralFooter v-if="pageLoaded" />
     </template>
   </GeneralBaseLayout>
 </template>
@@ -22,7 +22,7 @@ import { mapMutations } from 'vuex'
 export default Vue.extend({
   name: 'App',
   components: {
-    GeneralFooter: () => import('../components/general/Footer.vue')
+    GeneralFooter: () => import('../components/general/BaseFooter.vue')
   },
   data () {
     return {

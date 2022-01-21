@@ -1,104 +1,121 @@
 <!--The primary table component-->
 <!--Currently accommodating orders and writers-->
 <template>
-  <v-card :class="selectedOrder ? '' : 'my-3'" elevation="5">
-      <v-card-title style="background-color: #f3f1f1" v-if="!selectedOrder">
-        <v-app-bar-nav-icon color="#007991" v-if="mini" @click.stop="turnOnOffDrawer"></v-app-bar-nav-icon>
-        <div>
-          {{ tableData.title }}
-        </div>
-        <v-spacer></v-spacer>
-        <v-btn
-            id="invite-writer-btn"
-            outlined
-            @click="inviteWriterDialog = true"
-            v-if="currentUrl === '/client/writers'"
+  <v-card
+    :class="selectedOrder ? '' : 'my-3'"
+    elevation="5"
+  >
+    <v-card-title
+      v-if="!selectedOrder"
+      style="background-color: #f3f1f1"
+    >
+      <v-app-bar-nav-icon
+        v-if="mini"
+        color="#007991"
+        @click.stop="turnOnOffDrawer"
+      />
+      <div>
+        {{ tableData.title }}
+      </div>
+      <v-spacer />
+      <v-btn
+        v-if="currentUrl === '/client/writers'"
+        id="invite-writer-btn"
+        outlined
+        @click="inviteWriterDialog = true"
+      >
+        <v-icon>
+          mdi-account-plus-outline
+        </v-icon>
+        <span
+          class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+              text-md-subtitle-1 text-sm-subtitle-1 ml-1"
+        >Invite Writer</span>
+      </v-btn>
+      <v-btn
+        v-else
+        id="new-order-btn"
+        :disabled="postNewOrderOngoing"
+        outlined
+        @click="postNewOrder"
+      >
+        <div
+          v-if="postNewOrderOngoing"
+          class="lds-ellipsis"
         >
-          <v-icon>mdi-account-plus-outline
+          <div style="background: #007991" />
+          <div style="background: #007991" />
+          <div style="background: #007991" />
+          <div style="background: #007991" />
+        </div>
+        <span
+          v-else
+        >
+          <v-icon>mdi-plus
           </v-icon>
           <span
-              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
-              text-md-subtitle-1 text-sm-subtitle-1 ml-1"
-          >Invite Writer</span>
-        </v-btn>
-        <v-btn
-            id="new-order-btn"
-            outlined
-            @click="postNewOrder"
-            :disabled="postNewOrderOngoing"
-            v-else
-        >
-          <div v-if="postNewOrderOngoing" class="lds-ellipsis">
-            <div style="background: #007991"></div>
-            <div style="background: #007991"></div>
-            <div style="background: #007991"></div>
-            <div style="background: #007991"></div>
-          </div>
-          <span
-            v-else>
-            <v-icon>mdi-plus
-            </v-icon>
-            <span
-              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
+            class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                 text-md-subtitle-1 text-sm-subtitle-1"
-            >New Order</span>
-          </span>
-        </v-btn>
-      </v-card-title>
-      <v-divider></v-divider>
-      <v-card-text class="mt-n4">
-        <slot name="table-filters"></slot>
-        <v-simple-table
-            fixed-header
-        >
-          <template v-slot:default>
-            <thead>
+          >New Order</span>
+        </span>
+      </v-btn>
+    </v-card-title>
+    <v-divider />
+    <v-card-text class="mt-n4">
+      <slot name="table-filters" />
+      <v-simple-table
+        fixed-header
+      >
+        <template v-slot:default>
+          <thead>
             <tr>
               <th
-                  v-for="(header, headerKey) in tableData.headers"
-                  :key="headerKey"
-                  class="text-left"
+                v-for="(header, headerKey) in tableData.headers"
+                :key="headerKey"
+                class="text-left"
               >
                 <b> {{ header.text }} </b>
               </th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             <template v-if="tableData.items.length > 0">
-<!--              TODO: To add a better dynamic functionality to switch between cases -->
+              <!--              TODO: To add a better dynamic functionality to switch between cases -->
               <template v-if="currentUrl === '/client/orders'">
-<!--                Here, we loop through the table items-->
+                <!--                Here, we loop through the table items-->
                 <tr
                   v-for="(item, itemKey) in tableData.items"
                   :key="itemKey"
-                  @click="openOrder(item.id)"
                   :style="selectedOrder ? '' : 'cursor: pointer'"
+                  @click="openOrder(item.id)"
                 >
-<!--                  While here we loop through table headers-->
+                  <!--                  While here we loop through table headers-->
                   <td
                     v-for="(itemHeader, itemHeaderKey) in tableData.headers"
                     :key="itemHeaderKey"
                   >
-<!--                    Important to note is that there are items that have subValues while others don't-->
-<!--                    Example. Item.pageCount does not have a SubValue but Item.Currency.CurrencyCode has-->
-<!--                    SubValue in this case is the third layer of an object-->
+                    <!--                    Important to note is that there are items that have subValues while others don't-->
+                    <!--                    Example. Item.pageCount does not have a SubValue but Item.Currency.CurrencyCode has-->
+                    <!--                    SubValue in this case is the third layer of an object-->
                     <template v-if="itemHeader.subValue">
-<!--                 There are also scenarios where an item is an array denoted by the itemHeader being an isAnArray-->
-<!--                      Here, we need to access the item in a manner as an array should-->
-                      <div v-if="itemHeader.isAnArray" style="color: #007991;">
-                          {{
-                            item[itemHeader.value][0] ? item[itemHeader.value][0].Currency.currencyCode.concat(' ', String(Math.floor(item[itemHeader.value][0][itemHeader.subValue]))) : null
-                          }}
+                      <!--                 There are also scenarios where an item is an array denoted by the itemHeader being an isAnArray-->
+                      <!--                      Here, we need to access the item in a manner as an array should-->
+                      <div
+                        v-if="itemHeader.isAnArray"
+                        style="color: #007991;"
+                      >
+                        {{ ordersArrayItem(item, itemHeader) }}
                       </div>
                       <div v-else>
                         {{ item[itemHeader.value] ? item[itemHeader.value][itemHeader.subValue] : null }}
                       </div>
                     </template>
                     <template v-else>
-<!--                      There are also scenarios where we need to call functions such as in processing deadline-->
+                      <!--                      There are also scenarios where we need to call functions such as in processing deadline-->
                       <div v-if="itemHeader.text === 'DEADLINE'">
-                        <deadline
-                          :deadline="deadline_(item.deadlineDate, deadlineHours(item.TimeAmPm.time))"></deadline>
+                        <assignment-deadline
+                          :deadline="deadline_(item.deadlineDate, deadlineHours(item.TimeAmPm.time))"
+                        />
                       </div>
                       <div v-else>
                         {{ item[itemHeader.value] ? item[itemHeader.value] : null }}
@@ -111,15 +128,15 @@
                 <tr
                   v-for="(item, itemKey) in tableData.items"
                   :key="itemKey"
-                  @click="openSelectedWriter(item.Writer.id)"
                   :style="selectedOrder ? '' : 'cursor: pointer'"
+                  @click="openSelectedWriter(item.Writer.id)"
                 >
                   <td
                     v-for="(itemHeader, itemHeaderKey) in tableData.headers"
                     :key="itemHeaderKey"
                   >
                     <template v-if="itemHeader.subValue">
-                        {{ item[itemHeader.value] ? item[itemHeader.value][itemHeader.subValue] : null }}
+                      {{ item[itemHeader.value] ? item[itemHeader.value][itemHeader.subValue] : null }}
                     </template>
                     <template v-else>
                       <template v-if="itemHeader.value === 'WriterOrder'">
@@ -146,27 +163,33 @@
                 No records found
               </div>
             </template>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-card-text>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </v-card-text>
     <v-dialog
       v-model="inviteWriterDialog"
+      :fullscreen="getViewPortCode === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="getViewPortCode === 'xs'"
     >
       <v-card>
-        <v-toolbar color="#344754" flat short>
-          <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Enter email address'">
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
+        <v-toolbar
+          color="#344754"
+          flat
+          short
+        >
+          <v-toolbar-title
+            class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+            v-text="'Enter email address'"
+          />
+          <v-spacer />
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="inviteWriterDialog = !inviteWriterDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -174,37 +197,49 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-text style="padding-bottom: 20px">
-          <v-form ref="inviteWriterForm" v-on:submit.prevent="">
+          <v-form
+            ref="inviteWriterForm"
+            @submit.prevent=""
+          >
             <br>
             <v-text-field
-              type="email"
-              flat
-              solo
-              class="text-field"
-              label="Enter email address"
-              :rules="validate.emailField"
               id="loginEmail"
               v-model="inviteWriterForm.email"
+              :rules="validate.emailField"
+              class="text-field"
+              flat
+              label="Enter email address"
+              solo
+              type="email"
               @keyup.enter="inviteWriter"
-            ></v-text-field>
+            />
             <br>
-            <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                           :error="errorObject"></alert-message>
+            <alert-message
+              v-if="successObject.value || errorObject.value"
+              :error="errorObject"
+              :success="successObject"
+              class="mt-4"
+            />
             <v-btn
-              outlined
               id="submit_email_btn"
-              @click="inviteWriter"
-              :disabled="inviteWriterOngoing"
               ref="continueEmail"
+              :disabled="inviteWriterOngoing"
+              outlined
+              @click="inviteWriter"
             >
-              <div v-if="inviteWriterOngoing" class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+              <div
+                v-if="inviteWriterOngoing"
+                class="lds-ellipsis"
+              >
+                <div />
+                <div />
+                <div />
+                <div />
               </div>
-              <span v-else
-                    class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"> Send Invitation </span>
+              <span
+                v-else
+                class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"
+              > Send Invitation </span>
             </v-btn>
             <div>
               <p class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption pt-3">
@@ -217,21 +252,27 @@
     </v-dialog>
     <v-dialog
       v-model="inviteWriterPromptDialog"
+      :fullscreen="getViewPortCode === 'xs'"
+      eager
       max-width="400"
       persistent
-      eager
-      :fullscreen="getViewPortCode === 'xs'"
     >
       <v-card>
-        <v-toolbar color="#344754" flat short>
-          <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Writer Action'">
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
+        <v-toolbar
+          color="#344754"
+          flat
+          short
+        >
+          <v-toolbar-title
+            class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+            v-text="'Writer Action'"
+          />
+          <v-spacer />
           <v-toolbar-items>
             <v-btn
-              icon
               dark
+              icon
               @click="inviteWriterPromptDialog = !inviteWriterPromptDialog"
             >
               <v-icon>mdi-close</v-icon>
@@ -239,29 +280,43 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-text style="padding-bottom: 20px">
-          <v-form ref="promptInviteWriterForm" v-on:submit.prevent="">
+          <v-form
+            ref="promptInviteWriterForm"
+            @submit.prevent=""
+          >
             <br>
-            <p v-text="inviteWriterNotification" style="margin-top: 20px;"
-               class="text-h4 text-md-h6 text-sm-h5">
-            </p>
+            <p
+              class="text-h4 text-md-h6 text-sm-h5"
+              style="margin-top: 20px;"
+              v-text="inviteWriterNotification"
+            />
             <br>
-            <alert-message v-if="successObject.value || errorObject.value" class="mt-4" :success="successObject"
-                           :error="errorObject"></alert-message>
+            <alert-message
+              v-if="successObject.value || errorObject.value"
+              :error="errorObject"
+              :success="successObject"
+              class="mt-4"
+            />
             <v-btn
+              v-if="inviteWriterNotification === 'Kindly invite at least one writer and approve to continue'"
+              ref="continueEmail"
+              :disabled="launchInviteWriterOngoing"
               outlined
               @click="launchInviteWriter"
-              :disabled="launchInviteWriterOngoing"
-              ref="continueEmail"
-              v-if="inviteWriterNotification === 'Kindly invite at least one writer and approve to continue'"
             >
-              <div v-if="launchInviteWriterOngoing" class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+              <div
+                v-if="launchInviteWriterOngoing"
+                class="lds-ellipsis"
+              >
+                <div />
+                <div />
+                <div />
+                <div />
               </div>
-              <span v-else
-                    class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"> Invite Writers </span>
+              <span
+                v-else
+                class="text-body-2 text-xl-body-2 text-lg-body-2 text-md-body-1 text-sm-body-2"
+              > Invite Writers </span>
             </v-btn>
           </v-form>
         </v-card-text>
@@ -271,10 +326,10 @@
       <v-snackbar
         v-model="snackbar"
         :timeout="timeout"
-        top
-        right
         color="teal"
         elevation="24"
+        right
+        top
       >
         {{ text }}
 
@@ -290,15 +345,15 @@
         </template>
       </v-snackbar>
     </div>
-    <overlay-loader :overlay="overlay"></overlay-loader>
-    </v-card>
+    <overlay-loader :overlay="overlay" />
+  </v-card>
 </template>
 
 <script>
 
 import { mapGetters, mapMutations } from 'vuex'
 import { deadline, deadlineHoursAmPm } from '@/mixins/time'
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import api from '../../api/api'
 import Validation from '../../plugins/Validation'
 import { bus } from '@/plugins/bus'
@@ -306,11 +361,20 @@ import { bus } from '@/plugins/bus'
 export default {
   name: 'BaseTable',
   components: {
-    Deadline,
+    AssignmentDeadline,
     OverlayLoader: () => import('../../components/general/OverlayLoader'),
     AlertMessage: () => import('../../components/general/AlertMessage')
   },
-  props: ['tableData', 'selectedOrder', 'drawer'],
+  props: {
+    tableData: {
+      type: Object,
+      required: true
+    },
+    selectedOrder: {
+      type: Boolean,
+      required: true
+    }
+  },
   data () {
     return {
       loading: false,
@@ -399,6 +463,9 @@ export default {
     launchInviteWriter () {
       this.inviteWriterPromptDialog = false
       this.inviteWriterDialog = true
+    },
+    ordersArrayItem (item, itemHeader) {
+      return item[itemHeader.value][0] ? item[itemHeader.value][0].Currency.currencyCode.concat(' ', String(Math.floor(item[itemHeader.value][0][itemHeader.subValue]))) : null
     },
     async postNewOrder () {
       /* First check whether the client has any writers */

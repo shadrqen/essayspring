@@ -2,12 +2,21 @@
 <template>
   <v-app>
     <client-only>
-      <nav-drawer></nav-drawer>
-      <v-card class="ma-4" v-if="writer">
+      <nav-drawer />
+      <v-card
+        class="ma-4"
+        v-if="writer"
+      >
         <v-card-title>
-          <v-icon style="cursor: pointer" class="mr-2" @click="$router.push('/client/writers')">chevron_left</v-icon>
+          <v-icon
+            style="cursor: pointer"
+            class="mr-2"
+            @click="$router.push('/client/writers')"
+          >
+            chevron_left
+          </v-icon>
           Writer &#8470; {{ client.selectedWriter }}
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-chip
             class="ma-2"
             v-if="connectionNotConfirmed"
@@ -17,15 +26,21 @@
             @click="confirmWriterApprovalDialog = true"
           >
             <v-avatar left>
-              <v-icon color="white">mdi-check-decagram-outline</v-icon>
+              <v-icon color="white">
+                mdi-check-decagram-outline
+              </v-icon>
             </v-avatar>
             Approve Writer
           </v-chip>
         </v-card-title>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-text>
           <v-row no-gutters>
-            <v-col v-bind="attrs" v-for="(item, key) in headers" :key="key">
+            <v-col
+              v-bind="attrs"
+              v-for="(item, key) in headers"
+              :key="key"
+            >
               <v-list
                 subheader
                 three-line
@@ -51,7 +66,11 @@
               </v-list>
             </v-col>
           </v-row>
-          <alert-message v-if="bodyAlertObject" :success="successObject" :error="errorObject"></alert-message>
+          <alert-message
+            v-if="bodyAlertObject"
+            :success="successObject"
+            :error="errorObject"
+          />
         </v-card-text>
       </v-card>
       <v-dialog
@@ -60,11 +79,17 @@
         max-width="600"
       >
         <v-card>
-          <v-toolbar color="#344754" flat short>
-            <v-toolbar-title class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
-            text-sm-subtitle-1 white--text" v-text="'Approve Writer'">
-            </v-toolbar-title>
-            <v-spacer></v-spacer>
+          <v-toolbar
+            color="#344754"
+            flat
+            short
+          >
+            <v-toolbar-title
+              class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1
+            text-sm-subtitle-1 white--text"
+              v-text="'Approve Writer'"
+            />
+            <v-spacer />
             <v-toolbar-items>
               <v-btn
                 icon
@@ -80,13 +105,19 @@
               By clicking <b>"Approve"</b>, you confirm that you know the writer in question, and invited him/her
             </div>
           </v-card-text>
-          <v-divider></v-divider>
+          <v-divider />
           <v-card-actions>
             <v-row no-gutters>
               <v-col v-bind="attrs12">
-                <alert-message :success="successObject" :error="errorObject"></alert-message>
+                <alert-message
+                  :success="successObject"
+                  :error="errorObject"
+                />
               </v-col>
-              <v-col v-bind="attrs12" class="text-end">
+              <v-col
+                v-bind="attrs12"
+                class="text-end"
+              >
                 <v-btn
                   class="my-2"
                   id="approve-writer-btn"
@@ -94,17 +125,21 @@
                   @click="approveWriter"
                   :disabled="approveWriterBtnDisabled"
                 >
-                  <div v-if="approveWriterOngoing" class="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+                  <div
+                    v-if="approveWriterOngoing"
+                    class="lds-ellipsis"
+                  >
+                    <div />
+                    <div />
+                    <div />
+                    <div />
                   </div>
                   <span
                     v-else
-                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1">
-                <v-icon>mdi-check-circle-outline</v-icon> Approve
-              </span>
+                    class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1 text-md-subtitle-1 text-sm-subtitle-1"
+                  >
+                    <v-icon>mdi-check-circle-outline</v-icon> Approve
+                  </span>
                 </v-btn>
               </v-col>
             </v-row>
@@ -117,10 +152,10 @@
       opacity="0.9"
     >
       <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </v-app>

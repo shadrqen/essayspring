@@ -20,58 +20,21 @@ const newWriterRegistration = require('../../views/new_writer_registration')
 const fs = require('fs')
 
 class OrdersService {
-  /* TODO: To make one custom function that receives a DBMS url and makes the request before returning the response
-* so as to make it reusable */
-
-  static async getDisciplines () {
-    return await getDBRequest('orders/v1/disciplines')
-      .then(disciplines => disciplines)
+  static async getRequest (url) {
+    return await getDBRequest(url)
+      .then(response => response)
       .catch(error => requestsMixin.customErrorMessage(error))
   }
 
-  static async getAssignmentTypes () {
-    return await getDBRequest('orders/v1/assignment_types')
-      .then(types => types)
+  static async postRequest (url, body) {
+    return await postDBRequest(url, body)
+      .then(response => response)
       .catch(error => requestsMixin.customErrorMessage(error))
   }
-
-  static async getOrderServiceTypes (req) {
-    return await postDBRequest('orders/v1/order_service_types', { extra: req.extra })
-      .then(types => types)
-      .catch(error => requestsMixin.customErrorMessage(error))
-  }
-
-    static getCitationStyles = async () => {
-      return await getDBRequest('orders/v1/citation_styles')
-        .then(styles => styles)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static getOrderFormats = async () => {
-      return await getDBRequest('orders/v1/order_formats')
-        .then(formats => formats)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static getAcademicCertifications = async () => {
-      return await getDBRequest('orders/v1/academic_certifications')
-        .then(certifications => certifications)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
 
     static getTime = async () => {
       return await getDBRequest('orders/v1/time')
         .then(time => time)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static async getEducationLevels (req) {
-      return await postDBRequest('orders/v1/education_levels',
-        {
-          academicInclined: req.academicInclined,
-          orderInclined: req.orderInclined
-        })
-        .then(levels => levels)
         .catch(error => requestsMixin.customErrorMessage(error))
     }
 
@@ -112,36 +75,6 @@ class OrdersService {
             console.log('\n\n\n error: ', err.data, '\n\n\n')
           })
       }
-    }
-
-    static saveOrderDetails = async req => {
-      return await postDBRequest('orders/v1/save_order_details', req)
-        .then(async res => res)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static saveOrderPaymentDetails = async req => {
-      return await postDBRequest('orders/v1/save_order_payment_details', req)
-        .then(res => res)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static removeFile = async req => {
-      return await postDBRequest('orders/v1/remove_file', req)
-        .then(res => res)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static updateOrderStatus = async req => {
-      return await postDBRequest('orders/v1/update_order_status', req)
-        .then(res => res)
-        .catch(error => requestsMixin.customErrorMessage(error))
-    }
-
-    static async getOrderStatusTypes () {
-      return await getDBRequest('orders/v1/get_order_status_types')
-        .then(response => response)
-        .catch(error => requestsMixin.customErrorMessage(error))
     }
 
     static async getOrders (req) {

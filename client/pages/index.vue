@@ -2,22 +2,34 @@
 <template>
   <v-app>
     <hero-image
-      :textCaption="textCaption"
-      :textH5="textH5"
-      :textSubTitle1="textSubTitle1"
-      :mainHero="mainHero"
-      :mainHeroPub="mainHeroPub"
-      :subHero="subHero"
-      :subHeroPub="subHeroPub"
-      :viewportCode="viewportCode"
-      :pageFullyLoaded="pageFullyLoaded"
-      :clientPostOrderCardTextPadding="clientPostOrderCardTextPadding"
-    ></hero-image>
-    <how-it-works :content="howItWorksPub" :contentPrivate="howItWorks" :viewport_size="viewportSize"></how-it-works>
-    <our-benefits v-if="pageFullyLoaded" :content="ourBenefits"></our-benefits>
-    <what-our-writers-say v-if="pageFullyLoaded" :what_they_say_title="whatTheySayTitle" :rating_text="ratingText" :rating="rating"
-                          :time_rating_added="timeRatingAdded"></what-our-writers-say>
-    <who-we-are v-if="pageFullyLoaded"></who-we-are>
+      :client-post-order-card-text-padding="clientPostOrderCardTextPadding"
+      :main-hero="mainHero"
+      :main-hero-pub="mainHeroPub"
+      :page-fully-loaded="pageFullyLoaded"
+      :sub-hero="subHero"
+      :sub-hero-pub="subHeroPub"
+      :text-caption="textCaption"
+      :text-h5="textH5"
+      :text-sub-title1="textSubTitle1"
+      :viewport-code="viewportCode"
+    />
+    <how-it-works
+      :content="howItWorksPub"
+      :content-private="howItWorks"
+      :viewport-size="viewportSize"
+    />
+    <our-benefits
+      v-if="pageFullyLoaded"
+      :content="ourBenefits"
+    />
+    <what-our-writers-say
+      v-if="pageFullyLoaded"
+      :rating="rating"
+      :rating-text="ratingText"
+      :time-rating-added="timeRatingAdded"
+      :what-they-say-title="whatTheySayTitle"
+    />
+    <who-we-are v-if="pageFullyLoaded" />
   </v-app>
 </template>
 
@@ -299,6 +311,6 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 </style>

@@ -1,7 +1,11 @@
 <template>
   <v-app>
-    <order-now-bar title="How it Works"></order-now-bar>
-    <how-it-works-component :content="how_it_works" :contentPrivate="how_it_works_private" :viewport_size="12"></how-it-works-component>
+    <order-now-bar title="How it Works" />
+    <how-it-works-component
+      :content="how_it_works"
+      :content-private="how_it_works_private"
+      :viewport_size="12"
+    />
   </v-app>
 </template>
 

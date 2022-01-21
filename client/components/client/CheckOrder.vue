@@ -1,87 +1,118 @@
 <!--Component to help user confirm an order's details before proceeding to checkout-->
 <template>
-  <v-card flat class="elevation-0">
-<!--    Form that loads only when this component has been called or reached on the stepper-->
-<!--    This helps to ensure that local variables have been initialized prior to rendering some elements on -->
-<!--    the DOM-->
-    <v-form ref="clientPostOrderForm" v-if="pageReached">
-<!--      The left and right margins are dynamically assigned depending on the xl status of the screen-->
-      <v-row no-gutters :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''">
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6" class="main-col">
-          <v-card flat class="main-card" style=" height: 410px">
+  <v-card
+    class="elevation-0"
+    flat
+  >
+    <!--    Form that loads only when this component has been called or reached on the stepper-->
+    <!--    This helps to ensure that local variables have been initialized prior to rendering some elements on -->
+    <!--    the DOM-->
+    <v-form
+      v-if="pageReached"
+      ref="clientPostOrderForm"
+    >
+      <!--      The left and right margins are dynamically assigned depending on the xl status of the screen-->
+      <v-row
+        :style="xl ? 'margin-left: 12vw; margin-right: 11vw;' : ''"
+        no-gutters
+      >
+        <v-col
+          class="main-col"
+          cols="12"
+          lg="4"
+          md="6"
+          sm="6"
+          xl="4"
+        >
+          <v-card
+            class="main-card"
+            flat
+            style=" height: 410px"
+          >
             <v-card-title class="grey lighten-4">
               <span class="card-title">Paper Summary</span>
             </v-card-title>
             <v-card-text id="paper-summary-card-text">
               <label>Topic</label>
               <p
-                  :class="paperSummaryTextClass"
-                  v-text="clientPostOrderForm.topic"
-              >
-              </p>
+                :class="paperSummaryTextClass"
+                v-text="clientPostOrderForm.topic"
+              />
               <label>Number of pages</label>
               <p
-                  :class="paperSummaryTextClass"
-                  v-text="clientPostOrderForm.pageCount"
-              >
-              </p>
+                :class="paperSummaryTextClass"
+                v-text="clientPostOrderForm.pageCount"
+              />
               <label>Deadline</label>
               <p
-                  :class="paperSummaryTextClass"
+                :class="paperSummaryTextClass"
               >
                 <template v-if="deadline">
-                  <deadline color="black" :deadline="deadline"></deadline>
+                  <assignment-deadline
+                    :deadline="deadline"
+                    color="black"
+                  />
                 </template>
               </p>
               <label>Subject</label>
               <p
-                  :class="paperSummaryTextClass"
-                  v-text="clientPostOrderForm.paperSubject ? disciplines.filter(discipline => discipline.id === clientPostOrderForm.paperSubject)[0].discipline : null"
-              >
-              </p>
+                :class="paperSummaryTextClass"
+                v-text="clientPostOrderForm.paperSubject ? disciplines.filter(discipline => discipline.id === clientPostOrderForm.paperSubject)[0].discipline : null"
+              />
               <label>Selected Writer</label>
               <p
-                  :class="paperSummaryTextClass"
+                :class="paperSummaryTextClass"
               >
                 {{ clientPostOrderForm.selectedWriter.name || 'No writer selected' }}
               </p>
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6" class="main-col">
-          <v-card flat class="main-card" style=" height: 410px">
+        <v-col
+          class="main-col"
+          cols="12"
+          lg="4"
+          md="6"
+          sm="6"
+          xl="4"
+        >
+          <v-card
+            class="main-card"
+            flat
+            style=" height: 410px"
+          >
             <v-card-title class="grey lighten-4">
               <span class="card-title">Some Extras</span>
             </v-card-title>
             <v-card-text>
               <v-list
-                  three-line
+                three-line
               >
                 <v-list-item-group
-                    v-model="settings"
-                    multiple
-                    active-class=""
+                  v-model="settings"
+                  active-class=""
+                  multiple
                 >
-<!--                  Looping through the extra services-->
+                  <!--                  Looping through the extra services-->
                   <v-list-item
-                      class="extras-list-item"
-                      v-for="(extra, key) in extraOrderServices"
-                      :key="key"
-                      @click="updateExtras(extra.id, extra.type, extra.price, extra.Currency.currencyCode)"
+                    v-for="(extra, key) in extraOrderServices"
+                    :key="key"
+                    class="extras-list-item"
+                    @click="updateExtras(extra.id, extra.type, extra.price, extra.Currency.currencyCode)"
                   >
                     <template>
                       <v-list-item-action>
                         <v-checkbox
-                            color="#007991"
-                            :input-value="clientPostOrderForm.paymentSummary.extrasList.some(outerExtra => outerExtra.type === extra.type)"
-                        ></v-checkbox>
+                          :input-value="clientPostOrderForm.paymentSummary.extrasList.some(outerExtra => outerExtra.type === extra.type)"
+                          color="#007991"
+                        />
                       </v-list-item-action>
 
                       <v-list-item-content class="extras-list-item-content">
                         <v-list-item-title>
-                        <span class="extras-list-item-content-item-title">
-                          {{ extra.type }}
-                        </span>
+                          <span class="extras-list-item-content-item-title">
+                            {{ extra.type }}
+                          </span>
                           <b class="extras-list-item-content-title-amount"> {{ extra.Currency.currencyCode }}
                             {{ extra.price }} </b>
                         </v-list-item-title>
@@ -94,8 +125,18 @@
             </v-card-text>
           </v-card>
         </v-col>
-        <v-col cols="12" xl="4" lg="4" md="6" sm="6">
-          <v-card flat class="main-card" :style="{ 'height': mainClassHeight }">
+        <v-col
+          cols="12"
+          lg="4"
+          md="6"
+          sm="6"
+          xl="4"
+        >
+          <v-card
+            :style="{ 'height': mainClassHeight }"
+            class="main-card"
+            flat
+          >
             <v-card-title class="grey lighten-4">
               <span class="card-title">Payment Summary</span>
             </v-card-title>
@@ -111,31 +152,45 @@
                       </v-list-item-title>
                     </v-list-item-action>
                     <v-list-item-content>
-                    <span class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
-                      {{ clientPostOrderForm.paymentSummary.currencyCode }}
-                      {{ clientPostOrderForm.paymentSummary.paperPrice }}
-                    </span>
+                      <span class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
+                        {{ clientPostOrderForm.paymentSummary.currencyCode }}
+                        {{ clientPostOrderForm.paymentSummary.paperPrice }}
+                      </span>
                       <br>
                       <span
                         id="payment-summary-list-content-multiplication"
-                        class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
+                        class="text-end text-xl-end text-lg-end text-md-end text-sm-end"
+                      >
                         {{ clientPostOrderForm.paymentSummary.currencyCode }}
                         {{ pricePerPage }} * {{ clientPostOrderForm.pageCount }}
-                    </span>
+                      </span>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-divider v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0"></v-divider>
-                  <v-list-item id="extras-summary-list-item" v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0">
+                  <v-divider v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0" />
+                  <v-list-item
+                    v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0"
+                    id="extras-summary-list-item"
+                  >
                     <v-list-item-content id="extras-summary-list-action-title">
                       <v-list-item-title style="display: block; width: 100%">
-                        <div style="float: left;" class="text-left text-xl-end text-lg-end text-md-start text-sm-start">
+                        <div
+                          class="text-left text-xl-end text-lg-end text-md-start text-sm-start"
+                          style="float: left;"
+                        >
                           Extras
                         </div>
-                        <div style="float: right" class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
+                        <div
+                          class="text-end text-xl-end text-lg-end text-md-end text-sm-end"
+                          style="float: right"
+                        >
                           {{ clientPostOrderForm.paymentSummary.currencyCode }} {{ clientPostOrderForm.paymentSummary.extrasTotalPrice }}
                         </div>
                       </v-list-item-title>
-                      <div v-for="(extra, key) in clientPostOrderForm.paymentSummary.extrasList" :key="key" style="display: block">
+                      <div
+                        v-for="(extra, key) in clientPostOrderForm.paymentSummary.extrasList"
+                        :key="key"
+                        style="display: block"
+                      >
                         <div style="float: left; margin-top: 5px; margin-bottom: 5px; font-size: 14px; color: grey">
                           {{ extra.type }}
                         </div>
@@ -145,7 +200,7 @@
                       </div>
                     </v-list-item-content>
                   </v-list-item>
-                  <v-divider v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0"></v-divider>
+                  <v-divider v-if="clientPostOrderForm.paymentSummary.extrasList.length > 0" />
                   <v-list-item class="payment-summary-list-item">
                     <v-list-item-action>
                       <v-list-item-title>
@@ -153,43 +208,48 @@
                       </v-list-item-title>
                     </v-list-item-action>
                     <v-list-item-content>
-                    <span class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
-                      <b>
-                        {{ clientPostOrderForm.paymentSummary.currencyCode }}
-                        {{ clientPostOrderForm.paymentSummary.totalPrice }}
-                      </b>
-                    </span>
+                      <span class="text-end text-xl-end text-lg-end text-md-end text-sm-end">
+                        <b>
+                          {{ clientPostOrderForm.paymentSummary.currencyCode }}
+                          {{ clientPostOrderForm.paymentSummary.totalPrice }}
+                        </b>
+                      </span>
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item class="payment-summary-list-item">
                     <v-list-item-content>
-                    <span
-                      class="grey--text text--darken-1 text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
-                      id="payment-summary-list-item-funds-will-remain"
-                    >
-                      The funds will remain in your account until you release them
-                    </span>
+                      <span
+                        id="payment-summary-list-item-funds-will-remain"
+                        class="grey--text text--darken-1 text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
+                      >
+                        The funds will remain in your account until you release them
+                      </span>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
               </v-list>
-              <alert-message :success="successObject" :error="errorObject"></alert-message>
+              <alert-message
+                :error="errorObject"
+                :success="successObject"
+              />
               <v-btn
-                outlined
                 class="payment-btn"
+                outlined
                 @click="proceedToNextLevel()"
               >
                 <v-icon
                   color="white"
-                >shopping_cart
+                >
+                  shopping_cart
                 </v-icon>
                 <span
                   class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
                 >Proceed to Checkout</span>
               </v-btn>
-              <p class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
-                 id="proceed-to-checkout-caption"
+              <p
+                id="proceed-to-checkout-caption"
+                class="text-caption text-xl-caption text-lg-caption text-md-caption text-sm-caption"
               >
                 By clicking "Proceed to Checkout", you agree to our terms of service.
               </p>
@@ -198,16 +258,16 @@
         </v-col>
       </v-row>
     </v-form>
-    <slot name="back-btn"></slot>
+    <slot name="back-btn" />
     <v-overlay
-        :value="overlay"
-        opacity="0.9"
+      :value="overlay"
+      opacity="0.9"
     >
       <div class="lds-ellipsis">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
     </v-overlay>
   </v-card>
@@ -219,13 +279,13 @@ import { mapGetters, mapMutations } from 'vuex'
 import api from '@/api/api.ts'
 import { bus } from '@/plugins/bus'
 import TimeMixin from '@/mixins/time'
-import Deadline from '@/components/client/Deadline'
+import AssignmentDeadline from '@/components/client/AssignmentDeadline'
 import AlertMessage from '@/components/general/AlertMessage'
 
 export default {
   name: 'CheckOrder',
   components: {
-    Deadline,
+    AssignmentDeadline,
     AlertMessage
   },
   data () {
@@ -428,7 +488,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 @import "../../styles/general/general";
 

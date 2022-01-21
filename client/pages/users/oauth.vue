@@ -1,18 +1,18 @@
 <!--Page that handles OAuth functionality. Currently handling Google's OAuth redirects-->
 <template>
   <v-app>
-    <index></index>
+    <index />
     <v-overlay
       :value="overlay"
       opacity="0.9"
     >
       <div
-          class="lds-ellipsis"
+        class="lds-ellipsis"
       >
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
-        <div class="lds-ellipsis-div"></div>
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
+        <div class="lds-ellipsis-div" />
       </div>
     </v-overlay>
   </v-app>
@@ -23,6 +23,7 @@
 import api from '../../api/api'
 import { mapMutations } from 'vuex'
 import Index from '../index.vue'
+import login from '../../mixins/login'
 
 export default {
   name: 'OAuth',
@@ -36,6 +37,7 @@ export default {
       }
     ]
   },
+  mixins: [login],
   components: {
     Index
   },
@@ -55,7 +57,7 @@ export default {
   methods: {
     ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeUserType', 'changeClient',
       'changeAccessToken', 'changeRefreshToken', 'changeEmail', 'changeLoginDialogContents', 'changeLoginDialog',
-      'changeLoginMode', 'changeOrderPostingDone'
+      'changeLoginMode', 'changeOrderPostingDone', 'changeUserType'
     ]),
     async processGoogleOAuth () {
       if (this.$route.query.code) {
@@ -88,31 +90,8 @@ export default {
         }
       }
     },
-    /* TODO: Again, to make this functionality centralized */
     loginClient (res) {
-      const email = res.email
-      this.changeClient({ key: 'regUpdateSuccessful', val: true })
-      this.changeClient({ key: 'isNew', val: res.isNew })
-      this.changeAccessToken(res.accessToken)
-      this.changeRefreshToken(res.refreshToken)
-      this.changeUserType('Client')
-      this.changeLoginStatus(true)
-      this.changeLoginDialog(false)
-      this.changeEmail(email)
-      this.changeLoginMode('Google')
-      this.changeClientPostOrderForm({
-        key: 'email',
-        subKey: null,
-        val: email,
-        option: null
-      })
-      api.setAuthHeaders()
-      this.changeLoginDialogContents({
-        key: 'dialogContent',
-        subKey: 'clientLogin',
-        val: false,
-        option: null
-      })
+      this.loginCurrentUser(res)
       if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
         this.changeOrderPostingDone(true)
         this.$router.push('/client/orders')

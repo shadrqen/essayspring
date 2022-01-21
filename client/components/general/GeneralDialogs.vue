@@ -1169,4 +1169,94 @@ export default {
 
 @import "../../styles/mixins/general";
 
+#submit_email_btn, #changePasswordBtn{
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#login_btn{
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#continue_with_facebook{
+  @include commonBtnConfig('auto', 100%, #1877f2, white)
+}
+
+#continue_with_google{
+  @include commonBtnConfig('auto', 100%, rgb(0 97 235), white)
+}
+
+#continue_with_google2 {
+  @include commonBtnConfig('auto', 100%, white, #4283E8);
+  margin-bottom: 20px;
+}
+
+#submit-problem-btn {
+  @include darkGreenBlueBtnConfig(100%, white, $primaryDarkGreenBlueColor);
+}
+
+#resendCodeBtn {
+  @include darkGreenBlueBtnConfig(auto, $primaryDarkGreenBlueColor, white);
+}
+
+#forgotPassword{
+  position: relative;
+  cursor: pointer;
+  color: $footerColor;
+}
+
+#userEmailLoginChip{
+  cursor: pointer;
+}
+
+#userEmailChip {
+  cursor: pointer;
+}
+
+#or-login-separator {
+  overflow: hidden;
+  text-align: center;
+}
+
+#or-login-separator:before,
+#or-login-separator:after {
+  background-color: #e0e0e0;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+#or-login-separator:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+.text_field {
+  border: 1px dashed $primaryDarkGreenBlueColor;
+  border-radius: 5px;
+  height: 82px;
+  cursor: pointer;
+  text-align: center;
+  vertical-align: middle;
+  span{
+    position: relative;
+    top: 25px;
+    padding: 20px;
+    font-size: 14px;
+    color: #cac8c8;
+  }
+}
+
+#or-login-separator:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+
+.tos_privacy {
+  text-decoration: underline;
+  cursor: pointer
+}
+
 </style>

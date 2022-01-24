@@ -4,7 +4,7 @@ updates:
   - package-ecosystem: npm
     directory: '/client'
     schedule:
-      interval: daily
+      interval: weekly
       time: '00:00'
     open-pull-requests-limit: 10
     reviewers:
@@ -18,7 +18,7 @@ updates:
   - package-ecosystem: npm
     directory: '/server'
     schedule:
-      interval: daily
+      interval: weekly
       time: '00:00'
     open-pull-requests-limit: 10
     reviewers:
@@ -32,7 +32,7 @@ updates:
   - package-ecosystem: npm
     directory: '/dbms'
     schedule:
-      interval: daily
+      interval: weekly
       time: '00:00'
     open-pull-requests-limit: 10
     reviewers:

@@ -4,7 +4,35 @@ updates:
   - package-ecosystem: npm
     directory: '/client'
     schedule:
-      interval: weekly
+      interval: daily
+      time: '00:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - shadrqen
+    assignees:
+      - shadrqen
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
+  - package-ecosystem: npm
+    directory: '/server'
+    schedule:
+      interval: daily
+      time: '00:00'
+    open-pull-requests-limit: 10
+    reviewers:
+      - shadrqen
+    assignees:
+      - shadrqen
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
+  - package-ecosystem: npm
+    directory: '/dbms'
+    schedule:
+      interval: daily
       time: '00:00'
     open-pull-requests-limit: 10
     reviewers:

@@ -393,6 +393,7 @@ export default {
   components: {
     AssignmentDeadline
   },
+  mixins: [DeadlineTimeDisabler, login],
   props: {
     textCaption: {
       type: String,
@@ -435,7 +436,6 @@ export default {
       required: true
     }
   },
-  mixins: [DeadlineTimeDisabler, login],
   data () {
     return {
       subHeroNewLine: '',

@@ -3,14 +3,20 @@
   "description": "<h1 align=\"center\">   <br>   <a href=\"https://essayspring.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/icon.png\" height=\"256px\" width=\"256px\"></a>   <br>   EssaySpring   <br> </h1>",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint:client": "cd client && npm run lint",
+    "client:tests": "cd client && npm run test:unit",
+    "lint:dbms": "cd dbms && npm run lint",
+    "dbms:tests": "cd dbms && npm run test",
+    "lint:server": "cd server && npm run lint",
+    "server:tests": "cd server && npm run test"
+  },
   "dependencies": {
-    "husky": "^4.3.0",
-    "npm-run-all": "^4.1.5"
+    "husky": "^4.3.0"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "cd client && npm run lint"
+      "pre-commit": "npm run lint:client && npm run client:tests && npm run lint:dbms && npm run dbms:tests && npm run lint:server && npm run server:tests"
     }
   },
   "repository": {

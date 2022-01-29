@@ -435,7 +435,6 @@ export default {
       required: true
     }
   },
-  mixins: [DeadlineTimeDisabler, login],
   data () {
     return {
       subHeroNewLine: '',

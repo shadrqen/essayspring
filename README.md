@@ -61,6 +61,12 @@ Currently, the client-facing platform (EssaySpring) has been integrated successf
 - **24/7 Support** - Get access to instant support services every hour and day of the week
 - **Boost your Grade** Improve your performance by receiving the ideal responses to your coursework
 
+<p align="center">
+    <img alt="EssaySpring Preview All Devices" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/all-devices-black.png">
+    <img alt="EssaySpring Preview Tablet" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/tablet-white.png">
+    <img alt="EssaySpring Preview Mobile" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/mobile-white.png">
+</p>
+
 Installation
 ------------
 
@@ -82,6 +88,12 @@ Here's how:
 - Clone to your machine ```git clone https://github.com/[YOUR_USERNAME]/essayspring.git```
 - Make your changes
 - Create a pull request
+
+### Use Gitpod
+
+Open the project in Gitpod (free online dev environment for GitHub) and start coding immediately.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/shadrqen/essayspring)
 
 
 ## Get in touch

@@ -393,6 +393,7 @@ export default {
   components: {
     AssignmentDeadline
   },
+  mixins: [DeadlineTimeDisabler, login],
   props: {
     textCaption: {
       type: String,

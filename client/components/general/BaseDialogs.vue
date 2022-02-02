@@ -616,7 +616,7 @@ export default {
     })
   },
   mounted () {
-    FacebookLogin.fbInitSdk()
+    // FacebookLogin.fbInitSdk()
     bus.$on('updateLoginForm', val => {
       this.loginForm.email = val
     })

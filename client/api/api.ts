@@ -1,3 +1,17 @@
+/**
+ * TODO: To ensure the following best practices for clean code are adhered to throughout the repo
+ * - JSDocs
+ * - remove commented out code
+ * - 2 or fewer function arguments (otherwise use object)
+ * - functions should do one thing
+ * - function names should say what they do
+ * - const to use CAPITAL_LETTERS
+ * - functions should be one level of abstraction
+ * - don't use flags as function parameters e.g. function (name, temp) { if (temp) {doSomething} else {doSomethingElse} } just split the two ifs to two functions
+ * - favor functional programming over imperative
+ * - encapsulate conditionals
+ * - avoid negative conditionals especially as function names
+ * - avoid conditionals where you can*/
 /* Promise based HTTP client for the browser and node.js */
 // @ts-ignore
 import axios from 'axios'
@@ -91,12 +105,12 @@ export default {
       return Promise.reject(error)
     })
   },
-  /*
-  * The api to handle post requests
-  * It takes the specific url of the backend resource and the payload, if it exists
-  * It resolves the response data or rejects with an error
-  */
-  async postRequest (path: any, payload: any) {
+  /**
+   *
+   * @param path
+   * @param payload
+   */
+  async postRequest (path: string, payload: any) {
     this.setAxiosHeaders()
     return await axios
       .post(url + path, payload)

@@ -1,8 +1,10 @@
 /* FIXME: To get time from the backend */
 class DateTime {
   constructor () {
-    // this._date = moment().format('L')
-    // this._time = moment().format('LT')
+    /**
+     * The current date
+     * @type {Date}
+     */
     this.currentDate = new Date()
     this.today = new Date()
     this._time = this.formatAMPM(this.currentDate)

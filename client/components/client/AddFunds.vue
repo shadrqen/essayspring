@@ -125,7 +125,7 @@
                     flat
                     label="Mobile number"
                     solo
-                    @keyup.enter="payNow"
+                    @keyup.enter="makeOrderPayment"
                   />
                 </v-col>
               </v-row>
@@ -140,7 +140,7 @@
                   id="initiate_payment"
                   class="mt-6"
                   outlined
-                  @click="payNow"
+                  @click="makeOrderPayment"
                 >
                   <span
                     class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
@@ -230,110 +230,132 @@ export default {
   methods: {
     ...mapMutations(['resetClientPostOrderForm', 'changeClientPostOrderForm', 'changeWholeClientPostOrderForm',
       'changeOrderPostingDone']),
-    async payNow () {
+    async makeOrderPayment () {
       if (this.$refs.initiatePaymentForm.validate()) {
         if (this.validateMobile()) {
           this.confirmPaymentDialog = false
           this.overlay.loading = true
           this.overlay.value = true
-          await api.postRequest('payments/v1/mpesa/stk_push', this.paymentForm)
-            .then(async res => {
-              /* If status is true, meaning that the STK Push request was successful */
-              if (res.status) {
-                /* There is also a possibility that an order was already paid for
-                * This happens when a user requests an STK Push and is sent
-                * The user pays for the order but the socket connection fails to update the payment
-                * The overlay loader continues, until maybe a user refreshes the page.
-                * After doing this, the user will be prompted to pay because the socket didn't update the paid stratus
-                * In case a user submits the phone number again, the STK Push request will return as successful
-                * but with the message being 'OrderAlreadyPaid'.
-                * In this case, the user will be shown an error that it has already been paid, before being
-                * redirected to the orders page */
-                if (res.message === 'OrderAlreadyPaid') {
-                  this.overlay.error.message = 'Order is already paid for!'
-                  this.overlay.loading = false
-                  this.overlay.error.value = true
-                  setTimeout(async () => {
-                    await this.clientRedirectToOrders()
-                  }, 2000)
-                } else {
-                  /* In case of a successful STK Push with a topic sent back as a response, create an MQTT socket
-                  * connection to listen to the response from M-PESA */
-                  if (res.topic) {
-                    await Socket.createConnection()
-                    /* Subscribe to the sent topic - which is unique to every STK Push request */
-                    this.client = await Socket.doSubscribe(res.topic)
-                    /* In case of an update from M-PESA, respond to each message */
-                    this.client.on('message', (topic, message) => {
-                      const parsedMessage = JSON.parse(message)
-                      switch (parsedMessage.paymentStatus) {
-                        case 'Success':
-                        {
-                          this.overlay.loading = false
-                          this.overlay.success.message = true
-                          this.overlay.success.value = true
-                          setTimeout(async () => {
-                            this.changeClientPostOrderForm({
-                              key: 'addFunds',
-                              subKey: 'paymentSuccessful',
-                              val: true,
-                              option: null
-                            })
-                            this.changeClientPostOrderForm({
-                              key: 'addFunds',
-                              subKey: 'notYetPaid',
-                              val: false,
-                              option: null
-                            })
-                            await this.resetOverlayState()
-                          }, 1600)
-                          break
-                        }
-                        case 'User cancelled':
-                          this.showPaymentErrorStatusMessage('Payment cancelled! Try again')
-                          break
-                        case 'Processing payment':
-                          this.showPaymentErrorStatusMessage('A similar transaction is already underway! Kindly wait')
-                          break
-                        case 'Success with balance':
-                          this.showPaymentErrorStatusMessage('Payment successful, albeit with a balance!')
-                          break
-                        case 'Pending payment':
-                          this.showPaymentErrorStatusMessage('Payment not received! Kindly try again')
-                          break
-                        case 'Failed':
-                          this.showPaymentErrorStatusMessage('Payment failed! Kindly try again')
-                          break
-                        default:
-                          this.showPaymentErrorStatusMessage('Payment failed! Kindly try again')
-                          break
-                      }
-                    })
-                  }
-                }
-              } else {
-                this.overlay.error.message = res.message
-                this.overlay.loading = false
-                this.overlay.error.value = true
-                setTimeout(async () => {
-                  await this.resetOverlayState()
-                }, 2000)
-              }
-            })
-            .catch(() => {
-              this.overlay.error.message = 'Failed! Try again'
-              this.overlay.loading = false
-              this.overlay.error.value = true
-              setTimeout(async () => {
-                await this.resetOverlayState()
-              }, 2000)
-            })
+          await this.sendPaymentRequest()
         } else {
           this.confirmPaymentDialog = false
           this.overlay.loading = false
           this.overlay.value = false
         }
       }
+    },
+    async sendPaymentRequest () {
+      await api.postRequest('payments/v1/mpesa/stk_push', this.paymentForm)
+        .then(async res => {
+          await this.processPayment(res)
+        })
+        .catch(() => {
+          this.overlay.error.message = 'Failed! Try again'
+          this.overlay.loading = false
+          this.overlay.error.value = true
+          setTimeout(async () => {
+            await this.resetOverlayState()
+          }, 2000)
+        })
+    },
+    async processPayment (res) {
+      /* If status is true, meaning that the STK Push request was successful */
+      if (res.status) {
+        /* There is also a possibility that an order was already paid for
+        * This happens when a user requests an STK Push and is sent
+        * The user pays for the order but the socket connection fails to update the payment
+        * The overlay loader continues, until maybe a user refreshes the page.
+        * After doing this, the user will be prompted to pay because the socket didn't update the paid stratus
+        * In case a user submits the phone number again, the STK Push request will return as successful
+        * but with the message being 'OrderAlreadyPaid'.
+        * In this case, the user will be shown an error that it has already been paid, before being
+        * redirected to the orders page */
+        if (res.message === 'OrderAlreadyPaid') {
+          this.overlay.error.message = 'Order is already paid for!'
+          this.overlay.loading = false
+          this.overlay.error.value = true
+          setTimeout(async () => {
+            await this.clientRedirectToOrders()
+          }, 2000)
+        } else {
+          /* In case of a successful STK Push with a topic sent back as a response, create an MQTT socket
+          * connection to listen to the response from M-PESA */
+          if (res.topic) {
+            await this.initiateSocketConnection(res.topic)
+          }
+        }
+      } else {
+        this.overlay.error.message = res.message
+        this.overlay.loading = false
+        this.overlay.error.value = true
+        setTimeout(async () => {
+          await this.resetOverlayState()
+        }, 2000)
+      }
+    },
+    async initiateSocketConnection (topic) {
+      await Socket.createConnection()
+      /* Subscribe to the sent topic - which is unique to every STK Push request */
+      this.client = await Socket.doSubscribe(topic)
+      /* In case of an update from M-PESA, respond to each message */
+      this.client.on('message', (topic, message) => {
+        this.processReceivedSocketMessage(JSON.parse(message))
+      })
+    },
+    /**
+     * Process received message from the socket connection
+     * @param {Object} parsedMessage - A message received through the socket connection, converted from a
+     * string into JSON
+     */
+    processReceivedSocketMessage (parsedMessage) {
+      switch (parsedMessage.paymentStatus) {
+        case 'Success':
+          this.processSuccessfulPayment()
+          break
+        case 'User cancelled':
+          this.showPaymentErrorStatusMessage('Payment cancelled! Try again')
+          break
+        case 'Processing payment':
+          this.showPaymentErrorStatusMessage('A similar transaction is already underway! Kindly wait')
+          break
+        case 'Success with balance':
+          this.showPaymentErrorStatusMessage('Payment successful, albeit with a balance!')
+          break
+        case 'Pending payment':
+          this.showPaymentErrorStatusMessage('Payment not received! Kindly try again')
+          break
+        case 'Failed':
+          this.showPaymentErrorStatusMessage('Payment failed! Kindly try again')
+          break
+        default:
+          this.showPaymentErrorStatusMessage('Payment failed! Kindly try again')
+          break
+      }
+    },
+    /**
+     * Processes a successful payment request by first showing a success message before changing the
+     * state to reflect the success
+     * @returns {void}
+     */
+    processSuccessfulPayment () {
+      this.overlay.loading = false
+      this.overlay.success.message = true
+      this.overlay.success.value = true
+      setTimeout(async () => {
+        this.changeClientPostOrderForm({
+          key: 'addFunds',
+          subKey: 'paymentSuccessful',
+          val: true,
+          option: null
+        })
+        this.changeClientPostOrderForm({
+          key: 'addFunds',
+          subKey: 'notYetPaid',
+          val: false,
+          option: null
+        })
+        await this.resetOverlayState()
+      }, 1600)
     },
     showPaymentErrorStatusMessage (message) {
       this.overlay.error.message = message

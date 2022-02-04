@@ -616,24 +616,10 @@ export default {
     })
   },
   mounted () {
-    // FacebookLogin.fbInitSdk()
+    FacebookLogin.fbInitSdk()
     bus.$on('updateLoginForm', val => {
       this.loginForm.email = val
     })
-    /*
-    watch: {
-      loginDialog () {
-        if (this.loginDialog === ) {
-          setTimeout(() => {
-            if (!['xs', 'sm'].includes(this.viewport_code)) {
-              document.getElementById('loginEmail').focus()
-              document.getElementById('loginEmail').select()
-            }
-          }, 0)
-        }
-      }
-    },
-     */
   },
   methods: {
     ...mapMutations([

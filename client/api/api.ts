@@ -143,6 +143,7 @@ export default {
    * @returns {Object} - The request response (success, error)
    */
   async postRequest (urlPath: string, payload: any) {
+    console.log('\n\n\n here \n\n\n')
     this.setAxiosHeaders()
     return await axios
       .post(BACKEND_URL + urlPath, payload)

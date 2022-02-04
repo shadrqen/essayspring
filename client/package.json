@@ -5,12 +5,13 @@
     "scripts": {
         "build": "nuxt build",
         "test:unit": "vue-cli-service test:unit",
+        "test:unit:watch": "vue-cli-service test:unit --watch --verbose true",
         "dev": "nuxt",
         "generate": "nuxt generate",
         "lint": "eslint --ext .js,.ts,.vue .",
         "lintfix": "eslint --fix --ext .js,.ts,.vue .",
         "start": "nuxt start",
-      "docs": "npx jsdoc -c ./jsdoc.json"
+        "docs": "npx jsdoc -c ./jsdoc.json"
     },
     "jest": {
         "transform": {

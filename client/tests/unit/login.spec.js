@@ -8,9 +8,13 @@
 // eslint-disable-next-line no-unused-vars
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 
-import flushPromises from 'flush-promises'
+// import flushPromises from 'flush-promises'
 
 import Vuex from 'vuex'
+
+// import axios from 'axios'
+
+// import mockApi from '@/api/api.ts'
 
 // import sinon from 'sinon'
 // eslint-disable-next-line no-unused-vars
@@ -21,6 +25,60 @@ import Dialogs from '@/components/general/BaseDialogs.vue'
 
 import VueRouter from 'vue-router'
 
+/**
+ * Declaring constants and variables
+ */
+/* const mockLoginSuccessful = {
+  accountExists: true,
+  type: 'Client',
+  canLogIn: true
+} */
+
+/**
+ * Mocking modules
+ */
+// eslint-disable-next-line no-undef
+jest.mock('@/services/facebook-login.js')
+
+// eslint-disable-next-line no-undef
+jest.mock('@/api/api.ts', () => {
+  return {
+    // eslint-disable-next-line no-undef
+    postRequest: () => {
+      return {
+        // eslint-disable-next-line no-undef
+        then: () => jest.fn(),
+        // eslint-disable-next-line no-undef
+        catch: () => jest.fn()
+      }
+    },
+    // eslint-disable-next-line no-undef
+    setAuthHeaders: () => jest.fn()
+  }
+})
+
+// eslint-disable-next-line no-undef
+jest.mock('axios', () => {
+  const mockLoginSuccessful = {
+    data: {
+      accountExists: true,
+      type: 'Client',
+      canLogIn: true
+    }
+  }
+  // eslint-disable-next-line no-undef
+  return {
+    // eslint-disable-next-line no-undef
+    post: jest.fn(() => mockLoginSuccessful),
+    interceptors: {
+      // eslint-disable-next-line no-undef
+      request: { use: () => jest.fn(), eject: jest.fn() },
+      // eslint-disable-next-line no-undef
+      response: { use: () => jest.fn(), eject: jest.fn() }
+    }
+  }
+})
+
 const localVue = createLocalVue()
 
 localVue.use(Vuex)
@@ -29,13 +87,6 @@ localVue.use(VueRouter)
 const router = new VueRouter()
 
 const vuetify = new Vuetify()
-class FacebookLogin {
-  // eslint-disable-next-line no-undef
-  fbInitSdk () {
-    // eslint-disable-next-line no-undef
-    return jest.fn()
-  }
-}
 
 // eslint-disable-next-line no-undef
 describe('Login Service -> Log in user', () => {
@@ -89,8 +140,7 @@ describe('Login Service -> Log in user', () => {
       },
       propsData: {
         viewport_code: 'lg'
-      },
-      mocks: { FacebookLogin }
+      }
     })
   })
   // eslint-disable-next-line no-undef
@@ -105,12 +155,21 @@ describe('Login Service -> Log in user', () => {
 
     await loginEmailText.trigger('keyup.center')
 
-    // eslint-disable-next-line no-undef
     wrapper.vm.$refs.submitEmailForm.validate = () => true
+
+    // await wrapper.vm.submitEmail()
+
+    // Wait until the DOM updates.
+    // await flushPromises()
+
+    // eslint-disable-next-line no-undef
+
+    // eslint-disable-next-line no-undef
+    // expect(mockApi.postRequest()).toHaveBeenCalledTimes(1)
 
     // const submitEmail = await wrapper.vm.submitEmail()
 
-    await flushPromises()
+    // await flushPromises()
 
     // eslint-disable-next-line no-undef
     // expect(submitEmail).toBeCalled()

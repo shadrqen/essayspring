@@ -1,26 +1,25 @@
 /**
 * @test-cases
- * 1.  If correct email and password is provided, log in user
+ * 1.  If correct email and password is provided
+ *      i. Expect login to be called
+ *      ii.
  * 2.  If either of the two is not specified, show error and don’t proceed
  * 3.  If wrong email format is used, show error
  * */
 
-// eslint-disable-next-line no-unused-vars
 import { createLocalVue, shallowMount } from '@vue/test-utils'
 
 // import flushPromises from 'flush-promises'
 
 import Vuex from 'vuex'
 
-// import axios from 'axios'
+import axios from 'axios'
 
-// import mockApi from '@/api/api.ts'
+import MockAdapter from 'axios-mock-adapter'
 
 // import sinon from 'sinon'
-// eslint-disable-next-line no-unused-vars
 import Vuetify from 'vuetify'
 
-// eslint-disable-next-line no-unused-vars
 import Dialogs from '@/components/general/BaseDialogs.vue'
 
 import VueRouter from 'vue-router'
@@ -37,47 +36,33 @@ import VueRouter from 'vue-router'
 /**
  * Mocking modules
  */
-// eslint-disable-next-line no-undef
+
+/* eslint-disable no-undef */
+const mock = new MockAdapter(axios)
+
 jest.mock('@/services/facebook-login.js')
 
-// eslint-disable-next-line no-undef
-jest.mock('@/api/api.ts', () => {
-  return {
-    // eslint-disable-next-line no-undef
-    postRequest: () => {
-      return {
-        // eslint-disable-next-line no-undef
-        then: () => jest.fn(),
-        // eslint-disable-next-line no-undef
-        catch: () => jest.fn()
-      }
-    },
-    // eslint-disable-next-line no-undef
-    setAuthHeaders: () => jest.fn()
-  }
-})
+jest.mock('@/mixins/login.js')
 
-// eslint-disable-next-line no-undef
-jest.mock('axios', () => {
-  const mockLoginSuccessful = {
-    data: {
-      accountExists: true,
-      type: 'Client',
-      canLogIn: true
-    }
-  }
-  // eslint-disable-next-line no-undef
-  return {
-    // eslint-disable-next-line no-undef
-    post: jest.fn(() => mockLoginSuccessful),
-    interceptors: {
-      // eslint-disable-next-line no-undef
-      request: { use: () => jest.fn(), eject: jest.fn() },
-      // eslint-disable-next-line no-undef
-      response: { use: () => jest.fn(), eject: jest.fn() }
-    }
-  }
-})
+// jest.mock('axios', () => {
+//   return {
+//     post: Promise.resolve({ data: mockLoginSuccessful }),
+//     interceptors: {
+//       request: { use: () => jest.fn(), eject: jest.fn() },
+//       response: { use: () => jest.fn(), eject: jest.fn() }
+//     },
+//     defaults: {
+//       headers: {
+//         common: {
+//           Access: '',
+//           Refresh: ''
+//         }
+//       }
+//     }
+//   }
+// })
+
+/* eslint-enable no-undef */
 
 const localVue = createLocalVue()
 
@@ -87,12 +72,10 @@ localVue.use(VueRouter)
 const router = new VueRouter()
 
 const vuetify = new Vuetify()
-
-// eslint-disable-next-line no-undef
+/* eslint-disable no-undef */
 describe('Login Service -> Log in user', () => {
-  // eslint-disable-next-line no-unused-vars
   let wrapper, getters, mutations, store
-  // eslint-disable-next-line no-undef
+
   beforeEach(() => {
     getters = {
       loginStatus: () => false,
@@ -115,10 +98,12 @@ describe('Login Service -> Log in user', () => {
       }
     }
     mutations = {
-      // eslint-disable-next-line no-undef
+
       changeLoginDialog: jest.fn(),
-      // eslint-disable-next-line no-undef
-      changeLoginDialogContents: jest.fn()
+
+      changeLoginDialogContents: jest.fn(),
+
+      changeLoginStatus: jest.fn()
     }
     store = new Vuex.Store({
       getters,
@@ -129,50 +114,45 @@ describe('Login Service -> Log in user', () => {
       localVue,
       vuetify,
       router,
-      data () {
-        return {
-          loginForm: {
-            email: 'a@b.c',
-            password: 'dfdfdfY66dg',
-            gotStarted: false
-          }
-        }
-      },
       propsData: {
-        viewport_code: 'lg'
+        viewportCode: 'lg'
       }
     })
   })
-  // eslint-disable-next-line no-undef
-  it('When the correct email and password is provided, expect user to be logged in successfully', async () => {
-    const loginEmailText = wrapper.find('#loginEmail')
-    /* Act */
-    // await login.trigger('click')
 
-    /* Assert */
-    // eslint-disable-next-line no-undef
-    expect(loginEmailText.exists()).toBe(true)
+  describe('When the correct email and password is provided', () => {
+    it('Expect login to be called', async () => {
+      /* Arrange */
+      const submitEmailButton = wrapper.find('[data-test-id="login-email-button"]')
+      wrapper.vm.$refs.submitEmailForm.validate = () => true
 
-    await loginEmailText.trigger('keyup.center')
+      /* Act */
+      await submitEmailButton.vm.$emit('click')
 
-    wrapper.vm.$refs.submitEmailForm.validate = () => true
+      /* Assert */
+      expect(wrapper.vm.submitEmailOngoing).toBe(true)
+    })
 
-    // await wrapper.vm.submitEmail()
+    it('Expect user to submit email successfully', async () => {
+      /* Arrange */
+      const submitEmailButton = wrapper.find('[data-test-id="login-email-button"]')
+      wrapper.vm.$refs.submitEmailForm.validate = () => true
+      const mockLoginSuccessful = {
+        accountExists: true,
+        type: 'Client',
+        canLogIn: true,
+        orderPostingStep: 'Finished'
+      }
+      mock.onPost('/auth/v1/submit_login_email').reply(200, mockLoginSuccessful)
 
-    // Wait until the DOM updates.
-    // await flushPromises()
+      /* Act */
+      await wrapper.setData({ loginForm: { email: 'me@you.com', password: null, gotStarted: false } })
+      await submitEmailButton.vm.$emit('click')
 
-    // eslint-disable-next-line no-undef
-
-    // eslint-disable-next-line no-undef
-    // expect(mockApi.postRequest()).toHaveBeenCalledTimes(1)
-
-    // const submitEmail = await wrapper.vm.submitEmail()
-
-    // await flushPromises()
-
-    // eslint-disable-next-line no-undef
-    // expect(submitEmail).toBeCalled()
-    // expect(wrapper.vm.submitEmailOngoing).toBe(true)
+      /* Assert */
+      expect(wrapper.vm.loginForm.email).toBe('me@you.com')
+      expect(wrapper.vm.submitEmailOngoing).toBe(true)
+    })
   })
 })
+/* eslint-enable no-undef */

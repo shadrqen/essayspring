@@ -48,6 +48,7 @@
                 v-model="loginForm.email"
                 :rules="validate.emailField"
                 class="text-field"
+                data-test-id="login-email-field"
                 flat
                 label="Enter your email"
                 solo
@@ -65,6 +66,7 @@
                 id="submit_email_btn"
                 ref="continueEmail"
                 :disabled="submitEmailOngoing"
+                data-test-id="login-email-button"
                 outlined
                 @click="submitEmail"
               >
@@ -897,10 +899,12 @@ export default {
       }
     },
     async submitEmail () {
+      console.log('\n\n\n submit email called \n\n\n')
       if (this.$refs.submitEmailForm.validate()) {
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
+            console.log('\n\n\n res: ', res, '\n\n\n')
             if (res.accountExists) {
               if (res.type === 'Client' && res.canLogIn) {
                 this.changeLoginDialogContents({
@@ -936,11 +940,11 @@ export default {
               }, 2000)
             }
           })
-          .catch(e => {
-            console.log(e)
+          .catch(() => {
             this.setAlertMessages('Error submitting email address. Kindly try again')
             this.submitEmailOngoing = false
           })
+        console.log('\n\n\n ous \n\n\n')
       }
     },
     /* Setting a password means changing the login dialog to allow a user to change a password.

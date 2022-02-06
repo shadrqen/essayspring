@@ -295,6 +295,7 @@
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 class="text-field"
+                data-test-id="login-form-password"
                 flat
                 label="Password"
                 solo
@@ -899,12 +900,10 @@ export default {
       }
     },
     async submitEmail () {
-      console.log('\n\n\n submit email called \n\n\n')
       if (this.$refs.submitEmailForm.validate()) {
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
-            console.log('\n\n\n res: ', res, '\n\n\n')
             if (res.accountExists) {
               if (res.type === 'Client' && res.canLogIn) {
                 this.changeLoginDialogContents({
@@ -919,11 +918,14 @@ export default {
                   val: true,
                   option: null
                 })
-                setTimeout(() => {
-                  document.getElementById('loginPassword').focus()
-                  document.getElementById('loginPassword').select()
-                }, 0)
+                if (process.env.NODE_ENV !== 'test') {
+                  setTimeout(() => {
+                    document.getElementById('loginPassword').focus()
+                    document.getElementById('loginPassword').select()
+                  }, 0)
+                }
               } else if (res.type === 'Client' && res.shouldSetPass) {
+                console.log('\n\n\n yes you need to set a password \n\n\n')
                 this.clientIsSettingPassword = true
                 this.clientIsChangingPassword = false
                 this.shouldSetPass(res.message)
@@ -944,7 +946,6 @@ export default {
             this.setAlertMessages('Error submitting email address. Kindly try again')
             this.submitEmailOngoing = false
           })
-        console.log('\n\n\n ous \n\n\n')
       }
     },
     /* Setting a password means changing the login dialog to allow a user to change a password.

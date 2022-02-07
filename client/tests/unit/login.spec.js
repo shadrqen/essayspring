@@ -61,7 +61,7 @@ const router = new VueRouter()
 
 const vuetify = new Vuetify()
 /* eslint-disable no-undef */
-describe('Login Service -> Log in user', () => {
+describe('Login Service -> Submit email', () => {
   let wrapper, getters, mutations, store, spyOnSubmitEmail, spyOnSetAlertMessages
   let submitEmailButton
 
@@ -126,42 +126,154 @@ describe('Login Service -> Log in user', () => {
     spyOnSubmitEmail.mockRestore()
   })
 
-  describe('When a valid email is provided', () => {
-    describe('If a user is new', () => {
-      it('Expect login to be called', async () => {
-        /* Act */
-        /* All we want is to know whether the submitLogin function was called, so we set the validate function
-        * as false to stop further processing */
-        wrapper.vm.$refs.submitEmailForm.validate = () => false
-        await submitEmailButton.vm.$emit('click')
+  describe('Email submission', () => {
+    describe('When a valid email is provided', () => {
+      describe('Given a user is new', () => {
+        it('SubmitEmail function should be called', async () => {
+          /* Act */
+          /* All we want is to know whether the submitLogin function was called, so we set the validate function
+          * as false to stop further processing */
+          wrapper.vm.$refs.submitEmailForm.validate = () => false
+          await submitEmailButton.vm.$emit('click')
 
-        /* Assert */
-        expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
-      })
-      it('Expect the registerClient event to be fired', async () => {
-        /* Arrange */
-        const email = 'new@user.com'
-        wrapper.vm.$refs.submitEmailForm.validate = () => true
-        const mockSubmitEmailSuccess = {
-          accountExists: false
-        }
-
-        /* Act */
-        await submitEmailSetup({
-          response: mockSubmitEmailSuccess,
-          email: email,
-          url: 'auth/v1/submit_login_email'
+          /* Assert */
+          expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
         })
-        // Wait for the event firing promise to be resolved
-        await flushPromises()
+        it('The registerClient event should be fired', async () => {
+          /* Arrange */
+          const email = 'new@user.com'
+          wrapper.vm.$refs.submitEmailForm.validate = () => true
+          const mockSubmitEmailSuccess = {
+            accountExists: false
+          }
 
-        /* Assert */
-        expect(wrapper.vm.loginForm.email).toBe('new@user.com')
-        expect(bus.$emit).toHaveBeenCalledWith('registerClient', true, email)
+          /* Act */
+          await submitEmailSetup({
+            response: mockSubmitEmailSuccess,
+            email: email,
+            url: 'auth/v1/submit_login_email'
+          })
+          // Wait for the event firing promise to be resolved
+          await flushPromises()
+
+          /* Assert */
+          expect(wrapper.vm.loginForm.email).toBe('new@user.com')
+          expect(bus.$emit).toHaveBeenCalledWith('registerClient', true, email)
+        })
+      })
+      describe('Given a user already exists', () => {
+        it('SubmitEmail function should be called', async () => {
+          /* Act */
+          /* All we want is to know whether the submitLogin function was called, so we set the validate function
+              * as false to stop further processing */
+          wrapper.vm.$refs.submitEmailForm.validate = () => false
+          await submitEmailButton.vm.$emit('click')
+
+          /* Assert */
+          expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
+        })
+
+        it('User with a set password should be prompted to enter password', async () => {
+          /* Arrange */
+          const email = 'existing@user.setpass'
+          wrapper.vm.$refs.submitEmailForm.validate = () => true
+          const mockSubmitEmailSuccess = {
+            accountExists: true,
+            type: 'Client',
+            canLogIn: true,
+            shouldSetPass: false
+          }
+
+          /* Act */
+          await submitEmailSetup({
+            response: mockSubmitEmailSuccess,
+            email: email,
+            url: 'auth/v1/submit_login_email'
+          })
+
+          /* Assert */
+          expect(wrapper.vm.loginForm.email).toBe(email)
+          expect(wrapper.vm.submitEmailOngoing).toBe(true)
+
+          // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
+          await flushPromises()
+
+          expect(mutations.changeLoginDialogContents).toHaveBeenCalledTimes(2)
+          expect(mutations.changeLoginDialogContents).toHaveBeenCalledWith({}, {
+            key: 'dialogContent',
+            subKey: 'submitEmail',
+            val: false,
+            option: null
+          })
+        })
+
+        it('User with no set password should be prompted to set password', async () => {
+          /* Arrange */
+          const email = 'existing@user.nopass'
+          wrapper.vm.$refs.submitEmailForm.validate = () => true
+          const mockSubmitEmailSuccess = {
+            accountExists: true,
+            type: 'Client',
+            canLogIn: false,
+            shouldSetPass: true
+          }
+
+          /* Act */
+          await submitEmailSetup({
+            response: mockSubmitEmailSuccess,
+            email: email,
+            url: 'auth/v1/submit_login_email'
+          })
+
+          /* Assert */
+          expect(wrapper.vm.loginForm.email).toBe(email)
+          expect(wrapper.vm.submitEmailOngoing).toBe(true)
+
+          // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
+          await flushPromises()
+
+          expect(mutations.changeLoginDialogContents).toHaveBeenCalledTimes(3)
+          expect(mutations.changeLoginDialogContents).toHaveBeenCalledWith({}, {
+            key: 'dialogContent',
+            subKey: 'notification',
+            val: true,
+            option: null
+          })
+        })
+
+        it('User with type "NonClient" should be notified why can\'t log in', async () => {
+          /* Arrange */
+          const email = 'existing@user.notclient'
+          wrapper.vm.$refs.submitEmailForm.validate = () => true
+          const mockSubmitEmailSuccess = {
+            accountExists: true,
+            type: 'NonClient',
+            canLogIn: false,
+            shouldSetPass: false
+          }
+
+          /* Act */
+          await submitEmailSetup({
+            response: mockSubmitEmailSuccess,
+            email: email,
+            url: 'auth/v1/submit_login_email'
+          })
+
+          /* Assert */
+          expect(wrapper.vm.loginForm.email).toBe(email)
+          expect(wrapper.vm.submitEmailOngoing).toBe(true)
+
+          // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
+          await flushPromises()
+
+          expect(spyOnSetAlertMessages).toHaveBeenCalledTimes(1)
+          expect(spyOnSetAlertMessages).toHaveBeenCalledWith('Email already used as a writer! Kindly use another email')
+          spyOnSetAlertMessages.mockRestore()
+        })
       })
     })
-    describe('If a user already exists', () => {
-      it('Expect login to be called', async () => {
+    describe('When an invalid email is provided', () => {
+      it('Login should to be called', async () => {
         /* Act */
         /* All we want is to know whether the submitLogin function was called, so we set the validate function
         * as false to stop further processing */
@@ -171,128 +283,31 @@ describe('Login Service -> Log in user', () => {
         /* Assert */
         expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
       })
-
-      it('Expect user with a set password to be prompted to enter password', async () => {
-        /* Arrange */
-        const email = 'existing@user.setpass'
-        wrapper.vm.$refs.submitEmailForm.validate = () => true
-        const mockSubmitEmailSuccess = {
-          accountExists: true,
-          type: 'Client',
-          canLogIn: true,
-          shouldSetPass: false
-        }
-
+      it('The login form validation should fail', async () => {
         /* Act */
-        await submitEmailSetup({
-          response: mockSubmitEmailSuccess,
-          email: email,
-          url: 'auth/v1/submit_login_email'
-        })
+        wrapper.vm.$refs.submitEmailForm.validate = () => false
+        await submitEmailButton.vm.$emit('click')
 
         /* Assert */
-        expect(wrapper.vm.loginForm.email).toBe(email)
-        expect(wrapper.vm.submitEmailOngoing).toBe(true)
-
-        // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
-        await flushPromises()
-
-        expect(mutations.changeLoginDialogContents).toHaveBeenCalledTimes(2)
-        expect(mutations.changeLoginDialogContents).toHaveBeenCalledWith({}, {
-          key: 'dialogContent',
-          subKey: 'submitEmail',
-          val: false,
-          option: null
-        })
-      })
-
-      it('Expect user with no set password to be prompted to set password', async () => {
-        /* Arrange */
-        const email = 'existing@user.nopass'
-        wrapper.vm.$refs.submitEmailForm.validate = () => true
-        const mockSubmitEmailSuccess = {
-          accountExists: true,
-          type: 'Client',
-          canLogIn: false,
-          shouldSetPass: true
-        }
-
-        /* Act */
-        await submitEmailSetup({
-          response: mockSubmitEmailSuccess,
-          email: email,
-          url: 'auth/v1/submit_login_email'
-        })
-
-        /* Assert */
-        expect(wrapper.vm.loginForm.email).toBe(email)
-        expect(wrapper.vm.submitEmailOngoing).toBe(true)
-
-        // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
-        await flushPromises()
-
-        expect(mutations.changeLoginDialogContents).toHaveBeenCalledTimes(3)
-        expect(mutations.changeLoginDialogContents).toHaveBeenCalledWith({}, {
-          key: 'dialogContent',
-          subKey: 'notification',
-          val: true,
-          option: null
-        })
-      })
-
-      it('Expect user who is not of type "Client" to notified why can\'t log in', async () => {
-        /* Arrange */
-        const email = 'existing@user.notclient'
-        wrapper.vm.$refs.submitEmailForm.validate = () => true
-        const mockSubmitEmailSuccess = {
-          accountExists: true,
-          type: 'NonClient',
-          canLogIn: false,
-          shouldSetPass: false
-        }
-
-        /* Act */
-        await submitEmailSetup({
-          response: mockSubmitEmailSuccess,
-          email: email,
-          url: 'auth/v1/submit_login_email'
-        })
-
-        /* Assert */
-        expect(wrapper.vm.loginForm.email).toBe(email)
-        expect(wrapper.vm.submitEmailOngoing).toBe(true)
-
-        // Flush all pending resolved promise handlers (ensure submit email finishes before asserting below)
-        await flushPromises()
-
-        expect(spyOnSetAlertMessages).toHaveBeenCalledTimes(1)
-        expect(spyOnSetAlertMessages).toHaveBeenCalledWith('Email already used as a writer! Kindly use another email')
-        spyOnSetAlertMessages.mockRestore()
+        /* Because submitEmailForm.validate() is false, the request will not enter the submitEmail function
+        * Therefore, we expect submitEmailOngoing to be false because we expect no change
+        * (it's initial value is false) */
+        expect(wrapper.vm.submitEmailOngoing).toBe(false)
       })
     })
   })
-  describe('When an invalid email is provided', () => {
-    it('Expect login to be called', async () => {
-      /* Act */
-      /* All we want is to know whether the submitLogin function was called, so we set the validate function
-      * as false to stop further processing */
-      wrapper.vm.$refs.submitEmailForm.validate = () => false
-      await submitEmailButton.vm.$emit('click')
+  describe('Logging In', () => {
+    describe('When a valid email/password combination is provided', () => {
+      it('Incorrect email/password combination should be displayed to user', async () => {
+        /* Arrange */
+        // const email = 'incorrect@email.password.combination'
 
-      /* Assert */
-      expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
-    })
-    it('Expect form validation to fail', async () => {
-      /* Act */
-      wrapper.vm.$refs.submitEmailForm.validate = () => false
-      await submitEmailButton.vm.$emit('click')
+        /* Act */
 
-      /* Assert */
-      /* Because submitEmailForm.validate() is false, the request will not enter the submitEmail function
-      * Therefore, we expect submitEmailOngoing to be false because we expect no change
-      * (it's initial value is false) */
-      expect(wrapper.vm.submitEmailOngoing).toBe(false)
+        /* Assert */
+      })
     })
+    describe('When a wrong email/password combination is provided', () => {})
   })
 })
 /* eslint-enable no-undef */

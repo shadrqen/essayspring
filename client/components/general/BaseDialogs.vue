@@ -904,6 +904,14 @@ export default {
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
+            /* TODO: To harmonize the return object to remove redundancy (check object below)
+            * {
+                accountExists: true,
+                type: 'Client',
+                canLogIn: true,
+                shouldSetPass: false
+              }
+            * */
             if (res.accountExists) {
               if (res.type === 'Client' && res.canLogIn) {
                 this.changeLoginDialogContents({
@@ -925,7 +933,6 @@ export default {
                   }, 0)
                 }
               } else if (res.type === 'Client' && res.shouldSetPass) {
-                console.log('\n\n\n yes you need to set a password \n\n\n')
                 this.clientIsSettingPassword = true
                 this.clientIsChangingPassword = false
                 this.shouldSetPass(res.message)

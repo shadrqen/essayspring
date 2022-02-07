@@ -17,7 +17,6 @@ import axios from 'axios'
 
 import MockAdapter from 'axios-mock-adapter'
 
-// import sinon from 'sinon'
 import Vuetify from 'vuetify'
 
 import Dialogs from '@/components/general/BaseDialogs.vue'
@@ -290,7 +289,8 @@ describe('Login Service -> Log in user', () => {
 
       /* Assert */
       /* Because submitEmailForm.validate() is false, the request will not enter the submitEmail function
-      * Therefore, submitEmailOngoing should be false because it's initial value is false */
+      * Therefore, we expect submitEmailOngoing to be false because we expect no change
+      * (it's initial value is false) */
       expect(wrapper.vm.submitEmailOngoing).toBe(false)
     })
   })

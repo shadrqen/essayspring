@@ -637,8 +637,7 @@ export default {
       'changeLoginMode',
       'changeOrderPostingDone',
       'changeClientGotStarted',
-      'changeReportProblemDialog',
-      'changeUserType'
+      'changeReportProblemDialog'
     ]),
     closeLoginDialog () {
       this.changeLoginDialog(false)

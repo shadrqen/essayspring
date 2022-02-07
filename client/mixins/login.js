@@ -7,10 +7,10 @@ export default {
       this.changeClient({ key: 'isNew', val: res.isNew })
       this.changeAccessToken(res.accessToken)
       this.changeRefreshToken(res.refreshToken)
-      this.changeUserType('Client')
       this.changeLoginStatus(true)
       this.changeLoginDialog(false)
       this.changeEmail(email)
+      /* TODO: How do we know that the login mode is Google? */
       this.changeLoginMode('Google')
       this.changeClientPostOrderForm({
         key: 'email',

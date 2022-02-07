@@ -23,7 +23,9 @@ import Dialogs from '@/components/general/BaseDialogs.vue'
 
 import VueRouter from 'vue-router'
 
-import { bus } from '@/plugins/bus.js'
+import { bus } from '@/plugins/bus'
+
+import loginMixin from '@/mixins/login'
 
 /**
  * Mocking modules
@@ -61,21 +63,31 @@ const router = new VueRouter()
 
 const vuetify = new Vuetify()
 /* eslint-disable no-undef */
-describe('Login Service -> Submit email', () => {
-  let wrapper, getters, mutations, store, spyOnSubmitEmail, spyOnSetAlertMessages
-  let submitEmailButton
+describe('Authentication Service -> Log in User', () => {
+  let wrapper, getters, mutations, store
 
   afterAll(() => mock.restore())
 
   beforeEach(() => {
-    spyOnSubmitEmail = jest.spyOn(Dialogs.methods, 'submitEmail')
-    spyOnSetAlertMessages = jest.spyOn(Dialogs.methods, 'setAlertMessages')
     getters = {
       loginStatus: () => false,
       getViewPortCode: () => 'lg',
       reportProblemDialog: () => false,
-      loginDialog: () => true,
-      loginDialogContents: () => {
+      loginDialog: () => true
+    }
+    mutations = {
+      changeLoginDialog: jest.fn(),
+      changeLoginDialogContents: jest.fn(),
+      changeLoginStatus: jest.fn()
+    }
+  })
+
+  describe('Email submission', () => {
+    let submitEmailButton, spyOnSubmitEmail, spyOnSetAlertMessages
+    beforeEach(() => {
+      spyOnSubmitEmail = jest.spyOn(Dialogs.methods, 'submitEmail')
+      spyOnSetAlertMessages = jest.spyOn(Dialogs.methods, 'setAlertMessages')
+      getters.loginDialogContents = () => {
         return {
           dialogTitle: 'Log in to your account',
           dialogContent: {
@@ -89,44 +101,31 @@ describe('Login Service -> Submit email', () => {
           }
         }
       }
-    }
-    mutations = {
-
-      changeLoginDialog: jest.fn(),
-
-      changeLoginDialogContents: jest.fn(),
-
-      changeLoginStatus: jest.fn()
-    }
-    store = new Vuex.Store({
-      getters,
-      mutations
+      store = new Vuex.Store({
+        getters,
+        mutations
+      })
+      wrapper = shallowMount(Dialogs, {
+        store,
+        localVue,
+        vuetify,
+        router,
+        propsData: {
+          viewportCode: 'lg'
+        }
+      })
+      submitEmailButton = wrapper.find('[data-test-id="submit-email-button"]')
     })
-    wrapper = shallowMount(Dialogs, {
-      store,
-      localVue,
-      vuetify,
-      router,
-      propsData: {
-        viewportCode: 'lg'
-      }
+    afterEach(() => {
+      spyOnSubmitEmail.mockRestore()
     })
-    submitEmailButton = wrapper.find('[data-test-id="login-email-button"]')
-  })
-
-  /*
-* Declaring shared functions */
-  const submitEmailSetup = async (submitContext = {}) => {
-    mock.onPost(`${BACKEND_URL}/${submitContext.url}`).reply(200, submitContext.response)
-    await wrapper.setData({ loginForm: { email: submitContext.email, password: null, gotStarted: false } })
-    await submitEmailButton.vm.$emit('click')
-  }
-
-  afterEach(() => {
-    spyOnSubmitEmail.mockRestore()
-  })
-
-  describe('Email submission', () => {
+    /*
+  * Declaring shared functions */
+    const submitEmailSetup = async (submitContext = {}) => {
+      mock.onPost(`${BACKEND_URL}/${submitContext.url}`).reply(200, submitContext.response)
+      await wrapper.setData({ loginForm: { email: submitContext.email, password: null, gotStarted: false } })
+      await submitEmailButton.vm.$emit('click')
+    }
     describe('When a valid email is provided', () => {
       describe('Given a user is new', () => {
         it('SubmitEmail function should be called', async () => {
@@ -139,6 +138,7 @@ describe('Login Service -> Submit email', () => {
           /* Assert */
           expect(spyOnSubmitEmail).toHaveBeenCalledTimes(1)
         })
+
         it('The registerClient event should be fired', async () => {
           /* Arrange */
           const email = 'new@user.com'
@@ -273,7 +273,7 @@ describe('Login Service -> Submit email', () => {
       })
     })
     describe('When an invalid email is provided', () => {
-      it('Login should to be called', async () => {
+      it('Login should be called', async () => {
         /* Act */
         /* All we want is to know whether the submitLogin function was called, so we set the validate function
         * as false to stop further processing */
@@ -297,8 +297,105 @@ describe('Login Service -> Submit email', () => {
     })
   })
   describe('Logging In', () => {
+    let loginButton, spyOnLogin
+    beforeEach(() => {
+      spyOnLogin = jest.spyOn(Dialogs.methods, 'startLoggingIn')
+      getters.loginDialogContents = () => {
+        return {
+          dialogTitle: 'Log in to your account',
+          dialogContent: {
+            submitEmail: false,
+            login: true,
+            notification: false,
+            notificationMessage: null,
+            loginInfo: null,
+            clientLogin: false,
+            setPassword: false
+          }
+        }
+      }
+      getters.clientGotStarted = () => false
+      getters.clientPostOrderForm = () => {
+        return {
+          type: 'private'
+        }
+      }
+      mutations.changeOrderPostingDone = () => jest.fn()
+      store = new Vuex.Store({
+        getters,
+        mutations
+      })
+      wrapper = shallowMount(Dialogs, {
+        store,
+        localVue,
+        vuetify,
+        router,
+        mixins: [loginMixin],
+        propsData: {
+          viewportCode: 'lg'
+        }
+      })
+      loginButton = wrapper.find('[data-test-id="login-button"]')
+    })
+
+    const loginUserSetup = async (email, password) => {
+      await wrapper.setData({ loginForm: { email: email, password: password, gotStarted: false } })
+
+      /* Act */
+      await loginButton.vm.$emit('click')
+    }
+
     describe('When a valid email/password combination is provided', () => {
-      it('Incorrect email/password combination should be displayed to user', async () => {
+      it('Should call the log in function', async () => {
+        /* Arrange */
+        const email = 'valid@email.user'
+        const password = 'Pass1234...'
+
+        /* Act */
+        wrapper.vm.$refs.loginForm.validate = () => false
+        await loginUserSetup(email, password)
+
+        /* Assert */
+        expect(spyOnLogin).toHaveBeenCalledTimes(1)
+      })
+      it('Should log in user', async () => {
+        /* Arrange */
+        const email = 'valid@email.user'
+        const password = 'Pass1234...'
+        const mockSuccessfulLoginResponse = {
+          message: 'success',
+          orderPostingStep: 'Finished',
+          email: email
+        }
+
+        /* Act */
+        mock.onPost(`${BACKEND_URL}/auth/v1/login_user`).reply(200, mockSuccessfulLoginResponse)
+        wrapper.vm.$refs.loginForm.validate = () => true
+        await loginUserSetup(email, password)
+
+        await flushPromises()
+
+        /* Assert */
+        // expect(mutations.changeLoginStatus).toHaveBeenCalledTimes(1)
+        expect(wrapper.vm.loginOngoing).toBe(true)
+      })
+      it('Should set authorization headers', async () => {
+        /* Arrange */
+        // const email = 'incorrect@email.password.combination'
+
+        /* Act */
+
+        /* Assert */
+      })
+      it('Should redirect user to orders page if no pending order', async () => {
+        /* Arrange */
+        // const email = 'incorrect@email.password.combination'
+
+        /* Act */
+
+        /* Assert */
+      })
+      it('Should redirect user to place-order page page if there is a pending order', async () => {
         /* Arrange */
         // const email = 'incorrect@email.password.combination'
 
@@ -307,7 +404,16 @@ describe('Login Service -> Submit email', () => {
         /* Assert */
       })
     })
-    describe('When a wrong email/password combination is provided', () => {})
+    describe('When a wrong email/password combination is provided', () => {
+      it('An incorrect email/password error should be displayed to user', async () => {
+        /* Arrange */
+        // const email = 'incorrect@email.password.combination'
+
+        /* Act */
+
+        /* Assert */
+      })
+    })
   })
 })
 /* eslint-enable no-undef */

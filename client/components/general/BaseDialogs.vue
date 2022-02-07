@@ -66,7 +66,7 @@
                 id="submit_email_btn"
                 ref="continueEmail"
                 :disabled="submitEmailOngoing"
-                data-test-id="login-email-button"
+                data-test-id="submit-email-button"
                 outlined
                 @click="submitEmail"
               >
@@ -327,6 +327,7 @@
                 id="login_btn"
                 :disabled="loginOngoing"
                 class="mt-2"
+                data-test-id="login-button"
                 outlined
                 @click="startLoggingIn(false)"
               >
@@ -769,7 +770,9 @@ export default {
       this.loginOngoing = true
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
+          // console.log('\n\n\n res: ', res, '\n\n\n')
           if (res.message === 'success') {
+            // console.log('\n\n\n just b4 calling ... \n\n\n')
             this.loginCurrentUser(res)
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a

@@ -1,5 +1,5 @@
 /**
-* @test-cases
+ * @test-cases
  * 1.  If correct email and password is provided
  *      i. Expect login to be called
  *      ii.

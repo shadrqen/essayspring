@@ -48,6 +48,7 @@
                 v-model="loginForm.email"
                 :rules="validate.emailField"
                 class="text-field"
+                data-test-id="login-email-field"
                 flat
                 label="Enter your email"
                 solo
@@ -65,6 +66,7 @@
                 id="submit_email_btn"
                 ref="continueEmail"
                 :disabled="submitEmailOngoing"
+                data-test-id="submit-email-button"
                 outlined
                 @click="submitEmail"
               >
@@ -293,6 +295,7 @@
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 class="text-field"
+                data-test-id="login-form-password"
                 flat
                 label="Password"
                 solo
@@ -324,6 +327,7 @@
                 id="login_btn"
                 :disabled="loginOngoing"
                 class="mt-2"
+                data-test-id="login-button"
                 outlined
                 @click="startLoggingIn(false)"
               >
@@ -620,20 +624,6 @@ export default {
     bus.$on('updateLoginForm', val => {
       this.loginForm.email = val
     })
-    /*
-    watch: {
-      loginDialog () {
-        if (this.loginDialog === ) {
-          setTimeout(() => {
-            if (!['xs', 'sm'].includes(this.viewport_code)) {
-              document.getElementById('loginEmail').focus()
-              document.getElementById('loginEmail').select()
-            }
-          }, 0)
-        }
-      }
-    },
-     */
   },
   methods: {
     ...mapMutations([
@@ -648,8 +638,7 @@ export default {
       'changeLoginMode',
       'changeOrderPostingDone',
       'changeClientGotStarted',
-      'changeReportProblemDialog',
-      'changeUserType'
+      'changeReportProblemDialog'
     ]),
     closeLoginDialog () {
       this.changeLoginDialog(false)
@@ -781,7 +770,9 @@ export default {
       this.loginOngoing = true
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
+          // console.log('\n\n\n res: ', res, '\n\n\n')
           if (res.message === 'success') {
+            // console.log('\n\n\n just b4 calling ... \n\n\n')
             this.loginCurrentUser(res)
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
@@ -915,6 +906,14 @@ export default {
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
+            /* TODO: To harmonize the return object to remove redundancy (check object below)
+            * {
+                accountExists: true,
+                type: 'Client',
+                canLogIn: true,
+                shouldSetPass: false
+              }
+            * */
             if (res.accountExists) {
               if (res.type === 'Client' && res.canLogIn) {
                 this.changeLoginDialogContents({
@@ -929,10 +928,12 @@ export default {
                   val: true,
                   option: null
                 })
-                setTimeout(() => {
-                  document.getElementById('loginPassword').focus()
-                  document.getElementById('loginPassword').select()
-                }, 0)
+                if (process.env.NODE_ENV !== 'test') {
+                  setTimeout(() => {
+                    document.getElementById('loginPassword').focus()
+                    document.getElementById('loginPassword').select()
+                  }, 0)
+                }
               } else if (res.type === 'Client' && res.shouldSetPass) {
                 this.clientIsSettingPassword = true
                 this.clientIsChangingPassword = false
@@ -950,8 +951,7 @@ export default {
               }, 2000)
             }
           })
-          .catch(e => {
-            console.log(e)
+          .catch(() => {
             this.setAlertMessages('Error submitting email address. Kindly try again')
             this.submitEmailOngoing = false
           })

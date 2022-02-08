@@ -545,8 +545,7 @@ export default {
       changeEmail: 'changeEmail',
       changeLoginDialogContents: 'changeLoginDialogContents',
       changeLoginDialog: 'changeLoginDialog',
-      changeClientGotStarted: 'changeClientGotStarted',
-      changeUserType: 'changeUserType'
+      changeClientGotStarted: 'changeClientGotStarted'
     }),
     async proceedToPlaceOrder () {
       if (this.$refs.clientPostOrderForm.validate()) {
@@ -599,12 +598,13 @@ export default {
           * 1. The user is new. He/she is therefore registered before getting access tokens to proceed
           * 2. The user is not new, here should be prompted to log in */
           /* Option 2: Prompt the 'not new' user to log in in case an account already exists */
+          /* FIXME: How can a user who is not new find himself/herself here? (like scenarios)? */
           if (response.response === 'success' && !response.isNew) {
             await api.postRequest('auth/v1/submit_login_email', {
               email: email
             })
               .then(async res => {
-                /* On loggin in, there are two scenarios:
+                /* On logging in, there are two scenarios:
                 * 1. The user is a client
                 * 2. The user is not a client - could be a writer. Mind you both writers and clients share the platform */
                 /* In the first case, there are two more scenarios:
@@ -613,6 +613,7 @@ export default {
                 * set his/her password */
                 /* IMPORTANT: Once a user has signed up or registered for an account with us, he/she is not prompted
                 * to create a password first. The password creation comes the second time he/she wants to log in. */
+                /* TODO: To combine the 'canLogIn, shouldSetPass' etc. functionality with that in BaseDialogs */
                 if (res.type === 'Client' && res.canLogIn) {
                   /* For user who are clients and have already set their passwords */
                   /* This is where the redirected variable comes in handy. This state helps to process other logic

@@ -21,7 +21,7 @@ import store from '../store'
  * The backend api absolute url
  * @type {string}
  */
-const BACKEND_URL: string = process.env.NODE_ENV === 'production' ? 'https://api.essayspring.com/' : `http://${process.env.URL}:3100/`
+const BACKEND_URL = process.env.NODE_ENV === 'production' ? 'https://api.essayspring.com/' : `http://${process.env.URL}:3100/`
 
 /**
  * An axios response interceptor to intercept responses and request for a refresh token in case of an expiry

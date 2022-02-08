@@ -2,15 +2,17 @@ import api from '../api/api'
 export default {
   methods: {
     loginCurrentUser (res) {
+      console.log('\n\n\n inside \n\n\n')
       const email = res.email
       this.changeClient({ key: 'regUpdateSuccessful', val: true })
       this.changeClient({ key: 'isNew', val: res.isNew })
       this.changeAccessToken(res.accessToken)
       this.changeRefreshToken(res.refreshToken)
-      this.changeUserType('Client')
+      console.log('\n\n\n just b4 calling ls \n\n\n')
       this.changeLoginStatus(true)
       this.changeLoginDialog(false)
       this.changeEmail(email)
+      /* TODO: How do we know that the login mode is Google? */
       this.changeLoginMode('Google')
       this.changeClientPostOrderForm({
         key: 'email',

@@ -48,9 +48,9 @@ export default {
     this.processGoogleOAuth()
   },
   methods: {
-    ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeUserType', 'changeClient',
+    ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeClient',
       'changeAccessToken', 'changeRefreshToken', 'changeEmail', 'changeLoginDialogContents', 'changeLoginDialog',
-      'changeLoginMode', 'changeOrderPostingDone', 'changeUserType'
+      'changeLoginMode', 'changeOrderPostingDone'
     ]),
     async processGoogleOAuth () {
       if (this.$route.query.code) {

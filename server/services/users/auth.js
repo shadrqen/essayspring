@@ -604,16 +604,13 @@ class AuthService {
         /* TODO: To remove the async in the promise below */
         return new Promise(async (resolve, reject) => {
           /* We are first checking redis to see whether it has a key that matches the given email */
-          await redisClient.get(req.redisPrefix.concat(req.email), async function (err, reply) {
+          try {
+            const reply = await redisClient.get(req.redisPrefix.concat(req.email))
             if (reply === req.otpCode) {
               const setPasswordForm = {
                 email: req.email,
                 password: req.password,
                 intention: req.intention
-              }
-              /* TODO: To confirm the effect of the statement below. It was not there previously */
-              if (err) {
-                reject(err)
               }
               await postDBRequest('users/v1/set_client_password', setPasswordForm)
                 .then(async response => {
@@ -628,7 +625,10 @@ class AuthService {
             } else {
               resolve({ status: false, message: 'Invalid OTP Code' })
             }
-          })
+          } catch (err) {
+            // ClosedClient Error
+            reject(err)
+          }
         })
         /* eslint-enable no-async-promise-executor */
       } catch (e) {
@@ -732,7 +732,8 @@ class AuthService {
               /* eslint-disable no-async-promise-executor */
               /* TODO: To remove the async in the promise below */
               return new Promise(async (resolve, reject) => {
-                await redisClient.get(req.redisPrefix.concat(req.email), async (err, otp) => {
+                try {
+                  const otp = await redisClient.get(req.redisPrefix.concat(req.email))
                   const response = {
                     accountExists: true,
                     codeSent: false,
@@ -741,12 +742,9 @@ class AuthService {
                     type: 'Client',
                     success: false
                   }
-                  /* TODO: to determine the effect of the conditional statement below */
-                  if (err) {
-                    reject(err)
-                  }
                   if (otp) {
-                    await redisClient.get(req.redisPrefix.concat(req.email, '-token'), async (tokenErr, tokenOtp) => {
+                    try {
+                      const tokenOtp = await redisClient.get(req.redisPrefix.concat(req.email, '-token'))
                       if (tokenOtp) {
                         response.success = true
                         response.message = 'Code already sent. Kindly retry again after 30 seconds'
@@ -755,11 +753,16 @@ class AuthService {
                         await redisClient.del(req.redisPrefix.concat(req.email))
                         resolve(AuthService.sendCode(req))
                       }
-                    })
+                    } catch (tokenErr) {
+                      reject(tokenErr)
+                    }
                   } else {
                     resolve(AuthService.sendCode(req))
                   }
-                })
+                } catch (err) {
+                  // ClosedClient Error
+                  reject(err)
+                }
               })
               /* eslint-enable no-async-promise-executor */
             } else {

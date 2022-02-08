@@ -140,12 +140,13 @@ export default {
    *
    * @param urlPath - the specific url of the backend resource
    * @param payload - Request body
+   * @param {number} timeout - the request timeout
    * @returns {Object} - The request response (success, error)
    */
-  async postRequest (urlPath: string, payload: any) {
+  async postRequest (urlPath: string, payload: any, timeout: number = 60000) {
     this.setAxiosHeaders()
     return await axios
-      .post(BACKEND_URL + urlPath, payload)
+      .post(BACKEND_URL + urlPath, payload, { timeout: timeout })
       .then(response => {
         return response.data
       })
@@ -156,12 +157,13 @@ export default {
   /**
    * The function to handle get requests
    * @param {string} urlPath - the specific url of the backend resource
+   * @param {number} timeout - the request timeout
    * @returns {Object} - The request response (success, error)
    */
-  async getRequest (urlPath: string) {
+  async getRequest (urlPath: string, timeout: number = 60000) {
     this.setAxiosHeaders()
     return await axios
-      .get(BACKEND_URL + urlPath)
+      .get(BACKEND_URL + urlPath, { timeout: timeout })
       .then(response => {
         return response.data
       })

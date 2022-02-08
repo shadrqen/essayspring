@@ -25,7 +25,7 @@ import VueRouter from 'vue-router'
 
 import { bus } from '@/plugins/bus'
 
-import loginMixin from '@/mixins/login'
+import loginMixin from '../../mixins/login.js'
 
 /**
  * Mocking modules
@@ -298,6 +298,7 @@ describe('Authentication Service -> Log in User', () => {
   })
   describe('Logging In', () => {
     let loginButton, spyOnLogin
+    localVue.use(loginMixin)
     beforeEach(() => {
       spyOnLogin = jest.spyOn(Dialogs.methods, 'startLoggingIn')
       getters.loginDialogContents = () => {
@@ -330,10 +331,10 @@ describe('Authentication Service -> Log in User', () => {
         localVue,
         vuetify,
         router,
-        mixins: [loginMixin],
         propsData: {
           viewportCode: 'lg'
-        }
+        },
+        mixins: [loginMixin]
       })
       loginButton = wrapper.find('[data-test-id="login-button"]')
     })
@@ -377,7 +378,6 @@ describe('Authentication Service -> Log in User', () => {
 
         /* Assert */
         // expect(mutations.changeLoginStatus).toHaveBeenCalledTimes(1)
-        expect(wrapper.vm.loginOngoing).toBe(true)
       })
       it('Should set authorization headers', async () => {
         /* Arrange */

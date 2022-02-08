@@ -769,15 +769,17 @@ export default {
       bus.$emit('changeNavOverlay', true)
       this.loginOngoing = true
       await api.postRequest('auth/v1/login_user', payload)
-        .then(res => {
+        .then(async res => {
           if (res.message === 'success') {
-            // console.log('\n\n\n just b4 calling ... \n\n\n')
-            this.loginCurrentUser(res, 'Email')
+            console.log('\n\n\n just b4 calling ... \n\n\n')
+            await this.loginCurrentUser(res, 'Email')
+            console.log('\n\n\n after ... \n\n\n')
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
             * client had a pending order on his last log in or not. If the status of the variable is finished,
             * then we are ascertained that there is no pending order */
-            if (res.orderPostingStep === 'Finished' || !res.orderPostingStep) {
+            const userHasNoPendingOrder = res.orderPostingStep === 'Finished' || !res.orderPostingStep
+            if (userHasNoPendingOrder) {
               /* The clientGotStarted variable determines whether a client clicked on the 'Get Started' button
               * on the home to log in. This is because there are two ways of loggin a user in - the 'Get Started'
               * button and the Login button. A person who logs in through the 'Get Started' button needs

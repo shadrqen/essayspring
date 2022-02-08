@@ -219,7 +219,8 @@ class AuthService {
             refreshToken: refreshToken,
             response: 'success',
             isNew: res.response !== 'Email already exists',
-            email: req.body.name ? req.body.email : null
+            /* TODO: Why this -> email: req.body.name ? req.body.email : null */
+            email: req.body.email
           }
         })
         .catch(error => {

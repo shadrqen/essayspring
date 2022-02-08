@@ -769,7 +769,7 @@ export default {
       switch (res.response) {
         /* We only act on the success option */
         case 'success':
-          this.loginCurrentUser(res)
+          this.loginCurrentUser(res, 'Email')
           /* TODO: To confirm the role of the redirected variable */
           if (redirected) {
             if (this.$route.fullPath !== '/') {

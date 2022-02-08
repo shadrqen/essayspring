@@ -63,7 +63,7 @@ export default {
         await api.postRequest('auth/v1/auth/google', { code: code })
           .then(res => {
             if (res.response === 'success' || res.message === 'success') {
-              this.loginClient(res)
+              this.loginClient(res, 'Google')
             } else {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',
@@ -83,8 +83,8 @@ export default {
         }
       }
     },
-    loginClient (res) {
-      this.loginCurrentUser(res)
+    loginClient (res, loginMode) {
+      this.loginCurrentUser(res, loginMode)
       if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
         this.changeOrderPostingDone(true)
         this.$router.push('/client/orders')

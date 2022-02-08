@@ -99,7 +99,7 @@ const mutations = {
   changeReportProblemDialog: (state: any, val: any) => {
     state.reportProblemDialog = val
   },
-  changeLoginMode: (state: any, val: any) => {
+  changeLoginMode: (state: any, val: string) => {
     state.loginMode = val
   },
   changeAccessToken: (state: any, val: any) => {

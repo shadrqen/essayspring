@@ -471,40 +471,44 @@ export default {
       return item[itemHeader.value][0] ? item[itemHeader.value][0].Currency.currencyCode.concat(' ', String(Math.floor(item[itemHeader.value][0][itemHeader.subValue]))) : null
     },
     async postNewOrder () {
-      /* First check whether the client has any writers */
-      this.postNewOrderOngoing = true
-      await api.getRequest('users/v1/get_writers')
-        .then(response => {
-          // this.postNewOrderOngoing = false
-          const atLeastOneActiveWriter = response.writers.filter(writer => writer.connectionConfirmed)
-          if (atLeastOneActiveWriter.length > 0) {
-            const email = this.clientPostOrderForm.email
-            this.resetClientPostOrderForm()
-            this.changeClientPostOrderForm({
-              key: 'email',
-              subKey: null,
-              val: email,
-              option: null
-            })
-            this.$router.push('/client/place-order')
-            /* Disabled the reloading of the page after wanting to start a new order, for now */
-            /* TODO: To confirm whether this has negative impacts on the user experience */
-            /* setTimeout(() => {
-              location.reload()
-            }, 2000) */
-          } else {
-            if (atLeastOneActiveWriter.length === 0 && response.writers.length > 0) {
-              this.inviteWriterNotification = 'Kindly approve at least one writer to continue'
+      if (this.clientPostOrderForm.type === 'public') {
+        /* First check whether the client has any writers for public clients */
+        this.postNewOrderOngoing = true
+        await api.getRequest('users/v1/get_writers')
+          .then(response => {
+            // this.postNewOrderOngoing = false
+            const atLeastOneActiveWriter = response.writers.filter(writer => writer.connectionConfirmed)
+            if (atLeastOneActiveWriter.length > 0) {
+              const email = this.clientPostOrderForm.email
+              this.resetClientPostOrderForm()
+              this.changeClientPostOrderForm({
+                key: 'email',
+                subKey: null,
+                val: email,
+                option: null
+              })
+              this.$router.push('/client/place-order')
+              /* Disabled the reloading of the page after wanting to start a new order, for now */
+              /* TODO: To confirm whether this has negative impacts on the user experience */
+              /* setTimeout(() => {
+                location.reload()
+              }, 2000) */
             } else {
-              this.inviteWriterNotification = 'Kindly invite at least one writer and approve to continue'
+              if (atLeastOneActiveWriter.length === 0 && response.writers.length > 0) {
+                this.inviteWriterNotification = 'Kindly approve at least one writer to continue'
+              } else {
+                this.inviteWriterNotification = 'Kindly invite at least one writer and approve to continue'
+              }
+              this.inviteWriterPromptDialog = true
+              this.postNewOrderOngoing = false
             }
-            this.inviteWriterPromptDialog = true
+          })
+          .catch(() => {
             this.postNewOrderOngoing = false
-          }
-        })
-        .catch(() => {
-          this.postNewOrderOngoing = false
-        })
+          })
+      } else {
+        await this.$router.push('/client/place-order')
+      }
     },
     /* Writer invitations are only for private writers */
     async inviteWriter () {

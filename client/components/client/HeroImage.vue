@@ -21,13 +21,13 @@
               id="sit_back_relax"
               :class="textH5"
             >
-              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }}
+              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? mainHeroPub : mainHero }}
             </p>
             <p
               id="we_offer_exemplary_service"
               :class="textSubTitle1"
             >
-              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? subHeroPub : subHero }}
+              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? subHeroPub : subHero }}
               <br>
               {{ subHeroNewLine }}
             </p>
@@ -37,7 +37,7 @@
                 justify="center"
               >
                 <v-img
-                  :height="clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? null : 300"
+                  :height="clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? null : 300"
                   :src="require('~/assets/exams.svg')"
                   class="mt-4"
                 >
@@ -81,14 +81,14 @@
                 :style="{ 'padding-left': clientPostOrderCardTextPadding,
                           'padding-right': clientPostOrderCardTextPadding}"
               >
-                <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                   Boost Your Grades
                 </template>
                 <template v-else>
                   Unlock Your Potential
                 </template>
               </v-card-title>
-              <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+              <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
               <v-form
                 ref="clientPostOrderForm"
                 @submit.prevent=""
@@ -113,7 +113,7 @@
                   />
                   <!--                  It is broken down into two instances: Public and private-->
                   <!--                  The public instance allows a client to specify order details-->
-                  <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                  <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                     <template v-if="pageFullyLoaded">
                       <br>
                       <label class="text_field_label">Assignment Type</label>
@@ -249,7 +249,7 @@
                             style="height: 50px"
                           />
                         </v-col>
-                        <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                        <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                       </v-row>
                     </template>
                     <template v-else>
@@ -512,7 +512,7 @@ export default {
     }
   },
   mounted () {
-    if (this.clientPostOrderForm.type === 'public') {
+    if (this.clientPostOrderForm.type === 'private') {
       /* We only get the states if the type of client is public */
       this.getStates()
     }
@@ -563,7 +563,7 @@ export default {
           })
           // /*If a person is already logged in, then redirect him or her to either the place-order or writers pages*/
           if (this.loginStatus) {
-            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
+            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'private') {
               this.$router.push('/client/place-order')
             } else {
               this.$router.push('/client/writers')
@@ -776,7 +776,7 @@ export default {
               this.$router.push('/')
             }
           } else {
-            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
+            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'private') {
               this.$router.push('/client/place-order')
             } else {
               this.$router.push('/client/writers')

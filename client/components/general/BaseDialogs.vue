@@ -770,10 +770,9 @@ export default {
       this.loginOngoing = true
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
-          // console.log('\n\n\n res: ', res, '\n\n\n')
           if (res.message === 'success') {
             // console.log('\n\n\n just b4 calling ... \n\n\n')
-            this.loginCurrentUser(res)
+            this.loginCurrentUser(res, 'Email')
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
             * client had a pending order on his last log in or not. If the status of the variable is finished,
@@ -1030,7 +1029,7 @@ export default {
       await FacebookLogin.checkLoginStatus()
         .then(res => {
           if (res.response === 'success' || res.message === 'success') {
-            this.loginClient(res)
+            this.loginClient(res, 'Facebook')
           } else {
             this.disableLoginFacebook = false
             this.errorObject.message = res.message

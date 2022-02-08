@@ -1,7 +1,7 @@
 # # -e "DOCKER_VERNEMQ_ALLOW_ANONYMOUS=on"
 # start with winpty for windows
-winpty docker build -t vernemq:loc .
-winpty docker run \
+docker build -t vernemq:loc .
+docker run \
   -it \
   --rm \
   -p 1883:1883 \

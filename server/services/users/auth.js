@@ -604,7 +604,7 @@ class AuthService {
         /* TODO: To remove the async in the promise below */
         return new Promise(async (resolve, reject) => {
           /* We are first checking redis to see whether it has a key that matches the given email */
-          redisClient.get(req.redisPrefix.concat(req.email), async function (err, reply) {
+          await redisClient.get(req.redisPrefix.concat(req.email), async function (err, reply) {
             if (reply === req.otpCode) {
               const setPasswordForm = {
                 email: req.email,
@@ -618,7 +618,7 @@ class AuthService {
               await postDBRequest('users/v1/set_client_password', setPasswordForm)
                 .then(async response => {
                   if (response.status && response.message === 'Password updated') {
-                    redisClient.del(req.redisPrefix.concat(req.email))
+                    await redisClient.del(req.redisPrefix.concat(req.email))
                   }
                   resolve(response)
                 })
@@ -695,8 +695,8 @@ class AuthService {
         /* One key sets the email address while the other sets the token.
             * The email expires in 1 hour. The token however expires in 30 minutes.
             * TODO: To confirm reasoning behind the difference in the expiry times */
-        redisClient.set(req.redisPrefix.concat(req.email), otpCode, 'EX', 60 * 10)
-        redisClient.set(req.redisPrefix.concat(req.email, '-token'), otpCode, 'EX', 30)
+        await redisClient.set(req.redisPrefix.concat(req.email), otpCode, 'EX', 60 * 10)
+        await redisClient.set(req.redisPrefix.concat(req.email, '-token'), otpCode, 'EX', 30)
         const htmlToSend = emailOTP.emailOTPCode(otpCode, req.intention)
         const emailDetails = {
           to: req.email,
@@ -732,7 +732,7 @@ class AuthService {
               /* eslint-disable no-async-promise-executor */
               /* TODO: To remove the async in the promise below */
               return new Promise(async (resolve, reject) => {
-                redisClient.get(req.redisPrefix.concat(req.email), async (err, otp) => {
+                await redisClient.get(req.redisPrefix.concat(req.email), async (err, otp) => {
                   const response = {
                     accountExists: true,
                     codeSent: false,

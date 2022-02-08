@@ -63,9 +63,9 @@ export default {
   name: 'AssignmentDeadline',
   props: {
     deadline: {
-      type: String,
+      type: Object,
       required: false,
-      default: ''
+      default: () => {}
     },
     color: {
       type: String,

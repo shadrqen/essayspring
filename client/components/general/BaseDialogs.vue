@@ -777,41 +777,33 @@ export default {
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
             * client had a pending order on his last log in or not. If the status of the variable is finished,
             * then we are ascertained that there is no pending order */
-            if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
+            if (res.orderPostingStep === 'Finished' || !res.orderPostingStep) {
               /* The clientGotStarted variable determines whether a client clicked on the 'Get Started' button
               * on the home to log in. This is because there are two ways of loggin a user in - the 'Get Started'
               * button and the Login button. A person who logs in through the 'Get Started' button needs
               * to be handled differently from that who logged in as evident below */
               if (this.clientGotStarted) {
-                if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                  this.$router.push('/client/place-order')
-                } else {
-                  this.$router.push('/client/writers')
-                }
+                this.$router.push('/client/place-order')
                 this.changeClientGotStarted(false)
                 bus.$emit('changeNavOverlay', false)
               } else {
                 this.changeOrderPostingDone(true)
                 if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                  this.$router.push('/client/place-order')
-                } else {
                   this.$router.push('/client/writers')
+                } else {
+                  this.$router.push('/client/orders')
                 }
                 bus.$emit('changeNavOverlay', false)
               }
             } else {
               /* That's why we push the response as a parameter to the route below. The response contains
               * details about the last order that is unfinished - which needs to be resumed from */
-              if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                this.$router.push({
-                  name: 'client-place-order',
-                  params: {
-                    response: JSON.stringify(res)
-                  }
-                })
-              } else {
-                this.$router.push('/client/writers')
-              }
+              this.$router.push({
+                name: 'client-place-order',
+                params: {
+                  response: JSON.stringify(res)
+                }
+              })
               bus.$emit('changeNavOverlay', false)
             }
           } else {

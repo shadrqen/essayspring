@@ -26,7 +26,7 @@ const getDefaultRegistrationState = {
   },
   orderStatusTypes: [],
   clientPostOrderForm: {
-    type: 'public',
+    type: 'private',
     level: 1,
     orderPostingStep: 1,
     email: '',
@@ -99,7 +99,7 @@ const state = () => ({
   },
   orderStatusTypes: [],
   clientPostOrderForm: {
-    type: 'public',
+    type: 'private',
     level: 1,
     orderPostingStep: 1,
     email: '',

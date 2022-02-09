@@ -38,10 +38,10 @@
 
           <!--          We only have two steps above for a private writer-->
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'" />
+          <v-divider v-if="clientPostOrderForm.type === 'private'" />
 
           <v-stepper-step
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             :complete="level > 3"
             color="#007991"
             step="3"
@@ -49,10 +49,10 @@
             {{ steps.step3 }}
           </v-stepper-step>
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'" />
+          <v-divider v-if="clientPostOrderForm.type === 'private'" />
 
           <v-stepper-step
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             :complete="level > 4"
             color="#007991"
             step="4"
@@ -97,13 +97,13 @@
         </v-stepper-content>
         <!--        We only have two steps above for a private writer-->
         <v-stepper-content
-          v-if="clientPostOrderForm.type === 'public'"
+          v-if="clientPostOrderForm.type === 'private'"
           step="3"
         >
           <slot name="stepper-content-step-3" />
         </v-stepper-content>
         <v-stepper-content
-          v-if="clientPostOrderForm.type === 'public'"
+          v-if="clientPostOrderForm.type === 'private'"
           step="4"
         >
           <slot name="stepper-content-step-4" />

@@ -93,3 +93,5 @@ sw.*
 db_volume/
 
 out/
+
+dump.rdb

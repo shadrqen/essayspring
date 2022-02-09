@@ -52,7 +52,7 @@
                     xl="4"
                   >
                     <v-btn
-                      v-if="clientPostOrderForm.type === 'public'"
+                      v-if="clientPostOrderForm.type === 'private'"
                       id="back_btn_step_2_"
                       outlined
                       @click="proceedToNextLevel(3)"
@@ -85,7 +85,7 @@
             </select-writer>
           </template>
           <template
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             #stepper-content-step-3
           >
             <check-order @progress-to-next-level="proceedToNextLevel">
@@ -118,7 +118,7 @@
             </check-order>
           </template>
           <template
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             #stepper-content-step-4
           >
             <add-funds @progress-to-next-level="proceedToNextLevel">
@@ -186,13 +186,13 @@ export default {
   mixins: [DefaultFormMixin],
   data () {
     return {
-      stepsPublic: {
+      stepsPrivate: {
         step1: 'Place Order',
         step2: 'Select Writer',
         step3: 'Check Order',
         step4: 'Add Funds'
       },
-      stepsPrivate: {
+      stepsPublic: {
         step1: 'Place Order',
         step2: 'Select Writer'
       },
@@ -218,7 +218,7 @@ export default {
         this.$router.push('/')
       } else {
         /* Check if the level is  */
-        if (this.clientPostOrderForm.level === 2 && this.clientPostOrderForm.type === 'public') {
+        if (this.clientPostOrderForm.level === 2 && this.clientPostOrderForm.type === 'private') {
           this.getOrderBids = true
           setTimeout(() => {
             this.getOrderBids = false
@@ -269,7 +269,7 @@ export default {
           }, 3000)
         }
         bus.$emit('updatePricesOnCheckOrder')
-      } else if (level === 2 && this.clientPostOrderForm.type === 'public') {
+      } else if (level === 2 && this.clientPostOrderForm.type === 'private') {
         bus.$emit('changeBiddingMessage')
         this.getOrderBids = true
       }
@@ -422,7 +422,7 @@ export default {
                 option: null
               })
               level = 2
-              if (this.clientPostOrderForm.type === 'public') {
+              if (this.clientPostOrderForm.type === 'private') {
                 this.getOrderBids = true
               }
             } else {
@@ -434,7 +434,7 @@ export default {
               }
             }
             const clientPostOrderForm = {
-              type: 'public',
+              type: 'private',
               level: level,
               orderPostingStep: 1,
               email: this.email,
@@ -491,7 +491,7 @@ export default {
             * a prop. When the prop is true, or when it mutates to true (because there is a watcher), then the
             * function starts getting bids from writers */
             if (res.orderPostingStep && res.orderPostingStep.lastStep === 1) {
-              if (this.clientPostOrderForm.type === 'public') {
+              if (this.clientPostOrderForm.type === 'private') {
                 this.getOrderBids = true
                 setTimeout(() => {
                   this.getOrderBids = false

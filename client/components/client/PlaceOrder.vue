@@ -369,7 +369,7 @@
             />
             <br>
             <v-layout
-              v-if="clientPostOrderForm.type === 'public'"
+              v-if="clientPostOrderForm.type === 'private'"
               class="pa-2 mt-2 mb-1 price-layout"
               row
             >
@@ -546,7 +546,7 @@
                 class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
               >
-                <template v-if="clientPostOrderForm.type === 'public'">
+                <template v-if="clientPostOrderForm.type === 'private'">
                   Select a Writer
                 </template>
                 <template v-else>
@@ -944,7 +944,7 @@ export default {
           val: this.clientPostOrderForm.pageCount,
           option: null
         })
-        if (this.clientPostOrderForm.type === 'public') {
+        if (this.clientPostOrderForm.type === 'private') {
           setTimeout(() => {
             this.priceCalculationIsNecessary()
           }, 0)
@@ -1017,7 +1017,7 @@ export default {
             val: this.clientPostOrderForm.paymentSummary.paperPrice,
             option: null
           })
-          if (this.clientPostOrderForm.type === 'public') {
+          if (this.clientPostOrderForm.type === 'private') {
             this.clientPostOrderForm.paymentSummary.totalPrice = this.clientPostOrderForm.paymentSummary.paperPrice + this.clientPostOrderForm.paymentSummary.extrasTotalPrice
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
@@ -1186,7 +1186,8 @@ export default {
       }
     },
     priceCalculationIsNecessary () {
-      if (this.clientPostOrderForm.type === 'public') {
+      console.log(this.clientPostOrderForm.type)
+      if (this.clientPostOrderForm.type === 'private') {
         if (this.clientPostOrderForm.deadlineDate && this.clientPostOrderForm.deadlineTime &&
             this.clientPostOrderForm.pageCount && this.clientPostOrderForm.assignmentType &&
             this.clientPostOrderForm.studyLevel

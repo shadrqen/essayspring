@@ -7,7 +7,7 @@
     <v-card-text>
       <v-container>
         <v-row
-          :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+          :style="screenIsXL ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
           no-gutters
         >
           <v-col
@@ -235,7 +235,7 @@
                             id="deadline-time"
                             v-model="clientPostOrderForm.deadlineTime"
                             :disabled="!clientPostOrderForm.deadlineDate"
-                            :items="computedItems"
+                            :items="filteredTimeInAmPm"
                             :rules="validate.deadlineTime"
                             append-icon="schedule"
                             class="text-field"
@@ -467,7 +467,7 @@ export default {
     }
   },
   computed: {
-    xl () {
+    screenIsXL () {
       let val
       switch (this.$vuetify.breakpoint.name) {
         case 'xl':
@@ -485,7 +485,7 @@ export default {
       client: 'client',
       loginStatus: 'loginStatus'
     }),
-    computedItems () {
+    filteredTimeInAmPm () {
       return this.time.map(item => {
         return {
           id: item.id,

@@ -7,7 +7,7 @@ class LoggerService {
     /* We release control to the next function as soon as we hit the function so that we can
      * do the rest on the background */
     next()
-    const log = {
+    const LOG = {
       ip: null,
       email: null,
       userType: null,
@@ -21,35 +21,35 @@ class LoggerService {
     const origin = req.headers.origin
     const referer = req.headers.referer
     const originalUrl = req.originalUrl
-    log.origin = origin
-    log.referer = referer
-    log.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-    log.originalUrl = originalUrl
-    log.userAgent = req.headers['user-agent']
-    log.suspect = !(origin && [process.env.WC_DEV_URL, 'https://essayspring.com'].includes(origin))
+    LOG.origin = origin
+    LOG.referer = referer
+    LOG.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    LOG.originalUrl = originalUrl
+    LOG.userAgent = req.headers['user-agent']
+    LOG.suspect = !(origin && [process.env.WC_DEV_URL, 'https://essayspring.com'].includes(origin))
     const urlsBodyNotLogged = ['/auth/v1/auth/facebook', '/auth/v1/auth/google',
       '/auth/v1/login_user', '/auth/v1/submit_login_email']
     if (!urlsBodyNotLogged.includes(originalUrl)) {
-      log.formData = req.body
+      LOG.formData = req.body
     }
     if (req.headers.access) {
       await decodeToken(req.headers.access)
         .then(tokens => {
           if (tokens.status === 'success') {
-            log.email = tokens.message.sub
-            log.userType = tokens.message.user
+            LOG.email = tokens.message.sub
+            LOG.userType = tokens.message.user
           } else {
-            log.userType = 'Other'
+            LOG.userType = 'Other'
           }
         })
         .catch(() => {
-          log.userType = 'Other'
+          LOG.userType = 'Other'
         })
     } else {
-      log.userType = 'Other'
+      LOG.userType = 'Other'
     }
     /* TODO: To handle the success and error responses */
-    await postDBRequest('logs/v1/save_log', log)
+    await postDBRequest('logs/v1/save_log', LOG)
       .then(() => {})
       .catch(() => {})
   }

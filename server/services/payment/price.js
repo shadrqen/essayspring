@@ -10,10 +10,10 @@ class PricesService {
     switch (studyLevel) {
       case 'High School':
       {
-        const collegePercentAsDecimal = 1 - (priceRatio.bachelors / 100)
-        const collegePrice = price * collegePercentAsDecimal
-        const schoolPercentageAsDecimal = 1 - (priceRatio.college / 100)
-        price = collegePrice * schoolPercentageAsDecimal
+        const COLLEGE_PERCENT_AS_DECIMAL = 1 - (priceRatio.bachelors / 100)
+        const COLLEGE_PRICE = price * COLLEGE_PERCENT_AS_DECIMAL
+        const SCHOOL_PERCENT_AS_DECIMAL = 1 - (priceRatio.college / 100)
+        price = COLLEGE_PRICE * SCHOOL_PERCENT_AS_DECIMAL
         break
       }
       case 'College':
@@ -35,10 +35,10 @@ class PricesService {
       }
       case 'Doctorate':
       {
-        const mastersPercentAsDecimal = 1 + (priceRatio.masters / 100)
-        const mastersPrice = price * mastersPercentAsDecimal
-        const doctoratePercentAsDecimal = 1 + (priceRatio.doctorate / 100)
-        price = mastersPrice * doctoratePercentAsDecimal
+        const MASTERS_AS_PERCENT = 1 + (priceRatio.masters / 100)
+        const MASTERS_PRICE = price * MASTERS_AS_PERCENT
+        const DOCTORATE_PERCENT_AS_DECIMAL = 1 + (priceRatio.doctorate / 100)
+        price = MASTERS_PRICE * DOCTORATE_PERCENT_AS_DECIMAL
         break
       }
     }
@@ -48,7 +48,7 @@ class PricesService {
   /* The price reduces with an increase in the deadline becomes longer */
   static calculateByDeadline (initialPrice, deadline, priceRatio) {
     let price = initialPrice
-    const days = deadline.days
+    const DEADLINE_DAYS = deadline.days
     let hours = deadline.hours
     /* The variables below are divided into:
     *   - 12 hour
@@ -57,49 +57,49 @@ class PricesService {
     *   - 3 day
     *   - 5-day
     * because the values stored in the database are in those denominations or else ranges */
-    const _12hrPercentageAsDecimal = 1 - (priceRatio.hr12 / 100)
-    const _12hrPrice = price * _12hrPercentageAsDecimal
-    const _1dayPercentAsDecimal = 1 - (priceRatio.day1 / 100)
-    const _1dayPrice = _12hrPrice * _1dayPercentAsDecimal
-    const _2dayPercentAsDecimal = 1 - (priceRatio.day2 / 100)
-    const _2dayPrice = _1dayPrice * _2dayPercentAsDecimal
-    const _3dayPercentAsDecimal = 1 - (priceRatio.day3 / 100)
-    const _3dayPrice = _2dayPrice * _3dayPercentAsDecimal
-    const _5dayPercentAsDecimal = 1 - (priceRatio.day5 / 100)
-    const _5dayPrice = _3dayPrice * _5dayPercentAsDecimal
+    const _12HR_PERCENT_AS_DECIMAL = 1 - (priceRatio.hr12 / 100)
+    const _12HR_PRICE = price * _12HR_PERCENT_AS_DECIMAL
+    const _1DAY_PERCENT_AS_DECIMAL = 1 - (priceRatio.day1 / 100)
+    const _1DAY_PRICE = _12HR_PRICE * _1DAY_PERCENT_AS_DECIMAL
+    const _2DAY_PERCENT_AS_DECIMAL = 1 - (priceRatio.day2 / 100)
+    const _2DAY_PRICE = _1DAY_PRICE * _2DAY_PERCENT_AS_DECIMAL
+    const _3DAY_PERCENT_AS_DECIMAL = 1 - (priceRatio.day3 / 100)
+    const _3DAY_PRICE = _2DAY_PRICE * _3DAY_PERCENT_AS_DECIMAL
+    const _5DAY_PERCENT_AS_DECIMAL = 1 - (priceRatio.day5 / 100)
+    const _5DAY_PRICE = _3DAY_PRICE * _5DAY_PERCENT_AS_DECIMAL
     /* TODO: To reduce the length of the calculations below */
-    if (days >= 5) {
-      price = _3dayPrice * _5dayPercentAsDecimal
-    } else if (days >= 3 && days < 5) {
-      const priceDiff = _3dayPrice - _5dayPrice
-      const priceRedPerHr = priceDiff / 48
-      if (days === 4) {
+    if (DEADLINE_DAYS >= 5) {
+      price = _3DAY_PRICE * _5DAY_PERCENT_AS_DECIMAL
+    } else if (DEADLINE_DAYS >= 3 && DEADLINE_DAYS < 5) {
+      const PRICE_DIFF = _3DAY_PRICE - _5DAY_PRICE
+      const PRICE_RED_PER_HR = PRICE_DIFF / 48
+      if (DEADLINE_DAYS === 4) {
         hours = hours + 24
       }
-      const totalPriceRed = hours * priceRedPerHr
-      price = _3dayPrice - totalPriceRed
-    } else if (days >= 2 && days < 3) {
-      const priceDiff = _2dayPrice - _3dayPrice
-      const priceRedPerHr = priceDiff / 24
-      const totalPriceRed = hours * priceRedPerHr
-      price = _2dayPrice - totalPriceRed
-    } else if (days >= 1 && days < 2) {
-      const priceDiff = _1dayPrice - _2dayPrice
-      const priceRedPerHr = priceDiff / 24
-      const totalPriceRed = hours * priceRedPerHr
-      price = _1dayPrice - totalPriceRed
-    } else if (days < 1) {
+      const TOTAL_PRICE_REDUCTION_PER_HR = hours * PRICE_RED_PER_HR
+      price = _3DAY_PRICE - TOTAL_PRICE_REDUCTION_PER_HR
+    } else if (DEADLINE_DAYS >= 2 && DEADLINE_DAYS < 3) {
+      const PRICE_DIFF = _2DAY_PRICE - _3DAY_PRICE
+      const PRICE_REDUCTION_PER_HR = PRICE_DIFF / 24
+      const TOTAL_PRICE_REDUCTION_PER_HR = hours * PRICE_REDUCTION_PER_HR
+      price = _2DAY_PRICE - TOTAL_PRICE_REDUCTION_PER_HR
+    } else if (DEADLINE_DAYS >= 1 && DEADLINE_DAYS < 2) {
+      const PRICE_DIFF = _1DAY_PRICE - _2DAY_PRICE
+      const PRICE_REDUCTION_PER_HR = PRICE_DIFF / 24
+      const TOTAL_PRICE_REDUCTION_PER_HR = hours * PRICE_REDUCTION_PER_HR
+      price = _1DAY_PRICE - TOTAL_PRICE_REDUCTION_PER_HR
+    } else if (DEADLINE_DAYS < 1) {
       if (hours !== 6) {
         if (hours <= 12) {
-          const priceDiff = price - _12hrPrice
-          const priceRedPerHr = priceDiff / 6
-          const totalPriceRed = (hours - 6) * priceRedPerHr
-          price = price - totalPriceRed
+          const PRICE_DIFF = price - _12HR_PRICE
+          const PRICE_REDUCTION_PER_HR = PRICE_DIFF / 6
+          const TOTAL_PRICE_REDUCTION_PER_HR = (hours - 6) * PRICE_REDUCTION_PER_HR
+          price = price - TOTAL_PRICE_REDUCTION_PER_HR
         } else {
-          const priceDiff = _12hrPrice - _1dayPrice
-          const priceRedPerHr = priceDiff / 12
-          const totalPriceRed = (hours - 12) * priceRedPerHr
-          price = _12hrPrice - totalPriceRed
+          const PRICE_DIFF = _12HR_PRICE - _1DAY_PRICE
+          const PRICE_REDUCTION_PER_HR = PRICE_DIFF / 12
+          const TOTAL_PRICE_REDUCTION_PER_HR = (hours - 12) * PRICE_REDUCTION_PER_HR
+          price = _12HR_PRICE - TOTAL_PRICE_REDUCTION_PER_HR
         }
       }
     }
@@ -108,10 +108,10 @@ class PricesService {
 
   /* Base function to return the price */
   static async calculatePrice (req, priceDetails) {
-    const timeIn24Hr = PricesService.convert12to24hr(req.deadlineTime)
-    const deadline = PricesService.calculateDeadlineInHoursDays(req.deadlineDate, timeIn24Hr)
+    const TIME_IN_24HRS = PricesService.convert12to24hr(req.deadlineTime)
+    const ASSIGNMENT_DEADLINE = PricesService.calculateDeadlineInHoursDays(req.deadlineDate, TIME_IN_24HRS)
     let price = PricesService.calculateByStudyLevel(priceDetails.price.price, priceDetails.priceRatio, req.studyLevel)
-    price = PricesService.calculateByDeadline(price, deadline, priceDetails.priceRatio)
+    price = PricesService.calculateByDeadline(price, ASSIGNMENT_DEADLINE, priceDetails.priceRatio)
     price = price * req.pageCount
     return {
       basePrice: price,
@@ -122,12 +122,12 @@ class PricesService {
 
   /* Gets the stored price ranges from the database and then calculate the price from the function above */
   static async getPrice (req) {
-    const priceRatioObj = {
+    const PRICE_RATIO = {
       assignmentType: req.assignmentType,
       serviceType: req.serviceType,
       pageCount: req.pageCount
     }
-    return await postDBRequest('payments/v1/price_ratio', priceRatioObj)
+    return await postDBRequest('payments/v1/price_ratio', PRICE_RATIO)
       .then(async priceDetails => {
         return await this.calculatePrice(req, priceDetails)
       })
@@ -137,9 +137,9 @@ class PricesService {
   }
 
   static convert12to24hr (targetDeadlineTime) {
-    const amPmLength = targetDeadlineTime.length
+    const AM_PM_LENGTH = targetDeadlineTime.length
     let amPm, timeIn24Hrs
-    if (amPmLength === 3) {
+    if (AM_PM_LENGTH === 3) {
       amPm = targetDeadlineTime.slice(1)
       if (amPm === 'PM') {
         timeIn24Hrs = Number(targetDeadlineTime[0]) + 12
@@ -166,14 +166,14 @@ class PricesService {
   }
 
   static calculateDeadlineInHoursDays (deadlineDate, deadlineTime) {
-    const today = new Date()
-    const ultimateDeadline = new Date(deadlineDate)
-    ultimateDeadline.setHours(deadlineTime)
-    const differenceTime = ultimateDeadline.getTime() - today.getTime()
-    const differenceDays = differenceTime / (1000 * 3600 * 24)
-    const remainingDays = Math.floor(differenceDays)
-    const remainingHours = Math.floor((differenceDays % 1) * 24)
-    return { days: remainingDays, hours: remainingHours }
+    const TODAY = new Date()
+    const ULTIMATE_DEADLINE = new Date(deadlineDate)
+    ULTIMATE_DEADLINE.setHours(deadlineTime)
+    const DIFFERENCE_TIME = ULTIMATE_DEADLINE.getTime() - TODAY.getTime()
+    const DIFFERENCE_DAYS = DIFFERENCE_TIME / (1000 * 3600 * 24)
+    const REMAINING_DAYS = Math.floor(DIFFERENCE_DAYS)
+    const REMAINING_HOURS = Math.floor((DIFFERENCE_DAYS % 1) * 24)
+    return { days: REMAINING_DAYS, hours: REMAINING_HOURS }
   }
 }
 

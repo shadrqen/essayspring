@@ -13,10 +13,10 @@ class UsersService {
     }
 
     static async reportProblem (req) {
-      const decodedToken = await decodeToken(req.headers.access)
-      const email = decodedToken.message.sub
+      const DECODED_TOKEN = await decodeToken(req.headers.access)
+      const EMAIL = DECODED_TOKEN.message.sub
       return await postDBRequest('users/v1/report_problem', {
-        email: email,
+        email: EMAIL,
         obj: req.body,
         source: 'EssaySpring'
       })
@@ -25,10 +25,10 @@ class UsersService {
     }
 
     static async getWriters (req) {
-      const decodedToken = await decodeToken(req.headers.access)
-      const email = decodedToken.message.sub
+      const DECODED_TOKEN = await decodeToken(req.headers.access)
+      const EMAIL = DECODED_TOKEN.message.sub
       return await postDBRequest('users/v1/get_client_writers', {
-        email: email
+        email: EMAIL
       })
         .then(res => res)
         .catch(error => requestsMixin.customErrorMessage(error))

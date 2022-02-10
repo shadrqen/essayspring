@@ -1,55 +1,54 @@
 'use strict'
 
-const axios = require('axios')
+const AXIOS = require('axios')
 
-const getDBRequest = require('../database/connect').getDBRequest
-const postDBRequest = require('../database/connect').postDBRequest
+const { getDBRequest, postDBRequest } = require('../database/connect')
 
-const requestsMixin = require('../../mixins/requests')
+const REQUESTS_MIXIN = require('../../mixins/requests')
 
 const { decodeToken, sendEmail } = require('../users/auth')
 
-const sockets = require('../sockets/order')
+const SOCKETS_SERVICE = require('../sockets/order')
 
-const orderEmailAction = require('../../views/order_email_action')
+const ORDER_EMAIL_ACTION = require('../../views/order_email_action')
 
-const newWriterRegistration = require('../../views/new_writer_registration')
+const NEW_WRITER_REGISTRATION = require('../../views/new_writer_registration')
 
 // const writerOrderEmailAction = require('../../views/writer_email_action')
 
-const fs = require('fs')
+const FILE_SYSTEM = require('fs')
 
 class OrdersService {
   static async getRequest (url) {
     return await getDBRequest(url)
       .then(response => response)
-      .catch(error => requestsMixin.customErrorMessage(error))
+      .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
   }
 
   static async postRequest (url, body) {
     return await postDBRequest(url, body)
       .then(response => response)
-      .catch(error => requestsMixin.customErrorMessage(error))
+      .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
   }
 
     static getTime = async () => {
       return await getDBRequest('orders/v1/time')
         .then(time => time)
-        .catch(error => requestsMixin.customErrorMessage(error))
+        .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
     }
 
     static async getOrderBids (req) {
       /* TODO: To confirm why an array was sent as 'first' */
-      await sockets.getBids(req.orderId, true)
+      await SOCKETS_SERVICE.getBids(req.orderId, true)
       return { connectionStarted: true }
     }
 
     /* Sends public/private writers notifications on email that there is a new order */
     static async sendWriterNotifications (response, orderId, type) {
       if (response === 'success') {
-        const origin = process.env.NODE_ENV === 'production' ? process.env.WR_APP_URL : `http://${process.env.WR_URL}:82`
-        const url = type === 'public' ? 'new_order' : 'private/new_order'
-        await axios.post(origin.concat('/orders/notifications/email/ws/'.concat(url)), {
+        const ORIGIN = process.env.NODE_ENV === 'production' ? process.env.WR_APP_URL : `http://${process.env.WR_URL}:82`
+        const URL = type === 'public' ? 'new_order' : 'private/new_order'
+        await AXIOS.post(ORIGIN.concat('/orders/notifications/email/ws/'.concat(URL)), {
           orderId: orderId,
           wr_x_api_key: process.env.NODE_ENV && process.env.NODE_ENV === 'production' ? process.env.WR_NEW_BID_SECRET : process.env.DEV_WR_NEW_BID_SECRET
         })
@@ -61,10 +60,10 @@ class OrdersService {
     * there is now need to send an email notification to the writer */
     static async sendWriterClientInvitation (response, req) {
       if (response.message === 'Invitation sent successfully' || response.message === 'Invitation already exists!') {
-        const decodedToken = await decodeToken(req.headers.access)
-        const url = process.env.NODE_ENV === 'production' ? process.env.WR_APP_URL : `http://${process.env.WR_URL}:82`
-        await axios.post(url.concat('/orders/notifications/email/ws/client_invitation'), {
-          clientEmail: decodedToken.message.sub,
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
+        const URL = process.env.NODE_ENV === 'production' ? process.env.WR_APP_URL : `http://${process.env.WR_URL}:82`
+        await AXIOS.post(URL.concat('/orders/notifications/email/ws/client_invitation'), {
+          clientEmail: DECODED_TOKEN.message.sub,
           writerEmail: req.body.email,
           wr_x_api_key: process.env.NODE_ENV && process.env.NODE_ENV === 'production' ? process.env.WR_NEW_BID_SECRET : process.env.DEV_WR_NEW_BID_SECRET
         })
@@ -78,19 +77,19 @@ class OrdersService {
     }
 
     static async getOrders (req) {
-      const decodedToken = await decodeToken(req.headers.access)
-      const form = {}
-      const multiple = req.body.multiple
-      form.multiple = multiple
-      form.email = decodedToken.message.sub
-      if (multiple) {
-        form.orderStatusID = req.body.orderStatusID
+      const DECODED_TOKEN = await decodeToken(req.headers.access)
+      const FORM = {}
+      const MULTIPLE = req.body.multiple
+      FORM.multiple = MULTIPLE
+      FORM.email = DECODED_TOKEN.message.sub
+      if (MULTIPLE) {
+        FORM.orderStatusID = req.body.orderStatusID
       } else {
-        form.orderId = req.body.orderId
+        FORM.orderId = req.body.orderId
       }
-      return await postDBRequest('orders/v1/get_orders', form)
+      return await postDBRequest('orders/v1/get_orders', FORM)
         .then(response => response)
-        .catch(error => requestsMixin.customErrorMessage(error))
+        .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
     }
 
     static async getFile (req) {
@@ -105,18 +104,18 @@ class OrdersService {
       }
       try {
         // const fileExtension = req.fileUrl.split('.').pop()
-        const data = fs.readFileSync(uploadsPath.concat(req.fileUrl), 'base64')
-        return { message: 'success', file: data }
+        const FILE_DATA = FILE_SYSTEM.readFileSync(uploadsPath.concat(req.fileUrl), 'base64')
+        return { message: 'success', file: FILE_DATA }
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
     static async getOrderDetails (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
         return await postDBRequest('orders/v1/get_order_details', {
-          email: decodedToken.message.sub,
+          email: DECODED_TOKEN.message.sub,
           orderId: req.body.orderId
         })
           .then(detail => detail)
@@ -124,70 +123,70 @@ class OrdersService {
             throw new Error(error)
           })
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
     /* TODO: To make the use of try consistent */
     static async confirmOrderBelongs2Client (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
         return await postDBRequest('orders/v1/confirm_order_ownership', {
           orderId: req.body.orderId,
-          email: decodedToken.message.sub
+          email: DECODED_TOKEN.message.sub
         })
           .then(response => response)
           .catch(error => {
             throw new Error(error)
           })
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
     static async requestOrderRevision (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
-        const orderId = req.body.orderId
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
+        const ORDER_ID = req.body.orderId
         return await postDBRequest('orders/v1/revision_request', {
-          orderId: orderId,
-          email: decodedToken.message.sub,
+          orderId: ORDER_ID,
+          email: DECODED_TOKEN.message.sub,
           supportingFiles: req.body.supportingFiles,
           checklist: req.body.checklist,
           deadline: req.body.deadline
         })
           .then(response => {
-            const msg = 'there is a revision request for order No. ' + orderId + '!'
-            OrdersService.requestWsWriterSendEmail(orderId, msg, 'revision')
+            const REVISION_MESSAGE = 'there is a revision request for order No. ' + ORDER_ID + '!'
+            OrdersService.requestWsWriterSendEmail(ORDER_ID, REVISION_MESSAGE, 'revision')
             return response
           })
           .catch(error => {
             throw new Error(error)
           })
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
     static async confirmOrderCompletion (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
-        const orderId = req.body.orderId
-        const email = decodedToken.message.sub
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
+        const ORDER_ID = req.body.orderId
+        const EMAIL = DECODED_TOKEN.message.sub
         return await postDBRequest('orders/v1/confirm_order_completion', {
-          orderId: orderId,
-          email: email
+          orderId: ORDER_ID,
+          email: EMAIL
         })
           .then(response => {
-            const msg = 'order No. ' + orderId + ' has been confirmed!'
-            OrdersService.requestWsWriterSendEmail(orderId, msg, 'order-update')
+            const ORDER_COMPLETION_MESSAGE = 'order No. ' + ORDER_ID + ' has been confirmed!'
+            OrdersService.requestWsWriterSendEmail(ORDER_ID, ORDER_COMPLETION_MESSAGE, 'order-update')
             return response
           })
           .catch(error => {
             throw new Error(error)
           })
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
@@ -210,13 +209,13 @@ class OrdersService {
       } else {
         url = host + '/orders/notifications/email/ws/writer_specific'
       }
-      const notificationPayload = {
+      const NOTIFICATION_PAYLOAD = {
         orderId: orderId,
         msg: msg,
         wr_x_api_key: key /* This is the key that is used for inter-service communication */
       }
       /* To handle the responses below */
-      axios.post(url, notificationPayload)
+      AXIOS.post(url, NOTIFICATION_PAYLOAD)
         .then(() => {
         })
         .catch(() => {
@@ -226,25 +225,25 @@ class OrdersService {
     /* Sends order email notifications to clients */
     static async emailNotification (req) {
       try {
-        const email = req.email
-        const msg = req.msg
-        const user = req.user
-        const orderId = req.order_id
+        const EMAIL = req.email
+        const MESSAGE = req.msg
+        const USER = req.user
+        const ORDER_ID = req.order_id
         let url
         if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
           url = 'https://essayspring.com/orders'
         } else {
           url = `http://${process.env.URL}:4100/orders`
         }
-        const htmlToSend = orderEmailAction.orderAction(orderId, msg, user, url)
-        const emailDetails = {
-          to: email,
+        const htmlToSend = ORDER_EMAIL_ACTION.orderAction(ORDER_ID, MESSAGE, USER, url)
+        const EMAIL_DETAILS = {
+          to: EMAIL,
           subject: 'Order Status Update',
           html: htmlToSend
         }
-        await sendEmail(emailDetails)
+        await sendEmail(EMAIL_DETAILS)
       } catch (err) {
-        console.log(requestsMixin.customErrorMessage(err))
+        console.log(REQUESTS_MIXIN.customErrorMessage(err))
       }
     }
 
@@ -253,24 +252,24 @@ class OrdersService {
     * of the same */
     static async personWriterRegistersEmailNotification (req) {
       try {
-        const email = req.email
-        const names = req.names
+        const EMAIL = req.email
+        const NAMES = req.names
         let url
         if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
           url = 'https://essayspring.com/client/writers'
         } else {
           url = `http://${process.env.URL}:4100/client/writers`
         }
-        const htmlToSend = newWriterRegistration.newWriterRegistration(names, url)
-        const emailDetails = {
-          to: email,
+        const HTML_TO_SEND = NEW_WRITER_REGISTRATION.newWriterRegistration(NAMES, url)
+        const EMAIL_DETAILS = {
+          to: EMAIL,
           subject: 'New Writer Registration',
-          html: htmlToSend
+          html: HTML_TO_SEND
         }
-        await sendEmail(emailDetails)
+        await sendEmail(EMAIL_DETAILS)
         return { success: true }
       } catch (err) {
-        return Promise.reject(requestsMixin.customErrorMessage(err))
+        return Promise.reject(REQUESTS_MIXIN.customErrorMessage(err))
       }
     }
 
@@ -283,36 +282,36 @@ class OrdersService {
           return { rated: response }
         })
         .catch(error => {
-          return requestsMixin.customErrorMessage(error)
+          return REQUESTS_MIXIN.customErrorMessage(error)
         })
     }
 
     static async getPersonalWriters (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
-        const email = decodedToken.message.sub
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
+        const EMAIL = DECODED_TOKEN.message.sub
         return await postDBRequest('orders/v1/get_personal_writers', {
-          email: email
+          email: EMAIL
         })
           .then(response => response)
-          .catch(error => requestsMixin.customErrorMessage(error))
+          .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 
     static async sendWriterInvite (req) {
       try {
-        const decodedToken = await decodeToken(req.headers.access)
-        const email = decodedToken.message.sub
+        const DECODED_TOKEN = await decodeToken(req.headers.access)
+        const EMAIL = DECODED_TOKEN.message.sub
         return await postDBRequest('orders/v1/send_writer_invite', {
-          email: email,
+          email: EMAIL,
           writerEmail: req.body.email
         })
           .then(response => response)
-          .catch(error => requestsMixin.customErrorMessage(error))
+          .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
       } catch (err) {
-        return requestsMixin.customErrorMessage(err)
+        return REQUESTS_MIXIN.customErrorMessage(err)
       }
     }
 }

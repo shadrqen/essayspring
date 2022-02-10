@@ -1,4 +1,4 @@
-const mqtt = require('mqtt')
+const MQTT = require('mqtt')
 let options, mqttUrl
 
 if (process.env.NODE_ENV === 'production') {
@@ -31,19 +31,19 @@ if (process.env.NODE_ENV === 'production') {
 * example is the ability to perform under extreme/constrained networking connections.
 * Secondly, it has QOS - quality of service. QOS guarantees that a message is received by the recipient
 * depending on whether it is level 0, 1 or 2 (which is the highest) */
-const client = mqtt.connect(mqttUrl, options)
+const CLIENT = MQTT.connect(mqttUrl, options)
 
-client.on('connect', function () {
+CLIENT.on('connect', function () {
   console.log('MQTT client connected successfully')
 })
 
-client.on('close', function () {
+CLIENT.on('close', function () {
   console.log('MQTT client disconnected')
 })
 
 // handle errors
-client.on('error', function (error) {
+CLIENT.on('error', function (error) {
   console.log("Can't connect" + error)
 })
 
-module.exports = client
+module.exports = CLIENT

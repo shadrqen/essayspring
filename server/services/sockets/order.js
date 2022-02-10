@@ -1,4 +1,4 @@
-const client = require('./connection')
+const CLIENT = require('./connection')
 
 const postDBRequest = require('../database/connect').postDBRequest
 
@@ -6,19 +6,19 @@ const { checkOrderPaymentStatus } = require('../payment/mpesa/payment')
 
 const { sendEmail } = require('../users/auth')
 
-const orderEmailAction = require('../../views/order_email_action')
+const ORDER_EMAIL_ACTION = require('../../views/order_email_action')
 
 class OrderSockets {
   static async getBids (orderId, first) {
-    const topic = process.env.DEV_MQTT_WC_ORDER_BIDS_TOPIC.concat(orderId)
+    const TOPIC = process.env.DEV_MQTT_WC_ORDER_BIDS_TOPIC.concat(orderId)
     /* TODO: To remove the first parameter implementation and the subscribeToBidPosted function */
     if (first) {
       OrderSockets.subscribeToBidPosted(orderId)
       setTimeout(async () => {
-        await this.publishBids(topic, orderId)
+        await this.publishBids(TOPIC, orderId)
       }, 3000)
     } else {
-      await this.publishBids(topic, orderId)
+      await this.publishBids(TOPIC, orderId)
     }
     await OrderSockets.clientNewBidSendEmail(orderId)
   }
@@ -35,13 +35,13 @@ class OrderSockets {
           } else {
             url = `http://${process.env.URL}:4100/`
           }
-          const htmlToSend = orderEmailAction.orderAction(orderId, `your order No. ${orderId} has a new bid.`, '', url.concat('client/orders'))
-          const emailDetails = {
+          const HTML_TO_SEND = ORDER_EMAIL_ACTION.orderAction(orderId, `your order No. ${orderId} has a new bid.`, '', url.concat('client/orders'))
+          const EMAIL_DETAILS = {
             to: email,
             subject: 'New Order Bid',
-            html: htmlToSend
+            html: HTML_TO_SEND
           }
-          await sendEmail(emailDetails)
+          await sendEmail(EMAIL_DETAILS)
         }
       })
       .catch(error => {
@@ -52,12 +52,12 @@ class OrderSockets {
   static async publishBids (topic, orderId) {
     await postDBRequest('orders/v1/order_bids', { orderId: orderId })
       .then(res => {
-        const msg = JSON.stringify(res)
-        const options = {
+        const MESSAGE = JSON.stringify(res)
+        const OPTIONS = {
           retain: true,
           qos: 1 /* The QOS discussed above */
         }
-        client.publish(topic, msg, options)
+        CLIENT.publish(topic, MESSAGE, OPTIONS)
       })
       .catch(error => {
         console.log(error)
@@ -71,10 +71,10 @@ class OrderSockets {
     } else {
       topic = process.env.DEV_MQTT_SUB_TOPIC.concat(orderId)
     }
-    client.subscribe(topic, function () {
+    CLIENT.subscribe(topic, function () {
       console.log(`Subscribed to topic ${topic}`)
     })
-    client.on('message', async function (topic, msg, pkt) {
+    CLIENT.on('message', async function (topic, msg, pkt) {
       await OrderSockets.getBids(orderId, false)
       console.log('message received')
     })
@@ -83,15 +83,15 @@ class OrderSockets {
   /* Publishes the payment status received from M-PESA on a topic that was already subscribed to on the
   * client */
   static async publishOrderPaymentStatus (transactionId) {
-    const topic = process.env.DEV_MQTT_WC_ORDER_PAYMENT_TOPIC.concat(transactionId)
+    const TOPIC = process.env.DEV_MQTT_WC_ORDER_PAYMENT_TOPIC.concat(transactionId)
     await checkOrderPaymentStatus({ trId: transactionId })
       .then(response => {
-        const msg = JSON.stringify(response)
-        const options = {
+        const MESSAGE = JSON.stringify(response)
+        const OPTIONS = {
           retain: true,
           qos: 1
         }
-        client.publish(topic, msg, options)
+        CLIENT.publish(TOPIC, MESSAGE, OPTIONS)
       })
       .catch(error => {
         console.log(error)

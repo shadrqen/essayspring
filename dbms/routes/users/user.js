@@ -1,28 +1,28 @@
 /* Endpoint that handles requests related specifically to a user */
 
 /* Importing an instance of express */
-const express = require('express')
+const EXPRESS = require('express')
 
-/* Creating an express router instance */
-const router = express.Router()
+/* Creating an express ROUTER instance */
+const ROUTER = EXPRESS.Router()
 
 /* Importing the service that does logging of requests */
 const { logger } = require('../../services/logger')
 
 /* Contains queries for tables that are associated with the user (such as admin, client and writer tables) */
-const userHelper = require('../../helpers/users/user')
+const USER_HELPER = require('../../helpers/users/user')
 
 /* Importing the service that handles authentication */
 const { auth } = require('../../services/auth')
 
 /* GET home page. */
-router.get('/', auth, function (req, res) {
+ROUTER.get('/', auth, function (req, res) {
   res.json({ title: 'Users' })
 })
 
 /* Endpoint that gets a user by email */
-router.post('/user_by_email', auth, async function (req, res) {
-  await userHelper.getUserByMail(req.body)
+ROUTER.post('/user_by_email', auth, async function (req, res) {
+  await USER_HELPER.getUserByMail(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -32,8 +32,8 @@ router.post('/user_by_email', auth, async function (req, res) {
 })
 
 /* Endpoint that gets a detailed user by email - Includes objects or relationships such as Gender, Country etc */
-router.post('/web_user_by_email', logger, auth, async function (req, res) {
-  await userHelper.getWebUserByMail(req.body)
+ROUTER.post('/web_user_by_email', logger, auth, async function (req, res) {
+  await USER_HELPER.getWebUserByMail(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -43,8 +43,8 @@ router.post('/web_user_by_email', logger, auth, async function (req, res) {
 })
 
 /* Endpoint that gets a client's email by personal writer email */
-router.post('/client_email_by_writer_email', logger, auth, async function (req, res) {
-  await userHelper.getClientEmailByWriterEmail(req.body)
+ROUTER.post('/client_email_by_writer_email', logger, auth, async function (req, res) {
+  await USER_HELPER.getClientEmailByWriterEmail(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -54,8 +54,8 @@ router.post('/client_email_by_writer_email', logger, auth, async function (req, 
 })
 
 /* Endpoint that adds or saves a client */
-router.post('/add_client', auth, async function (req, res) {
-  await userHelper.addClientDetails(req.body)
+ROUTER.post('/add_client', auth, async function (req, res) {
+  await USER_HELPER.addClientDetails(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -65,8 +65,8 @@ router.post('/add_client', auth, async function (req, res) {
 })
 
 /* Endpoint that checks whether the writer application process is open or not */
-router.post('/check_writer_registration_status', auth, async function (req, res) {
-  await userHelper.checkWriterRegistrationStatus(req)
+ROUTER.post('/check_writer_registration_status', auth, async function (req, res) {
+  await USER_HELPER.checkWriterRegistrationStatus(req)
     .then(response => {
       res.status(200).json(response)
     })
@@ -76,8 +76,8 @@ router.post('/check_writer_registration_status', auth, async function (req, res)
 })
 
 /* Endpoint that submits a writer's email address */
-router.post('/submit_writer_email', auth, async function (req, res) {
-  await userHelper.submitWriterEmail(req)
+ROUTER.post('/submit_writer_email', auth, async function (req, res) {
+  await USER_HELPER.submitWriterEmail(req)
     .then(response => {
       res.status(200).json(response)
     })
@@ -87,8 +87,8 @@ router.post('/submit_writer_email', auth, async function (req, res) {
 })
 
 /* Endpoint to confirm a writer's email address */
-router.post('/confirm_writer_email', auth, async function (req, res) {
-  await userHelper.confirmWriterEmail(req.body)
+ROUTER.post('/confirm_writer_email', auth, async function (req, res) {
+  await USER_HELPER.confirmWriterEmail(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -98,8 +98,8 @@ router.post('/confirm_writer_email', auth, async function (req, res) {
 })
 
 /* Endpoint that creates a writers password */
-router.post('/create_writer_password', auth, async function (req, res) {
-  await userHelper.createWriterPassword(req.body)
+ROUTER.post('/create_writer_password', auth, async function (req, res) {
+  await USER_HELPER.createWriterPassword(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -108,8 +108,8 @@ router.post('/create_writer_password', auth, async function (req, res) {
     })
 })
 
-router.post('/save_writer_profile', auth, async function (req, res) {
-  await userHelper.saveWriterProfile(req.body)
+ROUTER.post('/save_writer_profile', auth, async function (req, res) {
+  await USER_HELPER.saveWriterProfile(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -118,8 +118,8 @@ router.post('/save_writer_profile', auth, async function (req, res) {
     })
 })
 
-router.post('/create_client_writer_connection', auth, async function (req, res) {
-  await userHelper.createClientWriterConnection(req.body)
+ROUTER.post('/create_client_writer_connection', auth, async function (req, res) {
+  await USER_HELPER.createClientWriterConnection(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -128,8 +128,8 @@ router.post('/create_client_writer_connection', auth, async function (req, res) 
     })
 })
 
-router.post('/get_client_writers', auth, async function (req, res) {
-  await userHelper.getPersonalWriters(req.body)
+ROUTER.post('/get_client_writers', auth, async function (req, res) {
+  await USER_HELPER.getPersonalWriters(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -138,19 +138,8 @@ router.post('/get_client_writers', auth, async function (req, res) {
     })
 })
 
-router.post('/get_selected_personal_writer', auth, async function (req, res) {
-  await userHelper.getSelectedPersonalWriter(req.body)
-    .then(response => {
-      res.status(200).json(response)
-    })
-    .catch(error => {
-      console.log(error)
-      res.status(500).send(error)
-    })
-})
-
-router.post('/approve_personal_writer', auth, async function (req, res) {
-  await userHelper.approvePersonalWriter(req.body)
+ROUTER.post('/get_selected_personal_writer', auth, async function (req, res) {
+  await USER_HELPER.getSelectedPersonalWriter(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -160,8 +149,19 @@ router.post('/approve_personal_writer', auth, async function (req, res) {
     })
 })
 
-router.post('/submit_grammar_test', auth, async function (req, res) {
-  await userHelper.submitGrammarTest(req.body)
+ROUTER.post('/approve_personal_writer', auth, async function (req, res) {
+  await USER_HELPER.approvePersonalWriter(req.body)
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(500).send(error)
+    })
+})
+
+ROUTER.post('/submit_grammar_test', auth, async function (req, res) {
+  await USER_HELPER.submitGrammarTest(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -170,8 +170,8 @@ router.post('/submit_grammar_test', auth, async function (req, res) {
     })
 })
 
-router.post('/submit_login_email', auth, async function (req, res) {
-  await userHelper.submitLoginEmail(req.body)
+ROUTER.post('/submit_login_email', auth, async function (req, res) {
+  await USER_HELPER.submitLoginEmail(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -180,8 +180,8 @@ router.post('/submit_login_email', auth, async function (req, res) {
     })
 })
 
-router.post('/set_client_password', auth, async function (req, res) {
-  await userHelper.setClientPassword(req.body)
+ROUTER.post('/set_client_password', auth, async function (req, res) {
+  await USER_HELPER.setClientPassword(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -190,8 +190,8 @@ router.post('/set_client_password', auth, async function (req, res) {
     })
 })
 
-router.post('/sample_essay_themes', auth, async function (req, res) {
-  await userHelper.getSampleEssayThemes(req.body)
+ROUTER.post('/sample_essay_themes', auth, async function (req, res) {
+  await USER_HELPER.getSampleEssayThemes(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -200,8 +200,8 @@ router.post('/sample_essay_themes', auth, async function (req, res) {
     })
 })
 
-router.post('/writer_start_writing', auth, async function (req, res) {
-  await userHelper.writerStartWriting(req.body)
+ROUTER.post('/writer_start_writing', auth, async function (req, res) {
+  await USER_HELPER.writerStartWriting(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -210,8 +210,8 @@ router.post('/writer_start_writing', auth, async function (req, res) {
     })
 })
 
-router.post('/save_writer_sample_essay', auth, async function (req, res) {
-  await userHelper.saveWriterSampleEssay(req.body)
+ROUTER.post('/save_writer_sample_essay', auth, async function (req, res) {
+  await USER_HELPER.saveWriterSampleEssay(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -220,8 +220,8 @@ router.post('/save_writer_sample_essay', auth, async function (req, res) {
     })
 })
 
-router.post('/writer_application_status', auth, async function (req, res) {
-  await userHelper.writerApplicationStatus(req.body)
+ROUTER.post('/writer_application_status', auth, async function (req, res) {
+  await USER_HELPER.writerApplicationStatus(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -230,8 +230,8 @@ router.post('/writer_application_status', auth, async function (req, res) {
     })
 })
 
-router.post('/report_problem', auth, async function (req, res) {
-  await userHelper.reportProblem(req.body)
+ROUTER.post('/report_problem', auth, async function (req, res) {
+  await USER_HELPER.reportProblem(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -240,8 +240,8 @@ router.post('/report_problem', auth, async function (req, res) {
     })
 })
 
-router.post('/save_login', auth, async function (req, res) {
-  await userHelper.saveLogin(req.body)
+ROUTER.post('/save_login', auth, async function (req, res) {
+  await USER_HELPER.saveLogin(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -250,8 +250,8 @@ router.post('/save_login', auth, async function (req, res) {
     })
 })
 
-router.post('/get_mobile', auth, async function (req, res) {
-  await userHelper.getClientMobile(req.body)
+ROUTER.post('/get_mobile', auth, async function (req, res) {
+  await USER_HELPER.getClientMobile(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -260,8 +260,8 @@ router.post('/get_mobile', auth, async function (req, res) {
     })
 })
 
-router.post('/get_client_email_by_order_id', auth, async function (req, res) {
-  await userHelper.getClientEmailByOrderId(req.body)
+ROUTER.post('/get_client_email_by_order_id', auth, async function (req, res) {
+  await USER_HELPER.getClientEmailByOrderId(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -270,4 +270,4 @@ router.post('/get_client_email_by_order_id', auth, async function (req, res) {
     })
 })
 
-module.exports = router
+module.exports = ROUTER

@@ -4,7 +4,7 @@
 
 /* Importing the index model that will be used to access the sequelize instance, which will in turn help create
 * sequelize transactions */
-const model = require('../../models/index')
+const MODEL = require('../../models/index')
 
 /* Importing all the sequelize models that will be used in the module */
 const {
@@ -195,14 +195,14 @@ class OrdersHelper {
   static async getSelectedGrammarQuestions () {
     try {
       /* Get questions */
-      const questions = await GrammarQuestion.findAll({
+      const QUESTIONS = await GrammarQuestion.findAll({
         attributes: ['id', 'instruction', 'question', 'correctAnswerId']
       })
       /* And their answers */
-      const answers = await GrammarAnswer.findAll({
+      const ANSWERS = await GrammarAnswer.findAll({
         attributes: ['id', 'answer', 'questionId', 'answerLetter']
       })
-      return { answers: answers, questions: questions }
+      return { answers: ANSWERS, questions: QUESTIONS }
     } catch (e) {
       return Promise.reject(e)
     }
@@ -275,10 +275,10 @@ class OrdersHelper {
   /* Function to get email addresses of active writers */
   static async getActiveWritersEmails () {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* Getting the email addresses of all active writers */
         /* First the active status id */
-        const activeStatus = await AccountStatus.findOne({
+        const ACTIVE_STATUS = await AccountStatus.findOne({
           where: {
             status: 'Active'
           },
@@ -292,7 +292,7 @@ class OrdersHelper {
               as: 'User',
               attributes: ['email'],
               where: {
-                accountStatus: activeStatus.id
+                accountStatus: ACTIVE_STATUS.id
               }
             }
           ]
@@ -311,9 +311,9 @@ class OrdersHelper {
       /* Using a transaction:
       * A transaction helps to automatically rollback the transaction if any error is thrown,
       * or commit the transaction otherwise.  */
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* Get a user using his or her email */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           attributes: ['id'],
           where: {
             email: req.email.toLowerCase()
@@ -321,12 +321,12 @@ class OrdersHelper {
         }, { transaction: t })
         /* Get clientId and other Ids to be used in the creation or updating of a record using the Promise.all
         * function */
-        const [clientId, serviceTypeId, orderStatusId, orderFormatId] = await Promise.all([
+        const [CLIENT_ID, SERVICE_TYPE_ID, ORDER_STATUS_ID, ORDER_FORMAT_ID] = await Promise.all([
           Client.findOne({
             attributes: ['id'],
             raw: true,
             where: {
-              userId: user.id
+              userId: USER.id
             }
           }, { transaction: t }),
           OrderServiceType.findOne({
@@ -358,7 +358,7 @@ class OrdersHelper {
         } else {
           orderTypeGen = 'Private'
         }
-        const orderType = await EntityType.findOne({
+        const ORDER_TYPE = await EntityType.findOne({
           where: {
             type: orderTypeGen
           },
@@ -368,14 +368,14 @@ class OrdersHelper {
         if (req.orderId > 0) {
           /* Update Order record where its id matches a given order Id */
           return await Order.update({
-            clientId: clientId.id,
-            serviceTypeId: serviceTypeId.id,
-            type: orderType.id,
-            statusId: orderStatusId.id,
+            clientId: CLIENT_ID.id,
+            serviceTypeId: SERVICE_TYPE_ID.id,
+            type: ORDER_TYPE.id,
+            statusId: ORDER_STATUS_ID.id,
             subjectId: req.paperSubject,
             assignmentType: req.assignmentType,
             citationStyleId: req.citationStyleId,
-            orderFormatId: orderFormatId.id,
+            orderFormatId: ORDER_FORMAT_ID.id,
             studyLevelId: req.studyLevel,
             deadlineDate: req.deadlineDate,
             deadlineTime: req.deadlineTime,
@@ -398,7 +398,7 @@ class OrdersHelper {
                 }
               }, { transaction: t })
               /* First get an order file type (Client Supporting) then use it in updating supporting files */
-              const orderFileType = await OrderFileType.findOne({
+              const ORDER_FILE_TYPE = await OrderFileType.findOne({
                 where: {
                   type: 'Client Supporting'
                 },
@@ -412,7 +412,7 @@ class OrdersHelper {
                   where: {
                     orderId: req.orderId,
                     fileUrl: req.supportingFiles[i].fileUrl,
-                    type: orderFileType.id
+                    type: ORDER_FILE_TYPE.id
                   }
                 }, { transaction: t })
                   .then(async fileExists => {
@@ -421,13 +421,13 @@ class OrdersHelper {
                       /* Final original name in this case is formatted not to exceed 50 characters
                       * It shortens a name that exceeds 50 characters and does nothing to those which are less
                       * than that. The length includes the file extension */
-                      const finalOriginalName = OrdersHelper.originalNameFormatter(req.supportingFiles[i].originalName)
+                      const FINAL_ORIGINAL_NAME = OrdersHelper.originalNameFormatter(req.supportingFiles[i].originalName)
                       /* Create an OrderFile record */
                       await OrderFile.create({
                         orderId: req.orderId,
                         fileUrl: req.supportingFiles[i].fileUrl,
-                        originalName: finalOriginalName,
-                        type: orderFileType.id
+                        originalName: FINAL_ORIGINAL_NAME,
+                        type: ORDER_FILE_TYPE.id
                       }, { transaction: t })
                         /* Do nothing after creation, just continue with the loop to the end */
                         .then(() => {})
@@ -447,14 +447,14 @@ class OrdersHelper {
         } else {
           /* Else create one */
           return await Order.create({
-            clientId: clientId.id,
-            serviceTypeId: serviceTypeId.id,
-            type: orderType.id,
-            statusId: orderStatusId.id,
+            clientId: CLIENT_ID.id,
+            serviceTypeId: SERVICE_TYPE_ID.id,
+            type: ORDER_TYPE.id,
+            statusId: ORDER_STATUS_ID.id,
             subjectId: req.paperSubject,
             assignmentType: req.assignmentType,
             citationStyleId: req.citationStyleId,
-            orderFormatId: orderFormatId.id,
+            orderFormatId: ORDER_FORMAT_ID.id,
             studyLevelId: req.studyLevel,
             deadlineDate: req.deadlineDate,
             deadlineTime: req.deadlineTime,
@@ -466,14 +466,14 @@ class OrdersHelper {
             .then(async res => {
               /* Then do the same thing as in the update order above */
               await ClientOrderPostingStep.create({
-                clientId: clientId.id,
+                clientId: CLIENT_ID.id,
                 orderId: res.dataValues.id,
                 lastStep: 1
               }, { transaction: t })
               /* Create orderFile records by looping through the list of files in the request if the supporting files
               * length exceeds 0 - i.e. it exists */
               if (req.supportingFiles.length > 0) {
-                const orderFileType = await OrderFileType.findOne({
+                const ORDER_FILE_TYPE = await OrderFileType.findOne({
                   where: {
                     type: 'Client Supporting'
                   },
@@ -482,13 +482,13 @@ class OrdersHelper {
                 /* Loop through the supporting files */
                 for (let i = 0; i < req.supportingFiles.length; i++) {
                   /* Format the original name before saving */
-                  const finalOriginalName = OrdersHelper.originalNameFormatter(req.supportingFiles[i].originalName)
+                  const FINAL_ORIGINAL_NAME = OrdersHelper.originalNameFormatter(req.supportingFiles[i].originalName)
                   /* Create an order file record */
                   await OrderFile.create({
                     orderId: res.dataValues.id,
                     fileUrl: req.supportingFiles[i].fileUrl,
-                    originalName: finalOriginalName,
-                    type: orderFileType.id
+                    originalName: FINAL_ORIGINAL_NAME,
+                    type: ORDER_FILE_TYPE.id
                   }, { transaction: t })
                     /* Do nothing on success */
                     .then(() => {})
@@ -499,7 +499,7 @@ class OrdersHelper {
                 }
               }
               /* Record the order's payment details by first getting the currency code ID */
-              const currencyId = await Currency.findOne({
+              const CURRENCY_ID = await Currency.findOne({
                 attributes: ['id'],
                 where: {
                   currencyCode: req.paymentSummary.currencyCode
@@ -507,12 +507,12 @@ class OrdersHelper {
                 raw: true
               }, { transaction: t })
               /* Then get payment extras IDs */
-              const extrasIds = req.paymentSummary.extrasList.map(list => list.id)
+              const EXTRAS_IDS = req.paymentSummary.extrasList.map(list => list.id)
               /* Create the order payment detail record */
               return await OrderPaymentDetail.create({
                 orderId: res.dataValues.id,
-                currencyId: currencyId.id,
-                extras: String(extrasIds),
+                currencyId: CURRENCY_ID.id,
+                extras: String(EXTRAS_IDS),
                 extrasTotalPrice: req.paymentSummary.extrasTotalPrice,
                 totalPrice: req.paymentSummary.totalPrice,
                 cpp: req.paymentSummary.cpp
@@ -544,7 +544,7 @@ class OrdersHelper {
   /* Function that gets the order bids by orderID */
   static async getOrderBids (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         return await OrderBid.findAll({
           attributes: ['orderId'],
           where: {
@@ -583,12 +583,12 @@ class OrdersHelper {
   /* Function that gets personal writers */
   static async getPersonalWriters (req) {
     try {
-      return await model.sequelize.transaction(async t => {
-        const clientId = await OrdersHelper.getClientId(req.email)
+      return await MODEL.sequelize.transaction(async t => {
+        const CLIENT_ID = await OrdersHelper.getClientId(req.email)
         return await ClientWriter.findAll({
           attributes: ['id'],
           where: {
-            clientId: clientId,
+            clientId: CLIENT_ID,
             connectionConfirmed: true
           },
           include: [
@@ -644,20 +644,20 @@ class OrdersHelper {
   /* Function that sends writers invites */
   static async sendWriterInvite (req) {
     try {
-      return await model.sequelize.transaction(async t => {
-        const clientId = await OrdersHelper.getClientId(req.email)
-        const invitationAlreadyExists = await WriterInvitation.findOne({
+      return await MODEL.sequelize.transaction(async t => {
+        const CLIENT_ID = await OrdersHelper.getClientId(req.email)
+        const INVITATION_ALREADY_EXISTS = await WriterInvitation.findOne({
           where: {
             email: req.writerEmail
           },
           attributes: ['id']
         })
-        if (invitationAlreadyExists) {
+        if (INVITATION_ALREADY_EXISTS) {
           return { success: false, message: 'Invitation already exists!' }
         }
         return await WriterInvitation.create({
           email: req.writerEmail,
-          clientId: clientId
+          clientId: CLIENT_ID
         })
           .then(writers => {
             return {
@@ -675,9 +675,9 @@ class OrdersHelper {
   /* Function to remove a file from the database by changing its isDeleted column to True */
   static async removeFile (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First the order file type - which is of type (Client Supporting) */
-        const orderFileType = await OrderFileType.findOne({
+        const ORDER_FILE_TYPE = await OrderFileType.findOne({
           where: {
             type: 'Client Supporting'
           },
@@ -689,7 +689,7 @@ class OrdersHelper {
           where: {
             orderId: req.orderId,
             fileUrl: req.filename,
-            type: orderFileType.id
+            type: ORDER_FILE_TYPE.id
           }
         }, { transaction: t })
           .then(async file => {
@@ -702,7 +702,7 @@ class OrdersHelper {
                 where: {
                   orderId: req.orderId,
                   fileUrl: req.filename,
-                  type: orderFileType.id
+                  type: ORDER_FILE_TYPE.id
                 }
               }, { transaction: t })
                 .then(updatedRecord => {
@@ -729,20 +729,20 @@ class OrdersHelper {
   /* Function that updates payment */
   static async updateOrderPayment (req, phase, requestOrderId) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         let orderId
         /* First get a user */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
         /* Then the client and currency IDs */
-        const [clientId, currencyId] = await Promise.all([
+        const [CLIENT_ID, CURRENCY_ID] = await Promise.all([
           Client.findOne({
             where: {
-              userId: user.id
+              userId: USER.id
             },
             attributes: ['id']
           }),
@@ -766,13 +766,13 @@ class OrdersHelper {
           })
             .then(async orderPaymentId => {
               /* Get the extras IDs */
-              const extrasIds = req.paymentSummary.extrasList.map(list => list.id)
+              const EXTRAS_IDS = req.paymentSummary.extrasList.map(list => list.id)
               /* Then if the payment details exist, update */
               if (orderPaymentId) {
                 /* Update the payment details where the orderID is the given orderId */
                 return await OrderPaymentDetail.update({
-                  currencyId: currencyId.id,
-                  extras: String(extrasIds),
+                  currencyId: CURRENCY_ID.id,
+                  extras: String(EXTRAS_IDS),
                   extrasTotalPrice: req.paymentSummary.extrasTotalPrice,
                   totalPrice: req.paymentSummary.totalPrice,
                   cpp: req.paymentSummary.cpp
@@ -785,7 +785,7 @@ class OrdersHelper {
                     /* Create a client order posting step if the phase is 'check order' */
                     if (phase === 'check-order') {
                       await ClientOrderPostingStep.create({
-                        clientId: clientId.id,
+                        clientId: CLIENT_ID.id,
                         orderId: orderId,
                         lastStep: 3
                       }, { transaction: t })
@@ -803,8 +803,8 @@ class OrdersHelper {
                 /* Else create an order payment detail */
                 return await OrderPaymentDetail.create({
                   orderId: requestOrderId,
-                  currencyId: currencyId.id,
-                  extras: String(extrasIds),
+                  currencyId: CURRENCY_ID.id,
+                  extras: String(EXTRAS_IDS),
                   extrasTotalPrice: req.paymentSummary.extrasTotalPrice,
                   totalPrice: req.paymentSummary.totalPrice,
                   cpp: req.paymentSummary.cpp
@@ -861,22 +861,22 @@ class OrdersHelper {
   static async updateOrderStatus (req) {
     /* FIXME: add promises */
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First check if order has already been paid for */
-        const successPaymentStatus = await PaymentStatus.findOne({
+        const SUCCESS_PAYMENT_STATUS = await PaymentStatus.findOne({
           where: {
             status: 'Success'
           },
           attributes: ['id']
         })
-        const orderAlreadyPaidFor = await ClientPayment.findOne({
+        const ORDER_ALREADY_PAID_FOR = await ClientPayment.findOne({
           where: {
             orderId: req.orderId,
-            statusId: successPaymentStatus.id
+            statusId: SUCCESS_PAYMENT_STATUS.id
           }
         })
         let orderStatus
-        if (orderAlreadyPaidFor) {
+        if (ORDER_ALREADY_PAID_FOR) {
           orderStatus = 'Ongoing'
         } else {
           orderStatus = 'Pending payment'
@@ -885,7 +885,7 @@ class OrdersHelper {
           orderStatus = 'Ongoing'
         }
         /* First get the 'Pending payment' order status */
-        const pendingPaymentStatus = await OrderStatus.findOne({
+        const PENDING_PAYMENT_STATUS = await OrderStatus.findOne({
           where: {
             status: orderStatus
           },
@@ -894,7 +894,7 @@ class OrdersHelper {
         })
         /* Then update the order status to the above status where the orderId is the one in the request */
         return await Order.update({
-          statusId: pendingPaymentStatus.id
+          statusId: PENDING_PAYMENT_STATUS.id
         }, {
           where: {
             id: req.orderId
@@ -905,17 +905,17 @@ class OrdersHelper {
             * but the order will be visible to the writer once the client has paid for the order fully */
             if (orderStatusUpdated) {
               /* Get the writer details */
-              const writer = await Writer.findOne({
+              const WRITER = await Writer.findOne({
                 where: {
                   userId: req.writerId
                 },
                 attributes: ['id']
               })
               /* Then check if he or she had already been assigned the order */
-              const writerAlreadyChosen = await WriterOrder.findOne({
+              const WRITER_ALREADY_CHOSEN = await WriterOrder.findOne({
                 where: {
                   orderId: req.orderId,
-                  writerId: writer.id
+                  writerId: WRITER.id
                 },
                 attributes: ['id']
               })
@@ -926,18 +926,18 @@ class OrdersHelper {
                 }, {
                   where: {
                     orderId: req.orderId,
-                    writerId: writer.id
+                    writerId: WRITER.id
                   }
                 }, { transaction: t })
               }
               /* If the writer had already been assigned the order, then well and good */
-              if (writerAlreadyChosen) {
+              if (WRITER_ALREADY_CHOSEN) {
                 return { statusUpdated: true, writerAlreadyChosen: true }
               } else {
                 /* Otherwise, assign him or her the order - but this is pending the payment of the order by a client */
                 return await WriterOrder.create({
                   orderId: req.orderId,
-                  writerId: writer.id
+                  writerId: WRITER.id
                 }, { transaction: t })
                   .then(writerAssigned => {
                     /* Return the assignment status */
@@ -970,7 +970,7 @@ class OrdersHelper {
   static async getClientId (email) {
     /* Helps to return the client ID by email, reducing the need to duplicate such code - owing to the fact that
     * there are many places in the program that needs to have the client ID, by providing the email address */
-    const user = await User.findOne({
+    const USER = await User.findOne({
       where: {
         email: email.toLowerCase()
       },
@@ -978,7 +978,7 @@ class OrdersHelper {
     })
     return await Client.findOne({
       where: {
-        userId: user.id
+        userId: USER.id
       },
       attributes: ['id'],
       raw: true
@@ -991,58 +991,58 @@ class OrdersHelper {
   static async rateWriter (req) {
     /* Helps to return the client ID by email, reducing the need to duplicate such code - owing to the fact that
     * there are many places in the program that needs to have the client ID, by providing the email address */
-    const orderAlreadyRated = await WriterRating.findOne({
+    const ORDER_ALREADY_RATED = await WriterRating.findOne({
       where: {
         orderId: req.orderId
       },
       attributes: ['id']
     })
-    if (orderAlreadyRated) {
+    if (ORDER_ALREADY_RATED) {
       return { rated: true }
     }
-    const writer = await WriterOrder.findOne({
+    const WRITER = await WriterOrder.findOne({
       where: {
         orderId: req.orderId
       },
       attributes: ['writerId']
     })
-    const writerRatedOnOrderAlready = await WriterRating.findOne({
+    const WRITER_RATED_ON_ORDER_ALREADY = await WriterRating.findOne({
       where: {
         orderId: req.orderId,
-        writerId: writer.writerId
+        writerId: WRITER.writerId
       },
       attributes: ['writerId']
     })
-    if (writerRatedOnOrderAlready) {
+    if (WRITER_RATED_ON_ORDER_ALREADY) {
       return true
     } else {
       return await WriterRating.create({
         orderId: req.orderId,
-        writerId: writer.writerId,
+        writerId: WRITER.writerId,
         rating: req.rating
       })
         .then(async rated => {
           if (rated) {
-            const averageRating = await WriterAverageRating.findOne({
+            const AVERAGE_RATING = await WriterAverageRating.findOne({
               where: {
-                writerId: writer.writerId
+                writerId: WRITER.writerId
               },
               attributes: ['rating']
             })
-            if (averageRating) {
-              const previousRatings = await WriterRating.findAll({
+            if (AVERAGE_RATING) {
+              const PREVIOUS_RATINGS = await WriterRating.findAll({
                 where: {
-                  writerId: writer.writerId
+                  writerId: WRITER.writerId
                 },
                 attributes: ['id']
               })
-              const totalRating = ((averageRating.rating * (previousRatings.length - 1)) + req.rating)
-              const newAverageRating = totalRating / previousRatings.length
+              const totalRating = ((AVERAGE_RATING.rating * (PREVIOUS_RATINGS.length - 1)) + req.rating)
+              const NEW_AVERAGE_RATING = totalRating / PREVIOUS_RATINGS.length
               return await WriterAverageRating.update({
-                rating: newAverageRating
+                rating: NEW_AVERAGE_RATING
               }, {
                 where: {
-                  writerId: writer.writerId
+                  writerId: WRITER.writerId
                 }
               })
                 .then(writerRatingAdded => !!writerRatingAdded)
@@ -1051,7 +1051,7 @@ class OrdersHelper {
                 })
             } else {
               return await WriterAverageRating.create({
-                writerId: writer.writerId,
+                writerId: WRITER.writerId,
                 rating: req.rating
               })
                 .then(writerRatingAdded => !!writerRatingAdded)
@@ -1071,7 +1071,7 @@ class OrdersHelper {
   static async getOrders (req) {
     try {
       /* Get the clientID first by calling the above method */
-      const clientId = await OrdersHelper.getClientId(req.email)
+      const CLIENT_ID = await OrdersHelper.getClientId(req.email)
       /* Multiple here is used to know whether a request wants get one or more orders, or
       * wants to get the details of a selected order */
       /* In case a request wants to get a client's order(s) - req.multiple will be true in this instance */
@@ -1079,7 +1079,7 @@ class OrdersHelper {
         /* Find a client's orders by client ID */
         return await Order.findAll({
           where: {
-            clientId: clientId,
+            clientId: CLIENT_ID,
             isDeleted: false
           },
           attributes: ['id', 'deadlineDate', 'deadlineTime', 'pageCount', 'topic'],
@@ -1132,7 +1132,7 @@ class OrdersHelper {
         /* Else if a requests does not want multiple orders, then get the details of one selected order */
         return await Order.findOne({
           where: {
-            clientId: clientId,
+            clientId: CLIENT_ID,
             id: req.orderId
           },
           attributes: ['id', 'deadlineDate', 'deadlineTime', 'pageCount', 'topic', 'instructions'],
@@ -1213,9 +1213,9 @@ class OrdersHelper {
             let revisionInstructions, submissionChecklist
             /* Get order revision instructions if an order is revisable - revisable here means that an order
             * is currently under revision, or is at a position where a client can request revision */
-            const revisableOrderStatuses = ['Completed', 'Submitted', 'Undergoing revision']
+            const REVISABLE_ORDER_STATUSES = ['Completed', 'Submitted', 'Undergoing revision']
             /* Check if an order is revisable */
-            if (revisableOrderStatuses.includes(order.dataValues.OrderStatus.dataValues.status)) {
+            if (REVISABLE_ORDER_STATUSES.includes(order.dataValues.OrderStatus.dataValues.status)) {
               /* Get the revision instructions */
               revisionInstructions = await OrderRevision.findAll({
                 where: {
@@ -1230,7 +1230,7 @@ class OrdersHelper {
                 attributes: ['aspect', 'aspectDescription']
               })
             }
-            const rated = await WriterRating.findOne({
+            const RATED = await WriterRating.findOne({
               where: {
                 orderId: req.orderId
               },
@@ -1241,7 +1241,7 @@ class OrdersHelper {
               details: order,
               revisionInstructions: revisionInstructions,
               submissionChecklist: submissionChecklist,
-              rated: !!rated
+              rated: !!RATED
             }
           })
           .catch(error => Promise.reject(error))
@@ -1267,7 +1267,7 @@ class OrdersHelper {
     * proceed with it after logging in. An order that is pending completion. If a client logged in by
     * clicking the 'Get Started' button, then he or she doesn't need to be given an order to proceed
     * regardless of whether there was a pending order or not */
-    return await model.sequelize.transaction(async (t) => {
+    return await MODEL.sequelize.transaction(async (t) => {
       let myQuery
       /* MyQuery is a custom 'where'. In case an orderID is provided, then filter the latest order by the
       * given orderID. Otherwise, just filter the latest order using the client's ID */
@@ -1282,7 +1282,7 @@ class OrdersHelper {
         }
       }
       /* Get the latest order depending on the query above, where */
-      const latestOrder = await Order.findOne({
+      const LATEST_ORDER = await Order.findOne({
         limit: 1,
         where: myQuery,
         order: [
@@ -1335,20 +1335,20 @@ class OrdersHelper {
         raw: true
       })
       /* If a client has had an order before, then check if it is completed already or not */
-      if (latestOrder) {
-        const discount = await PaperDiscount.findOne({
+      if (LATEST_ORDER) {
+        const DISCOUNT = await PaperDiscount.findOne({
           where: {
             lowerLimit: {
-              [Op.gte]: latestOrder.pageCount
+              [Op.gte]: LATEST_ORDER.pageCount
             }
           },
           attributes: ['discount']
         })
-        const finalDiscount = latestOrder.pageCount === 1 ? 0 : discount
+        const finalDiscount = LATEST_ORDER.pageCount === 1 ? 0 : DISCOUNT
         let orderAlreadyPaid = false
-        const orderPaid = await Order.findOne({
+        const ORDER_PAID = await Order.findOne({
           where: {
-            id: latestOrder.id
+            id: LATEST_ORDER.id
           },
           attributes: ['id'],
           include: [
@@ -1359,13 +1359,13 @@ class OrdersHelper {
             }
           ]
         })
-        const unPaidOrdersStatuses = ['Pending payment', 'Pending writer acknowledgement', 'Available', 'Bidding ongoing']
+        const UNPAID_ORDERS_STATUSES = ['Pending payment', 'Pending writer acknowledgement', 'Available', 'Bidding ongoing']
         /* Here, we are setting the variable orderAlreadyPaid to true because we don't want to make a client
         * proceed or pick up from a given order */
         if (gotStarted) {
           orderAlreadyPaid = true
         }
-        if (!unPaidOrdersStatuses.includes(orderPaid.OrderStatus.status)) {
+        if (!UNPAID_ORDERS_STATUSES.includes(ORDER_PAID.OrderStatus.status)) {
           orderAlreadyPaid = true
         }
         if (orderAlreadyPaid) {
@@ -1377,9 +1377,9 @@ class OrdersHelper {
             user: client
           }
         } else {
-          const orderPaymentDetails = await OrderPaymentDetail.findOne({
+          const ORDER_PAYMENT_DETAILS = await OrderPaymentDetail.findOne({
             where: {
-              orderId: latestOrder.id
+              orderId: LATEST_ORDER.id
             },
             attributes: ['id', 'extras', 'extrasTotalPrice', 'totalPrice', 'cpp'],
             include: [
@@ -1390,23 +1390,23 @@ class OrdersHelper {
               }
             ]
           })
-          const orderPaymentStatus = await PaymentStatus.findOne({
+          const ORDER_PAYMENT_STATUS = await PaymentStatus.findOne({
             where: {
               status: 'Success'
             },
             attributes: ['id'],
             raw: true
           })
-          const orderAlreadyPaidFor = await ClientPayment.findOne({
+          const ORDER_ALREADY_PAID_FOR = await ClientPayment.findOne({
             where: {
-              statusId: orderPaymentStatus.id,
-              orderId: latestOrder.id
+              statusId: ORDER_PAYMENT_STATUS.id,
+              orderId: LATEST_ORDER.id
             },
             attributes: ['id']
           })
-          const orderAssignment = await WriterOrder.findOne({
+          const ORDER_ASSIGNMENT = await WriterOrder.findOne({
             where: {
-              orderId: latestOrder.id
+              orderId: LATEST_ORDER.id
             },
             attributes: ['id'],
             include: [
@@ -1424,18 +1424,18 @@ class OrdersHelper {
               }
             ]
           })
-          const orderFileType = await OrderFileType.findOne({
+          const ORDER_FILE_TYPE = await OrderFileType.findOne({
             where: {
               type: 'Client Supporting'
             },
             attributes: ['id']
           })
-          const orderFiles = await OrderFile.findAll({
+          const ORDER_FILES = await OrderFile.findAll({
             attributes: ['fileUrl', 'originalName'],
             where: {
-              orderId: latestOrder.id,
+              orderId: LATEST_ORDER.id,
               isDeleted: false,
-              type: orderFileType.id
+              type: ORDER_FILE_TYPE.id
             }
           })
           return await ClientOrderPostingStep.findOne({
@@ -1450,14 +1450,14 @@ class OrdersHelper {
             .then(orderStep => {
               return {
                 type: 'Client',
-                orderDetails: latestOrder,
+                orderDetails: LATEST_ORDER,
                 paperDiscount: finalDiscount,
                 loginVia: client.loginVia ? client.loginVia : null,
                 orderPostingStep: orderStep,
-                orderPaymentDetails: orderPaymentDetails,
-                orderAlreadyPaidFor: !!orderAlreadyPaidFor,
-                orderAssignment: orderAssignment,
-                orderFiles: orderFiles,
+                orderPaymentDetails: ORDER_PAYMENT_DETAILS,
+                orderAlreadyPaidFor: !!ORDER_ALREADY_PAID_FOR,
+                orderAssignment: ORDER_ASSIGNMENT,
+                orderFiles: ORDER_FILES,
                 user: client
               }
             })
@@ -1481,9 +1481,9 @@ class OrdersHelper {
   /* Function to get the details of an order, but through another function, as seen below */
   static async getOrderDetails (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First get a user by email */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
@@ -1492,7 +1492,7 @@ class OrdersHelper {
         /* Then get a client by userID */
         return await Client.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id']
         }, { transaction: t })
@@ -1519,12 +1519,12 @@ class OrdersHelper {
   * This helps to confirm whether a client has the right to view a file or not */
   static async confirmOrderOwnership (req) {
     /* First get the client's ID */
-    const clientId = await OrdersHelper.getClientId(req.email)
+    const CLIENT_ID = await OrdersHelper.getClientId(req.email)
     /* The return whether a given client has an order ID specified in the request */
     return await Order.findOne({
       where: {
         id: req.orderId,
-        clientId: clientId
+        clientId: CLIENT_ID
       }
     })
       .then(orderExists => orderExists)
@@ -1535,9 +1535,9 @@ class OrdersHelper {
   * creates a revision request in the OrderRevision table */
   static async revisionRequest (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First get the user and client IDs */
-        const [user, clientId] = await Promise.all([
+        const [USER, CLIENT_ID] = await Promise.all([
           User.findOne({
             where: {
               email: req.email.toLowerCase()
@@ -1550,7 +1550,7 @@ class OrdersHelper {
         return await Order.findOne({
           where: {
             id: req.orderId,
-            clientId: clientId
+            clientId: CLIENT_ID
           }
         }, {
           transaction: t
@@ -1559,43 +1559,43 @@ class OrdersHelper {
             /* If order exists, then make the revision requests */
             if (orderExists) {
               /* Get the parameters */
-              const reqChecklist = req.checklist
-              const supportingFiles = req.supportingFiles
-              const checklist = {}
+              const REQ_CHECKLIST = req.checklist
+              const SUPPORTING_FILES = req.supportingFiles
+              const CHECKLIST = {}
               /* Format the checklist to get the ones that the client marked */
-              for (const key in reqChecklist) {
-                if (reqChecklist[key].key) {
-                  checklist[key] = reqChecklist[key].val
+              for (const key in REQ_CHECKLIST) {
+                if (REQ_CHECKLIST[key].key) {
+                  CHECKLIST[key] = REQ_CHECKLIST[key].val
                 }
               }
               /* If there are supporting files (of type Revision Supporting), then save the files */
-              if (supportingFiles.length > 0) {
-                /* First get the orderFileType (of type Revision Supporting) */
-                const orderFileType = await OrderFileType.findOne({
+              if (SUPPORTING_FILES.length > 0) {
+                /* First get the ORDER_FILE_TYPE (of type Revision Supporting) */
+                const ORDER_FILE_TYPE = await OrderFileType.findOne({
                   where: {
                     type: 'Revision Supporting'
                   },
                   attributes: ['id']
                 })
                 /* Then loop through the revision supporting files */
-                for (let i = 0; i < supportingFiles.length; i++) {
+                for (let i = 0; i < SUPPORTING_FILES.length; i++) {
                   /* Format the original file name to ensure it does not exceed the 50-character limit */
-                  const finalOriginalName = OrdersHelper.originalNameFormatter(supportingFiles[i].originalName)
+                  const FINAL_ORIGINAL_NAME = OrdersHelper.originalNameFormatter(SUPPORTING_FILES[i].originalName)
                   /* Then create an orderFile.
                   * POINT TO NOTE: No need to first check whether the record exists because at this point we
                   * don't edit revision requests. We just add */
                   await OrderFile.create({
                     orderId: req.orderId,
-                    fileUrl: supportingFiles[i].fileUrl,
-                    originalName: finalOriginalName,
-                    type: orderFileType.id,
+                    fileUrl: SUPPORTING_FILES[i].fileUrl,
+                    originalName: FINAL_ORIGINAL_NAME,
+                    type: ORDER_FILE_TYPE.id,
                     isDeleted: false,
                     submittedPaper: false
                   }, { transaction: t })
                 }
               }
               /* Get the status of an order */
-              const orderStatus = await Order.findOne({
+              const ORDER_STATUS = await Order.findOne({
                 where: {
                   id: req.orderId
                 },
@@ -1608,15 +1608,15 @@ class OrdersHelper {
                 ]
               })
               /* Update the status to 'Undergoing revision' if it already is not */
-              if (orderStatus.OrderStatus.status !== 'Undergoing revision') {
-                const revisionOrderStatus = await OrderStatus.findOne({
+              if (ORDER_STATUS.OrderStatus.status !== 'Undergoing revision') {
+                const REVISION_ORDER_STATUS = await OrderStatus.findOne({
                   where: {
                     status: 'Undergoing revision'
                   },
                   attributes: ['id']
                 })
                 await Order.update({
-                  statusId: revisionOrderStatus.id
+                  statusId: REVISION_ORDER_STATUS.id
                 }, {
                   where: {
                     id: req.orderId
@@ -1624,16 +1624,16 @@ class OrdersHelper {
                 }, { transaction: t })
               }
               /* Format the deadline time */
-              const deadline = new Date(req.deadline.date)
-              const deadlineTimeArray = req.deadline.time.split(':')
-              deadline.setHours(deadlineTimeArray[0])
-              deadline.setMinutes(deadlineTimeArray[1])
+              const DEADLINE = new Date(req.deadline.date)
+              const DEADLINE_TIME_ARRAY = req.deadline.time.split(':')
+              DEADLINE.setHours(DEADLINE_TIME_ARRAY[0])
+              DEADLINE.setMinutes(DEADLINE_TIME_ARRAY[1])
               /* Create an OrderRevision record */
               return await OrderRevision.create({
                 orderId: req.orderId,
-                revisionInstructions: checklist,
-                deadline: deadline,
-                creator: user.id,
+                revisionInstructions: CHECKLIST,
+                deadline: DEADLINE,
+                creator: USER.id,
                 submitted: false,
                 isDeleted: false
               }, { transaction: t })
@@ -1664,7 +1664,7 @@ class OrdersHelper {
   /* Function to confirm the completion of an order */
   static async confirmOrderCompletion (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First confirm the ownership of an order */
         return await OrdersHelper.confirmOrderOwnership({
           email: req.email,
@@ -1674,20 +1674,20 @@ class OrdersHelper {
             /* If it belongs, then update its status to completed */
             if (belongs) {
               /* Get the user, client and completed order status first */
-              const user = await User.findOne({
+              const USER = await User.findOne({
                 attributes: ['id'],
                 where: {
                   email: req.email.toLowerCase()
                 }
               }, { transaction: t })
-              const clientId = await Client.findOne({
+              const CLIENT_ID = await Client.findOne({
                 attributes: ['id'],
                 raw: true,
                 where: {
-                  userId: user.id
+                  userId: USER.id
                 }
               })
-              const completedOrderStatus = await OrderStatus.findOne({
+              const COMPLETED_ORDER_STATUS = await OrderStatus.findOne({
                 where: {
                   status: 'Completed'
                 },
@@ -1695,11 +1695,11 @@ class OrdersHelper {
               })
               /* Then update the order status to be 'Completed' */
               return await Order.update({
-                statusId: completedOrderStatus.id
+                statusId: COMPLETED_ORDER_STATUS.id
               }, {
                 where: {
                   id: req.orderId,
-                  clientId: clientId.id
+                  clientId: CLIENT_ID.id
                 }
               })
                 .then(statusUpdated => {
@@ -1722,31 +1722,31 @@ class OrdersHelper {
   static originalNameFormatter (originalName) {
     /* Takes in the original name and returns the formatted one */
     /* Define the maximum allowed length of an original name */
-    const maxOriginalNameLength = 50
+    const MAX_ORIGINAL_NAME_LENGTH = 50
     /* Get the length of the original name */
-    const originalNameLength = originalName.length
+    const ORIGINAL_NAME_LENGTH = originalName.length
     /* Set the remaining length of the original name before getting to 50 */
     let remainingNameLength = 0
     /* Declare the final original name, the variable to be returned */
     let finalOriginalName
     /* If the original name has exceeded 50, then format */
-    if (originalNameLength > maxOriginalNameLength) {
+    if (ORIGINAL_NAME_LENGTH > MAX_ORIGINAL_NAME_LENGTH) {
       /* First split the filename by the dot operator */
-      const splitFileName = originalName.split('.')
+      const SPLIT_FILE_NAME = originalName.split('.')
       let fileName, fileExtension
       /* If a filename has more than one dot operators, then remove the last element in the array first
       * before splitting and joining to get the filaname and file extension */
-      if (splitFileName.length > 2) {
-        fileExtension = originalName.split('.')[splitFileName.length - 1]
-        splitFileName.pop()
-        fileName = splitFileName.join('.')
+      if (SPLIT_FILE_NAME.length > 2) {
+        fileExtension = originalName.split('.')[SPLIT_FILE_NAME.length - 1]
+        SPLIT_FILE_NAME.pop()
+        fileName = SPLIT_FILE_NAME.join('.')
       } else {
         /* Else just split to get the file name and extensions */
         fileName = originalName.split('.')[0]
         fileExtension = originalName.split('.')[1]
       }
       /* Get the remaining allowable length of the filename after removing the file extension */
-      remainingNameLength = maxOriginalNameLength - fileExtension.length
+      remainingNameLength = MAX_ORIGINAL_NAME_LENGTH - fileExtension.length
       /* Lastly, concatenate to form the final original filename */
       finalOriginalName = fileName.slice(0, remainingNameLength - 1).concat('.', fileExtension)
     } else {

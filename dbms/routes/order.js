@@ -1,10 +1,10 @@
 /* Endpoint that handles requests related exclusively to an order (and not logs, payments or users) */
 
 /* Importing an instance of express */
-const express = require('express')
+const EXPRESS = require('express')
 
-/* Creating an instance of express router */
-const router = express.Router()
+/* Creating an instance of express ROUTER */
+const ROUTER = EXPRESS.Router()
 
 /* The service that handles authentication */
 const { auth } = require('../services/auth')
@@ -16,16 +16,16 @@ const { logger } = require('../services/logger')
 * This helper serves general requests to tables such as countries, disciplines e.t.c
 * General here means tables can be applicable to one or all of the admin, client or writer tables
 */
-const ordersHelper = require('../helpers/orders/order')
+const ORDERS_HELPER = require('../helpers/orders/order')
 
 /* GET home page. */
-router.get('/', function (req, res) {
+ROUTER.get('/', function (req, res) {
   res.json({ title: 'Orders' })
 })
 
 /* The routes below are more self-explanatory - They basically query specific tables */
-router.get('/countries', auth, async function (req, res) {
-  await ordersHelper.getAllCountries()
+ROUTER.get('/countries', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllCountries()
     .then(response => {
       res.status(200).json(response)
     })
@@ -35,8 +35,8 @@ router.get('/countries', auth, async function (req, res) {
 })
 
 /* Endpoint to returns disciplines */
-router.get('/disciplines', auth, async function (req, res) {
-  await ordersHelper.getAllDisciplines()
+ROUTER.get('/disciplines', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllDisciplines()
     .then(response => {
       res.status(200).json(response)
     })
@@ -46,8 +46,8 @@ router.get('/disciplines', auth, async function (req, res) {
 })
 
 /* Endpoint to returns assignment types */
-router.get('/assignment_types', auth, async function (req, res) {
-  await ordersHelper.getAssignmentTypes()
+ROUTER.get('/assignment_types', auth, async function (req, res) {
+  await ORDERS_HELPER.getAssignmentTypes()
     .then(response => {
       res.status(200).json(response)
     })
@@ -57,8 +57,8 @@ router.get('/assignment_types', auth, async function (req, res) {
 })
 
 /* Endpoint to get education levels */
-router.post('/education_levels', auth, async function (req, res) {
-  await ordersHelper.getEducationLevels(req.body)
+ROUTER.post('/education_levels', auth, async function (req, res) {
+  await ORDERS_HELPER.getEducationLevels(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -68,8 +68,8 @@ router.post('/education_levels', auth, async function (req, res) {
 })
 
 /* Endpoint to get time in 24 hours */
-router.get('/time', auth, async function (req, res) {
-  await ordersHelper.getAllTime()
+ROUTER.get('/time', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllTime()
     .then(response => {
       res.status(200).json(response)
     })
@@ -79,8 +79,8 @@ router.get('/time', auth, async function (req, res) {
 })
 
 /* Endpoint to get order service types */
-router.post('/order_service_types', auth, async function (req, res) {
-  await ordersHelper.getSpecificOrderServiceTypes(req.body)
+ROUTER.post('/order_service_types', auth, async function (req, res) {
+  await ORDERS_HELPER.getSpecificOrderServiceTypes(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -90,8 +90,8 @@ router.post('/order_service_types', auth, async function (req, res) {
 })
 
 /* Endpoint to get grammar questions */
-router.get('/grammar_questions', auth, async function (req, res) {
-  await ordersHelper.getSelectedGrammarQuestions()
+ROUTER.get('/grammar_questions', auth, async function (req, res) {
+  await ORDERS_HELPER.getSelectedGrammarQuestions()
     .then(response => {
       res.status(200).json(response)
     })
@@ -102,8 +102,8 @@ router.get('/grammar_questions', auth, async function (req, res) {
 })
 
 /* Endpoint to get genders */
-router.get('/genders', auth, async function (req, res) {
-  await ordersHelper.getAllGenders()
+ROUTER.get('/genders', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllGenders()
     .then(response => {
       res.status(200).json(response)
     })
@@ -113,8 +113,8 @@ router.get('/genders', auth, async function (req, res) {
 })
 
 /* Endpoint to get citation styles */
-router.get('/citation_styles', auth, async function (req, res) {
-  await ordersHelper.getAllCitationStyles()
+ROUTER.get('/citation_styles', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllCitationStyles()
     .then(response => {
       res.status(200).json(response)
     })
@@ -124,8 +124,8 @@ router.get('/citation_styles', auth, async function (req, res) {
 })
 
 /* Endpoint to get order formats */
-router.get('/order_formats', auth, async function (req, res) {
-  await ordersHelper.getAllOrderFormats()
+ROUTER.get('/order_formats', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllOrderFormats()
     .then(response => {
       res.status(200).json(response)
     })
@@ -135,8 +135,8 @@ router.get('/order_formats', auth, async function (req, res) {
 })
 
 /* Endpoint to get academic certifications */
-router.get('/academic_certifications', auth, async function (req, res) {
-  await ordersHelper.getAllAcademicCertifications()
+ROUTER.get('/academic_certifications', auth, async function (req, res) {
+  await ORDERS_HELPER.getAllAcademicCertifications()
     .then(response => {
       res.status(200).json(response)
     })
@@ -146,8 +146,8 @@ router.get('/academic_certifications', auth, async function (req, res) {
 })
 
 /* Endpoint to save order details */
-router.post('/save_order_details', auth, async function (req, res) {
-  await ordersHelper.saveOrderDetails(req.body)
+ROUTER.post('/save_order_details', auth, async function (req, res) {
+  await ORDERS_HELPER.saveOrderDetails(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -157,8 +157,8 @@ router.post('/save_order_details', auth, async function (req, res) {
 })
 
 /* Endpoint to get email addresses of writers */
-router.get('/get_active_writers_emails', auth, async function (req, res) {
-  await ordersHelper.getActiveWritersEmails()
+ROUTER.get('/get_active_writers_emails', auth, async function (req, res) {
+  await ORDERS_HELPER.getActiveWritersEmails()
     .then(response => {
       res.status(200).json(response)
     })
@@ -168,8 +168,8 @@ router.get('/get_active_writers_emails', auth, async function (req, res) {
 })
 
 /* Endpoint to save order payment details */
-router.post('/save_order_payment_details', auth, async function (req, res) {
-  await ordersHelper.saveOrderPaymentDetails(req.body)
+ROUTER.post('/save_order_payment_details', auth, async function (req, res) {
+  await ORDERS_HELPER.saveOrderPaymentDetails(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -179,8 +179,8 @@ router.post('/save_order_payment_details', auth, async function (req, res) {
 })
 
 /* Endpoint to remove attached files in an order */
-router.post('/remove_file', auth, async function (req, res) {
-  await ordersHelper.removeFile(req.body)
+ROUTER.post('/remove_file', auth, async function (req, res) {
+  await ORDERS_HELPER.removeFile(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -190,8 +190,8 @@ router.post('/remove_file', auth, async function (req, res) {
 })
 
 /* Endpoint to get order bids */
-router.post('/order_bids', auth, async function (req, res) {
-  await ordersHelper.getOrderBids(req.body)
+ROUTER.post('/order_bids', auth, async function (req, res) {
+  await ORDERS_HELPER.getOrderBids(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -202,8 +202,8 @@ router.post('/order_bids', auth, async function (req, res) {
 })
 
 /* Endpoint to get personal writers */
-router.post('/get_personal_writers', auth, async function (req, res) {
-  await ordersHelper.getPersonalWriters(req.body)
+ROUTER.post('/get_personal_writers', auth, async function (req, res) {
+  await ORDERS_HELPER.getPersonalWriters(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -214,8 +214,8 @@ router.post('/get_personal_writers', auth, async function (req, res) {
 })
 
 /* Endpoint to get send writers invites */
-router.post('/send_writer_invite', auth, async function (req, res) {
-  await ordersHelper.sendWriterInvite(req.body)
+ROUTER.post('/send_writer_invite', auth, async function (req, res) {
+  await ORDERS_HELPER.sendWriterInvite(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -226,8 +226,8 @@ router.post('/send_writer_invite', auth, async function (req, res) {
 })
 
 /* Endpoint to update the status of an order */
-router.post('/update_order_status', auth, async function (req, res) {
-  await ordersHelper.updateOrderStatus(req.body)
+ROUTER.post('/update_order_status', auth, async function (req, res) {
+  await ORDERS_HELPER.updateOrderStatus(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -237,8 +237,8 @@ router.post('/update_order_status', auth, async function (req, res) {
 })
 
 /* Endpoint to get a client's orders */
-router.post('/get_orders', logger, auth, async function (req, res) {
-  await ordersHelper.getOrders(req.body)
+ROUTER.post('/get_orders', logger, auth, async function (req, res) {
+  await ORDERS_HELPER.getOrders(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -249,8 +249,8 @@ router.post('/get_orders', logger, auth, async function (req, res) {
 })
 
 /* Endpoint to get a client's orders */
-router.post('/rate_writer', logger, auth, async function (req, res) {
-  await ordersHelper.rateWriter(req.body)
+ROUTER.post('/rate_writer', logger, auth, async function (req, res) {
+  await ORDERS_HELPER.rateWriter(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -261,8 +261,8 @@ router.post('/rate_writer', logger, auth, async function (req, res) {
 })
 
 /* Endpoint to get the order status types */
-router.get('/get_order_status_types', auth, async function (req, res) {
-  await ordersHelper.getOrderStatusTypes()
+ROUTER.get('/get_order_status_types', auth, async function (req, res) {
+  await ORDERS_HELPER.getOrderStatusTypes()
     .then(response => {
       res.status(200).json(response)
     })
@@ -272,8 +272,8 @@ router.get('/get_order_status_types', auth, async function (req, res) {
 })
 
 /* Endpoint to get order details */
-router.post('/get_order_details', auth, async function (req, res) {
-  await ordersHelper.getOrderDetails(req.body)
+ROUTER.post('/get_order_details', auth, async function (req, res) {
+  await ORDERS_HELPER.getOrderDetails(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -283,8 +283,8 @@ router.post('/get_order_details', auth, async function (req, res) {
 })
 
 /* Endpoint to confirm the ownership of an order */
-router.post('/confirm_order_ownership', auth, async function (req, res) {
-  await ordersHelper.confirmOrderOwnership(req.body)
+ROUTER.post('/confirm_order_ownership', auth, async function (req, res) {
+  await ORDERS_HELPER.confirmOrderOwnership(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -294,8 +294,8 @@ router.post('/confirm_order_ownership', auth, async function (req, res) {
 })
 
 /* Endpoint to create a revision request */
-router.post('/revision_request', auth, async function (req, res) {
-  await ordersHelper.revisionRequest(req.body)
+ROUTER.post('/revision_request', auth, async function (req, res) {
+  await ORDERS_HELPER.revisionRequest(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -305,8 +305,8 @@ router.post('/revision_request', auth, async function (req, res) {
 })
 
 /* Endpoint to confirm the completion of an order */
-router.post('/confirm_order_completion', auth, async function (req, res) {
-  await ordersHelper.confirmOrderCompletion(req.body)
+ROUTER.post('/confirm_order_completion', auth, async function (req, res) {
+  await ORDERS_HELPER.confirmOrderCompletion(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -315,4 +315,4 @@ router.post('/confirm_order_completion', auth, async function (req, res) {
     })
 })
 
-module.exports = router
+module.exports = ROUTER

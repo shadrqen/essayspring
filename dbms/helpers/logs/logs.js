@@ -12,7 +12,7 @@ const {
 /* Importing the index model file that will be used in creating transactions.
 * It makes use of static functions to enable calling them on the class themselves
 * directly, as opposed to creating a class instance then calling them on the instance */
-const model = require('../../models/index')
+const MODEL = require('../../models/index')
 
 /* The class that contains the logging logic i.e functions */
 class LogHelper {
@@ -20,20 +20,20 @@ class LogHelper {
   static async saveLog (req) {
     try {
       /* Getting the type of party */
-      const partyType = await AccountType.findOne({
+      const PARTY_TYPE = await AccountType.findOne({
         where: {
           type: req.userType
         },
         attributes: ['id']
       })
       /* Creating a log record in the AccessLog table in the database */
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         return await AccessLog.create({
           ipAddress: req.ip,
           origin: req.origin,
           originalUrl: req.originalUrl,
           referer: req.referer,
-          partyTypeId: partyType.id,
+          partyTypeId: PARTY_TYPE.id,
           partyEmail: req.email,
           formData: req.formData,
           suspect: req.suspect

@@ -1,39 +1,39 @@
-const sequelize = require('sequelize')
+const SEQUELIZE = require('sequelize')
 
 /* Module to return the exact sequelize error.
 * It takes an error, and returns its type */
 module.exports.errorChecker = error => {
-  const errorsList = []
-  if (error instanceof sequelize.UniqueConstraintError) {
-    errorsList.push('UniqueConstraintError')
-  } else if (error instanceof sequelize.BaseError) {
-    errorsList.push('BaseError')
-  } else if (error instanceof sequelize.ValidationError) {
-    errorsList.push('ValidationError')
-  } else if (error instanceof sequelize.DatabaseError) {
-    errorsList.push('DatabaseError')
-  } else if (error instanceof sequelize.TimeoutError) {
-    errorsList.push('TimeoutError')
-  } else if (error instanceof sequelize.ForeignKeyConstraintError) {
-    errorsList.push('ForeignKeyConstraintError')
-  } else if (error instanceof sequelize.ExclusionConstraintError) {
-    errorsList.push('ExclusionConstraintError')
-  } else if (error instanceof sequelize.ValidationErrorItem) {
-    errorsList.push('ValidationErrorItem')
-  } else if (error instanceof sequelize.ConnectionError) {
-    errorsList.push('ConnectionError')
-  } else if (error instanceof sequelize.ConnectionRefusedError) {
-    errorsList.push('ConnectionRefusedError')
-  } else if (error instanceof sequelize.AccessDeniedError) {
-    errorsList.push('AccessDeniedError')
-  } else if (error instanceof sequelize.HostNotFoundError) {
-    errorsList.push('HostNotFoundError')
-  } else if (error instanceof sequelize.HostNotReachableError) {
-    errorsList.push('HostNotReachableError')
-  } else if (error instanceof sequelize.InvalidConnectionError) {
-    errorsList.push('InvalidConnectionError')
-  } else if (error instanceof sequelize.ConnectionTimedOutError) {
-    errorsList.push('ConnectionTimedOutError')
+  const ERRORS_LIST = []
+  if (error instanceof SEQUELIZE.UniqueConstraintError) {
+    ERRORS_LIST.push('UniqueConstraintError')
+  } else if (error instanceof SEQUELIZE.BaseError) {
+    ERRORS_LIST.push('BaseError')
+  } else if (error instanceof SEQUELIZE.ValidationError) {
+    ERRORS_LIST.push('ValidationError')
+  } else if (error instanceof SEQUELIZE.DatabaseError) {
+    ERRORS_LIST.push('DatabaseError')
+  } else if (error instanceof SEQUELIZE.TimeoutError) {
+    ERRORS_LIST.push('TimeoutError')
+  } else if (error instanceof SEQUELIZE.ForeignKeyConstraintError) {
+    ERRORS_LIST.push('ForeignKeyConstraintError')
+  } else if (error instanceof SEQUELIZE.ExclusionConstraintError) {
+    ERRORS_LIST.push('ExclusionConstraintError')
+  } else if (error instanceof SEQUELIZE.ValidationErrorItem) {
+    ERRORS_LIST.push('ValidationErrorItem')
+  } else if (error instanceof SEQUELIZE.ConnectionError) {
+    ERRORS_LIST.push('ConnectionError')
+  } else if (error instanceof SEQUELIZE.ConnectionRefusedError) {
+    ERRORS_LIST.push('ConnectionRefusedError')
+  } else if (error instanceof SEQUELIZE.AccessDeniedError) {
+    ERRORS_LIST.push('AccessDeniedError')
+  } else if (error instanceof SEQUELIZE.HostNotFoundError) {
+    ERRORS_LIST.push('HostNotFoundError')
+  } else if (error instanceof SEQUELIZE.HostNotReachableError) {
+    ERRORS_LIST.push('HostNotReachableError')
+  } else if (error instanceof SEQUELIZE.InvalidConnectionError) {
+    ERRORS_LIST.push('InvalidConnectionError')
+  } else if (error instanceof SEQUELIZE.ConnectionTimedOutError) {
+    ERRORS_LIST.push('ConnectionTimedOutError')
   }
-  return String(errorsList)
+  return String(ERRORS_LIST)
 }

@@ -1,10 +1,10 @@
 /* Endpoint that handles logs requests */
 
 /* Importing an instance of express */
-const express = require('express')
+const EXPRESS = require('express')
 
-/* Creating an express router instance */
-const router = express.Router()
+/* Creating an express ROUTER instance */
+const ROUTER = EXPRESS.Router()
 
 /* Importing the service that handles matters authentication */
 const { auth } = require('../services/auth')
@@ -13,7 +13,7 @@ const { auth } = require('../services/auth')
 const { saveLog } = require('../helpers/logs/logs')
 
 /* Endpoint that saves logs */
-router.post('/save_log', auth, async function (req, res) {
+ROUTER.post('/save_log', auth, async function (req, res) {
   await saveLog(req.body)
     .then(response => {
       res.status(200).json(response)
@@ -23,4 +23,4 @@ router.post('/save_log', auth, async function (req, res) {
     })
 })
 
-module.exports = router
+module.exports = ROUTER

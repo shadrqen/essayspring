@@ -742,9 +742,9 @@ export default {
     },
     /* TODO: To use a module to do this */
     checkPasswordSimilarity () {
-      const passwordsNotSimilar = this.setPasswordForm.password.length === this.setPasswordForm.repeatPassword.length &&
+      const PASSWORDS_NOT_SIMILAR = this.setPasswordForm.password.length === this.setPasswordForm.repeatPassword.length &&
         this.setPasswordForm.password !== this.setPasswordForm.repeatPassword
-      if (passwordsNotSimilar) {
+      if (PASSWORDS_NOT_SIMILAR) {
         this.setPasswordOngoing = false
         this.errorObject = {
           value: true,
@@ -1172,8 +1172,8 @@ export default {
         if (link === 'close_nav_dialog') {
           this.navbarIcon = false
         } else {
-          const linkWithHash = '/' + link // so as to use in the if statement below
-          if (this.$route.fullPath !== linkWithHash) {
+          const LINK_WITH_HASH = '/' + link
+          if (this.$route.fullPath !== LINK_WITH_HASH) {
             if (link === 'login') {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',
@@ -1216,31 +1216,31 @@ export default {
       }
     },
     removeFile (file) {
-      const index = this.problemForm.supportingFiles.map(function (e) {
+      const INDEX = this.problemForm.supportingFiles.map(function (e) {
         return e.fileUrl
       }).indexOf(file.fileUrl)
-      if (index > -1) {
-        this.problemForm.supportingFiles.splice(index, 1)
+      if (INDEX > -1) {
+        this.problemForm.supportingFiles.splice(INDEX, 1)
       }
     },
     pickFile () {
       this.$refs.image.click()
     },
     async uploadFile (e) {
-      const files = e.target.files || e.dataTransfer.files
+      const FILES = e.target.files || e.dataTransfer.files
       /* The function only accepts a given set of file types indicated on the confirmFileMimeType function */
       if (registrationMixin.confirmFileMimeType(e)) {
-        if (!files.length) { return }
+        if (!FILES.length) { return }
         this.supportingFileUploading = true
-        const file = document.getElementById('problemFile').files[0]
-        const fileForm = new FormData()
-        fileForm.append('file', file)
-        await api.postRequest('users/v1/upload_file', fileForm)
+        const FILE = document.getElementById('problemFile').files[0]
+        const FILE_FORM = new FormData()
+        FILE_FORM.append('file', FILE)
+        await api.postRequest('users/v1/upload_file', FILE_FORM)
           .then(res => {
             if (!res.error) {
               this.problemForm.supportingFiles.push({
                 fileUrl: res.filename,
-                originalName: file.name
+                originalName: FILE.name
               })
             }
             this.supportingFileUploading = false

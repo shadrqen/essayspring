@@ -352,8 +352,8 @@ export default {
         if (link === 'close_nav_dialog') {
           this.navbarIcon = false
         } else {
-          const linkWithHash = '/' + link // so as to use in the if statement below
-          if (this.$route.fullPath !== linkWithHash) {
+          const LINK_WITH_HASH = '/' + link // so as to use in the if statement below
+          if (this.$route.fullPath !== LINK_WITH_HASH) {
             if (link === 'login') {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',

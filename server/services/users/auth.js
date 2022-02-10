@@ -4,17 +4,17 @@
    nodemailer helps in sending mails */
 const nodemailer = require('nodemailer')
 
-const axios = require('axios')
+const AXIOS = require('axios')
 
-const emailOTP = require('../../views/otp_email')
+const EMAIL_OTP = require('../../views/otp_email')
 
-const welcomeEmail = require('../../views/welcome_email')
+const WELCOME_EMAIL = require('../../views/welcome_email')
 
-const newClientIn = require('../../views/admin_new_client_notification')
+const NEW_CLIENT_IN = require('../../views/admin_new_client_notification')
 
 const { google } = require('googleapis')
 
-const requestsMixin = require('../../mixins/requests')
+const REQUESTS_MIXIN = require('../../mixins/requests')
 
 const googleConfig = {
   clientId: process.env.GOOGLE_CLIENT_ID,
@@ -36,12 +36,12 @@ function createConnection () {
 /* Encrypts the user's passwords
  It is a password-hashing function based on the Blowfish cipher
 */
-const bcrypt = require('bcrypt')
+const BCRYPT = require('bcrypt')
 
 /* Generates web tokens to send back to client */
-const jwt = require('jsonwebtoken')
+const JWT = require('jsonwebtoken')
 
-const redisClient = require('../other/redis')
+const REDIS_CLIENT = require('../other/redis')
 
 const { getDBRequest, postDBRequest } = require('../database/connect')
 
@@ -57,23 +57,23 @@ class AuthService {
   static async getRequest (url) {
     return await getDBRequest(url)
       .then(response => response)
-      .catch(error => requestsMixin.customErrorMessage(error))
+      .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
   }
 
   static async postRequest (url, body) {
     return await postDBRequest(url, body)
       .then(response => response)
-      .catch(error => requestsMixin.customErrorMessage(error))
+      .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
   }
 
   /* Function to return OTP Codes */
   static generateOTP () {
-    const digits = '0123456789'
-    const otpLength = 6
+    const DIGITS = '0123456789'
+    const OTP_LENGTH = 6
     let otp = ''
-    for (let i = 1; i <= otpLength; i++) {
-      const index = Math.floor(Math.random() * (digits.length))
-      otp = otp + digits[index]
+    for (let i = 1; i <= OTP_LENGTH; i++) {
+      const INDEX = Math.floor(Math.random() * (DIGITS.length))
+      otp = otp + DIGITS[INDEX]
     }
     return otp
   }
@@ -84,13 +84,13 @@ class AuthService {
     *   - Access (Used for access to serverside resources).
     *   - Refresh (Used to get new access tokens after they expire)
     */
-    static generateAccessToken = (email, expiryMinutes, userType) => jwt.sign({
+    static generateAccessToken = (email, expiryMinutes, userType) => JWT.sign({
       sub: email,
       user: userType
     }, authSecretKey, { expiresIn: expiryMinutes });
 
     /* Generates refresh tokens. Lasts far much longer than the access token. Used to get access tokens */
-    static generateRefreshToken = (email, userType) => jwt.sign({
+    static generateRefreshToken = (email, userType) => JWT.sign({
       sub: email,
       user: userType
     }, authSecretKey, { expiresIn: '60min' })
@@ -99,8 +99,8 @@ class AuthService {
     static async decodeToken (token) {
       try {
         // Verify the token using the Secret key that was used to encode the token
-        const decoded = await jwt.verify(token, authSecretKey)
-        return { status: 'success', message: decoded }
+        const DECODED_TOKEN = await JWT.verify(token, authSecretKey)
+        return { status: 'success', message: DECODED_TOKEN }
       } catch (err) {
         return { status: 'Fail', message: err }
       }
@@ -139,12 +139,12 @@ class AuthService {
 
     /* Confirms whether an access token is still valid or not */
     static auth (req, res, next) {
-      const origin = req.headers.origin
-      if (origin) {
-        if ([process.env.WC_DEV_URL, 'https://essayspring.com'].includes(origin)) {
+      const ORIGIN = req.headers.origin
+      if (ORIGIN) {
+        if ([process.env.WC_DEV_URL, 'https://essayspring.com'].includes(ORIGIN)) {
           try {
             // Verify the token using the Secret key that was used to encode the token
-            jwt.verify(req.headers.access, authSecretKey, function (accessError, accessDecoded) {
+            JWT.verify(req.headers.access, authSecretKey, function (accessError, accessDecoded) {
               if (accessError) {
                 throw new Error(accessError)
               } else {
@@ -167,9 +167,9 @@ class AuthService {
     }
 
     static cors (req, res, next) {
-      const origin = req.headers.origin
-      if (origin) {
-        if ([process.env.WC_DEV_URL, 'https://essayspring.com'].includes(origin)) {
+      const ORIGIN = req.headers.origin
+      if (ORIGIN) {
+        if ([process.env.WC_DEV_URL, 'https://essayspring.com'].includes(ORIGIN)) {
           next()
         } else {
           res.render('404')
@@ -185,16 +185,16 @@ class AuthService {
         /* Verify the token using the Secret key that was used to encode the token
             * Verify that the user's access token has expired and that the refresh one is yet to expire */
 
-        return jwt.verify(req.headers.refresh, authSecretKey, async function (refreshError, refreshDecoded) {
+        return JWT.verify(req.headers.refresh, authSecretKey, async function (refreshError, refreshDecoded) {
           if (refreshError) {
             /* eslint-disable prefer-promise-reject-errors */
             return Promise.reject('TokenExpiredError: jwt expired')
             /* eslint-enable prefer-promise-reject-errors */
           } else {
-            const decodedToken = await AuthService.decodeToken(req.headers.refresh)
-            const newAccess = AuthService.generateAccessToken(decodedToken.message.sub, '15min', decodedToken.message.user)
-            const newRefresh = AuthService.generateRefreshToken(decodedToken.message.sub, decodedToken.message.user)
-            return { response: 'success', newAccess: newAccess, newRefresh: newRefresh }
+            const DECODED_TOKEN = await AuthService.decodeToken(req.headers.refresh)
+            const NEW_ACCESS = AuthService.generateAccessToken(DECODED_TOKEN.message.sub, '15min', DECODED_TOKEN.message.user)
+            const NEW_REFRESH = AuthService.generateRefreshToken(DECODED_TOKEN.message.sub, DECODED_TOKEN.message.user)
+            return { response: 'success', newAccess: NEW_ACCESS, newRefresh: NEW_REFRESH }
           }
         })
       } catch (err) {
@@ -204,7 +204,7 @@ class AuthService {
           return Promise.reject('TokenExpiredError')
           /* eslint-enable prefer-promise-reject-errors */
         } else {
-          return requestsMixin.customErrorMessage(err)
+          return REQUESTS_MIXIN.customErrorMessage(err)
         }
       }
     }
@@ -212,11 +212,11 @@ class AuthService {
     static async registerUser (req) {
       return await postDBRequest('users/v1/add_client', req.body)
         .then(async res => {
-          const accessToken = await AuthService.generateAccessToken(req.body.email, '15min', 'Client')
-          const refreshToken = await AuthService.generateRefreshToken(req.body.email, 'Client')
+          const ACCESS_TOKEN = await AuthService.generateAccessToken(req.body.email, '15min', 'Client')
+          const REFRESH_TOKEN = await AuthService.generateRefreshToken(req.body.email, 'Client')
           return {
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken: ACCESS_TOKEN,
+            refreshToken: REFRESH_TOKEN,
             response: 'success',
             isNew: res.response !== 'Email already exists',
             /* TODO: Why this -> email: req.body.name ? req.body.email : null */
@@ -229,11 +229,11 @@ class AuthService {
     }
 
     static async loginUser (req) {
-      const email = req.body.email
-      const password = req.body.password
+      const EMAIL = req.body.email
+      const PASSWORD = req.body.password
 
       return await postDBRequest('users/v1/web_user_by_email', {
-        email: email,
+        email: EMAIL,
         gotStarted: req.body.gotStarted
       })
         .then(async user => {
@@ -243,22 +243,22 @@ class AuthService {
               let match = false
               /* For a user who registered through email but currently logs in using Facebook or Google
                         * The user has to continue using email for authentication */
-              if (user.loginVia === 'Email' && !password) {
-                return { message: 'Kindly log in by email', email: email }
+              if (user.loginVia === 'Email' && !PASSWORD) {
+                return { message: 'Kindly log in by email', email: EMAIL }
               }
               if (user.user.password) {
-                match = await bcrypt.compare(password, user.user.password)
+                match = await BCRYPT.compare(PASSWORD, user.user.password)
               } else {
                 /* No password here means that the user registered using Facebook or Google */
                 match = true
               }
               if (match) {
                 await AuthService.postRequest('users/v1/save_login', {
-                  email: email,
+                  email: EMAIL,
                   source: 'EssaySpring'
                 })
-                const accessToken = AuthService.generateAccessToken(email, '15min', 'Client')
-                const refreshToken = AuthService.generateRefreshToken(email, 'Client')
+                const ACCESS_TOKEN = AuthService.generateAccessToken(EMAIL, '15min', 'Client')
+                const REFRESH_TOKEN = AuthService.generateRefreshToken(EMAIL, 'Client')
                 return {
                   message: 'success',
                   userType: user.type,
@@ -269,9 +269,9 @@ class AuthService {
                   orderPaymentDetails: user.orderPaymentDetails || null,
                   orderAlreadyPaidFor: user.orderAlreadyPaidFor || false,
                   orderAssignment: user.orderAssignment || null,
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  email: email
+                  accessToken: ACCESS_TOKEN,
+                  refreshToken: REFRESH_TOKEN,
+                  email: EMAIL
                 }
               } else {
                 return { message: 'Email and/or password mismatch' }
@@ -284,12 +284,12 @@ class AuthService {
           }
         })
         .catch(error => {
-          return requestsMixin.customErrorMessage(error)
+          return REQUESTS_MIXIN.customErrorMessage(error)
         })
     }
 
     static sendEmail (details) {
-      const mailOptions = {
+      const MAIL_OPTIONS = {
         from: null,
         to: details.to,
         subject: details.subject,
@@ -300,11 +300,11 @@ class AuthService {
         if (details.info) {
           user = process.env.INFO_EMAIL_USER
           pass = process.env.INFO_EMAIL_PASS
-          mailOptions.from = 'EssaySpring '.concat(process.env.INFO_EMAIL_USER)
+          MAIL_OPTIONS.from = 'EssaySpring '.concat(process.env.INFO_EMAIL_USER)
         } else {
           user = process.env.PRIMARY_EMAIL_USER
           pass = process.env.PRIMARY_EMAIL_PASS
-          mailOptions.from = 'EssaySpring Support '.concat(process.env.PRIMARY_EMAIL_USER)
+          MAIL_OPTIONS.from = 'EssaySpring Support '.concat(process.env.PRIMARY_EMAIL_USER)
         }
         transporter = nodemailer.createTransport({
           host: process.env.PRIMARY_EMAIL_DOMAIN,
@@ -317,7 +317,7 @@ class AuthService {
         })
       } else {
         /* We use Gmail and nodemailer for sending emails on development */
-        mailOptions.from = process.env.GMAIL_USER
+        MAIL_OPTIONS.from = process.env.GMAIL_USER
         /* Instantiating the nodemailer email options */
         transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -330,7 +330,7 @@ class AuthService {
       /* We are currently using transporter to send emails directly from an email server.
         * Plans are currently underway to send emails through relay services such as Mailgun or Mailjet */
       return new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, async (error, info) => {
+        transporter.sendMail(MAIL_OPTIONS, async (error, info) => {
           if (error) {
             reject(error)
           } else {
@@ -358,13 +358,13 @@ class AuthService {
             }
           }
           if (res.accountExists && res.shouldSetPass) {
-            const codePayload = {
+            const CODE_PAYLOAD = {
               codeIntention: 'setting',
               intention: 'set',
               email: req.email,
               redisPrefix: 'Client-OTP-'
             }
-            return AuthService.sendOTPCode(codePayload)
+            return AuthService.sendOTPCode(CODE_PAYLOAD)
           }
           /* For a new user, register him/her, send welcome email and then send back the authentication
                 * tokens to be logged in on the clientside. */
@@ -377,15 +377,15 @@ class AuthService {
               url = `http://${process.env.URL}:4100`
               unsubscribeHost = `http://${process.env.URL}:3100`
             }
-            const unsubscribeUrl = unsubscribeHost.concat('/orders/v1/notification/email/unsubsribe')
-            const htmlToSend = welcomeEmail.welcomeEmail(url, unsubscribeUrl)
-            const emailDetails = {
+            const UNSUBSCRIBE_URL = unsubscribeHost.concat('/orders/v1/notification/email/unsubsribe')
+            const HTML_TO_SEND = WELCOME_EMAIL.welcomeEmail(url, UNSUBSCRIBE_URL)
+            const EMAIL_DETAILS = {
               to: req.email,
               subject: 'Welcome to EssaySpring',
-              html: htmlToSend,
+              html: HTML_TO_SEND,
               info: true
             }
-            AuthService.sendEmail(emailDetails)
+            AuthService.sendEmail(EMAIL_DETAILS)
             let adminUrl, email
             if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
               adminUrl = 'https://app.writeray.com/'
@@ -396,15 +396,15 @@ class AuthService {
             }
             /* Also send the admin an email to notify of new users joining the platform */
             try {
-              const adminMsg = `A new client ${req.email} has joined the platform.`
-              const htmlToSendAdmin = newClientIn.newClientEmail(adminMsg, adminUrl.concat('users/all'), 'A New Client Has Joined The System')
-              const adminEmailDetails = {
+              const ADMIN_MSG = `A new client ${req.email} has joined the platform.`
+              const HTML_TO_SEND_ADMIN = NEW_CLIENT_IN.newClientEmail(ADMIN_MSG, adminUrl.concat('users/all'), 'A New Client Has Joined The System')
+              const ADMIN_EMAIL_DETAILS = {
                 to: email,
                 subject: 'New Client Update',
-                html: htmlToSendAdmin,
+                html: HTML_TO_SEND_ADMIN,
                 info: true
               }
-              AuthService.sendEmail(adminEmailDetails)
+              AuthService.sendEmail(ADMIN_EMAIL_DETAILS)
             } catch (e) {
               console.log(e)
             }
@@ -412,17 +412,17 @@ class AuthService {
           return res
         })
         .catch(error => {
-          return requestsMixin.customErrorMessage(error)
+          return REQUESTS_MIXIN.customErrorMessage(error)
         })
     }
 
     static async googleAuth (req) {
       try {
-        const auth = createConnection()
-        const code = req.body.code
-        const { tokens } = await auth.getToken(code)
+        const AUTH = createConnection()
+        const CODE = req.body.code
+        const { tokens } = await AUTH.getToken(CODE)
         // Fetch the user's profile with the access token and bearer
-        return await axios
+        return await AXIOS
           .get(
                     `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`,
                     {
@@ -473,13 +473,13 @@ class AuthService {
             throw new Error(error)
           })
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
     static async facebookAuth (req) {
       try {
-        return axios.get(`https://graph.facebook.com/v8.0/me?fields=id,name,email,picture&access_token=${req.accessToken}`)
+        return AXIOS.get(`https://graph.facebook.com/v8.0/me?fields=id,name,email,picture&access_token=${req.accessToken}`)
           .then(async response => {
             const { data } = response
             if (data.error) return { status: 401, data: { message: 'Unauthorized' } }
@@ -525,7 +525,7 @@ class AuthService {
             throw new Error(error)
           })
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
@@ -534,7 +534,7 @@ class AuthService {
         /**
              * This scope tells google what information we want to request.
              */
-        const defaultScope = [
+        const DEFAULT_SCOPE = [
           'https://www.googleapis.com/auth/userinfo.profile',
           'https://www.googleapis.com/auth/userinfo.email'
         ]
@@ -546,7 +546,7 @@ class AuthService {
           return auth.generateAuthUrl({
             access_type: 'offline',
             prompt: 'consent', // access type and approval prompt will force a new refresh token to be made each time signs in
-            scope: defaultScope
+            scope: DEFAULT_SCOPE
           })
         }
 
@@ -554,48 +554,47 @@ class AuthService {
              * Create the google url to be sent to the client.
              */
         function urlGoogle () {
-          const auth = createConnection() // this is from previous step
-          const url = getConnectionUrl(auth)
-          return url
+          const AUTH = createConnection() // this is from previous step
+          return getConnectionUrl(AUTH)
         }
 
-        const url = urlGoogle()
+        const URL = urlGoogle()
 
-        if (url) {
-          return { status: true, url: url }
+        if (URL) {
+          return { status: true, url: URL }
         } else {
           return { status: false }
         }
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
     static async setClientPassword (req) {
       try {
-        const setPasswordForm = {
+        const SET_PASSWORD_FORM = {
           email: req.email,
           password: req.password,
           otpCode: req.otpCode,
           redisPrefix: 'Client-OTP-'
         }
-        return AuthService.changeClientPassword(setPasswordForm)
+        return AuthService.changeClientPassword(SET_PASSWORD_FORM)
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
     static async resetClientPassword (req) {
       try {
-        const setPasswordForm = {
+        const SET_PASSWORD_FORM = {
           email: req.email,
           password: req.password,
           otpCode: req.otpCode,
           redisPrefix: 'Client-Passwd-Change-'
         }
-        return AuthService.changeClientPassword(setPasswordForm)
+        return AuthService.changeClientPassword(SET_PASSWORD_FORM)
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
@@ -606,17 +605,17 @@ class AuthService {
         return new Promise(async (resolve, reject) => {
           /* We are first checking redis to see whether it has a key that matches the given email */
           try {
-            const reply = await redisClient.get(req.redisPrefix.concat(req.email))
-            if (reply === req.otpCode) {
-              const setPasswordForm = {
+            const REPLY = await REDIS_CLIENT.get(req.redisPrefix.concat(req.email))
+            if (REPLY === req.otpCode) {
+              const SET_PASSWORD_FORM = {
                 email: req.email,
                 password: req.password,
                 intention: req.intention
               }
-              await postDBRequest('users/v1/set_client_password', setPasswordForm)
+              await postDBRequest('users/v1/set_client_password', SET_PASSWORD_FORM)
                 .then(async response => {
                   if (response.status && response.message === 'Password updated') {
-                    await redisClient.del(req.redisPrefix.concat(req.email))
+                    await REDIS_CLIENT.del(req.redisPrefix.concat(req.email))
                   }
                   resolve(response)
                 })
@@ -633,21 +632,21 @@ class AuthService {
         })
         /* eslint-enable no-async-promise-executor */
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
     static async sendResetPasswordCode (req) {
       try {
-        const codePayload = {
+        const CODE_PAYLOAD = {
           codeIntention: 'changing',
           intention: 'change',
           email: req.email,
           redisPrefix: 'Client-Passwd-Change-'
         }
-        return AuthService.sendOTPCode(codePayload)
+        return AuthService.sendOTPCode(CODE_PAYLOAD)
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
@@ -666,15 +665,15 @@ class AuthService {
           intention = 'change'
           prefix = 'Client-Passwd-Change-'
         }
-        const codePayload = {
+        const CODE_PAYLOAD = {
           codeIntention: codeIntention,
           intention: intention,
           email: req.email,
           redisPrefix: prefix
         }
-        return AuthService.sendOTPCode(codePayload)
+        return AuthService.sendOTPCode(CODE_PAYLOAD)
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
@@ -683,7 +682,7 @@ class AuthService {
       /* eslint-disable no-async-promise-executor */
       /* TODO: To remove the async in the promise below */
       return new Promise(async (resolve, reject) => {
-        const response = {
+        const RESPONSE = {
           accountExists: true,
           codeSent: false,
           message: null,
@@ -692,30 +691,30 @@ class AuthService {
           success: false
         }
         /* eslint-enable no-async-promise-executor */
-        const otpCode = AuthService.generateOTP()
+        const OTP_CODE = AuthService.generateOTP()
         /* One key sets the email address while the other sets the token.
             * The email expires in 1 hour. The token however expires in 30 minutes.
             * TODO: To confirm reasoning behind the difference in the expiry times */
-        await redisClient.set(req.redisPrefix.concat(req.email), otpCode, 'EX', 60 * 10)
-        await redisClient.set(req.redisPrefix.concat(req.email, '-token'), otpCode, 'EX', 30)
-        const htmlToSend = emailOTP.emailOTPCode(otpCode, req.intention)
-        const emailDetails = {
+        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email), OTP_CODE, 'EX', 60 * 10)
+        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email, '-token'), OTP_CODE, 'EX', 30)
+        const HTML_TO_SEND = EMAIL_OTP.emailOTPCode(OTP_CODE, req.intention)
+        const EMAIL_DETAILS = {
           to: req.email,
-          subject: String(otpCode).concat(' is the code to finish ', req.codeIntention, ' your password'),
-          html: htmlToSend,
+          subject: String(OTP_CODE).concat(' is the code to finish ', req.codeIntention, ' your password'),
+          html: HTML_TO_SEND,
           info: false
         }
-        await AuthService.sendEmail(emailDetails)
+        await AuthService.sendEmail(EMAIL_DETAILS)
           .then(emailSentResponse => {
             if (emailSentResponse) {
-              response.success = true
-              response.message = 'A verification code has been sent to your email'
-              response.codeSent = true
-              resolve(response)
+              RESPONSE.success = true
+              RESPONSE.message = 'A verification code has been sent to your email'
+              RESPONSE.codeSent = true
+              resolve(RESPONSE)
             } else {
-              response.codeSent = false
-              response.message = 'Failed to send email'
-              resolve(response)
+              RESPONSE.codeSent = false
+              RESPONSE.message = 'Failed to send email'
+              resolve(RESPONSE)
             }
           })
           .catch(error => reject(error))
@@ -734,8 +733,8 @@ class AuthService {
               /* TODO: To remove the async in the promise below */
               return new Promise(async (resolve, reject) => {
                 try {
-                  const otp = await redisClient.get(req.redisPrefix.concat(req.email))
-                  const response = {
+                  const OTP = await REDIS_CLIENT.get(req.redisPrefix.concat(req.email))
+                  const RESPONSE = {
                     accountExists: true,
                     codeSent: false,
                     message: null,
@@ -743,15 +742,15 @@ class AuthService {
                     type: 'Client',
                     success: false
                   }
-                  if (otp) {
+                  if (OTP) {
                     try {
-                      const tokenOtp = await redisClient.get(req.redisPrefix.concat(req.email, '-token'))
-                      if (tokenOtp) {
-                        response.success = true
-                        response.message = 'Code already sent. Kindly retry again after 30 seconds'
-                        resolve(response)
+                      const OTP_TOKEN = await REDIS_CLIENT.get(req.redisPrefix.concat(req.email, '-token'))
+                      if (OTP_TOKEN) {
+                        RESPONSE.success = true
+                        RESPONSE.message = 'Code already sent. Kindly retry again after 30 seconds'
+                        resolve(RESPONSE)
                       } else {
-                        await redisClient.del(req.redisPrefix.concat(req.email))
+                        await REDIS_CLIENT.del(req.redisPrefix.concat(req.email))
                         resolve(AuthService.sendCode(req))
                       }
                     } catch (tokenErr) {
@@ -781,14 +780,14 @@ class AuthService {
             throw new Error(error)
           })
       } catch (e) {
-        return requestsMixin.customErrorMessage(e)
+        return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
 
     static async getClientMobile (req) {
-      const decodedToken = await AuthService.decodeToken(req.headers.refresh)
+      const DECODED_TOKEN = await AuthService.decodeToken(req.headers.refresh)
       return await postDBRequest('users/v1/get_mobile', {
-        email: decodedToken.message.sub
+        email: DECODED_TOKEN.message.sub
       })
         .then(response => response)
         .catch(error => Promise.reject(error))

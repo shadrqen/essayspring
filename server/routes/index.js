@@ -1,10 +1,10 @@
 /* Endpoint that handles requests to the root application router */
 
 /* Importing an instance of express */
-const express = require('express')
+const EXPRESS = require('express')
 
 /* Creating an instance of the express router */
-const router = express.Router()
+const ROUTER = EXPRESS.Router()
 
 /* Importing the auth function that handles matters authentication */
 const { auth } = require('../services/users/auth')
@@ -25,8 +25,8 @@ getDBRequest('v1/check') //  .get('https://elitesay-web-db-service.azurewebsites
   })
 
 /* GET home page. */
-router.get('/', logger, auth, function (req, res, next) {
+ROUTER.get('/', logger, auth, function (req, res, next) {
   res.json({ title: 'Index' })
 })
 
-module.exports = router
+module.exports = ROUTER

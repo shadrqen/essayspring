@@ -1,25 +1,25 @@
 /* Importing modules */
 /* Axios, Promise based HTTP client for the browser and node.js */
-const axios = require('axios')
+const AXIOS = require('axios')
 
 // const getDBRequest = require('../../database/connect').getDBRequest
 
 const { postDBRequest, setHeaders } = require('../../database/connect')
 
 /* Moment JS - helps is parsing, validating, manipulating and displaying date/time in JavaScript in a very easy way.  */
-const moment = require('moment')
+const MOMENT_JS = require('moment')
 
 /* The requests mixin to hold shareable requests mixins */
-const requestsMixin = require('../../../mixins/requests')
+const REQUESTS_MIXIN = require('../../../mixins/requests')
 
-const mpesaAuthService = require('./auth')
+const MPESA_AUTH_SERVICE = require('./auth')
 
 /* Initializing the mpesa access token */
 const setAuthorization = async () => {
   /* Appending the Authorization header to the b2C api request */
-  return await mpesaAuthService.accessToken()
+  return await MPESA_AUTH_SERVICE.accessToken()
     .then(token => {
-      axios.defaults.headers.common.Authorization = 'Bearer ' + token
+      AXIOS.defaults.headers.common.Authorization = 'Bearer ' + token
       return true
     })
     .catch(error => {
@@ -27,7 +27,7 @@ const setAuthorization = async () => {
     })
 }
 
-const mpesaConfig = require('./config')
+const MPESA_CONFIG = require('./config')
 
 /* Payment service to hold MPESA payments */
 class MPESAPaymentService {
@@ -35,12 +35,12 @@ class MPESAPaymentService {
   static async b2CApi (req) {
     await setAuthorization()
     /* Initializing the b2c mpesa url */
-    const url = 'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest'
-    /* Getting the current timestamp using moment js, which will be an input to the security credential below */
-    const timestamp = moment(moment.now()).format('YYYYMMDDHHmmss')
-    const b2CObj = {
+    const REQUEST_URL = 'https://sandbox.safaricom.co.ke/mpesa/b2c/v1/paymentrequest'
+    /* Getting the current timestamp using MOMENT_JS js, which will be an input to the security credential below */
+    const CURRENT_TIMESTAMP = MOMENT_JS(MOMENT_JS.now()).format('YYYYMMDDHHmmss')
+    const B2C_OBJECT = {
       InitiatorName: 'Rotiken Gisa',
-      SecurityCredential: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + timestamp).toString('base64'),
+      SecurityCredential: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + CURRENT_TIMESTAMP).toString('base64'),
       CommandID: 'BusinessPayment',
       Amount: req.amount,
       PartyA: req.partyA,
@@ -50,37 +50,37 @@ class MPESAPaymentService {
       ResultURL: req.c2bSuccess,
       Occasion: 'Withdrawal'
     }
-    return await axios.post(url, b2CObj)
+    return await AXIOS.post(REQUEST_URL, B2C_OBJECT)
       .then(response => {
         return response.data
       })
       .catch(error => {
-        return requestsMixin.customErrorMessage(error)
+        return REQUESTS_MIXIN.customErrorMessage(error)
       })
   }
 
   static async c2BRegister (req) {
     await setAuthorization()
-    const url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
-    const c2BRegisterObj = {
+    const C2B_REGISTRATION_URL = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/registerurl'
+    const C2B_REGISTRATION_OBJECT = {
       ShortCode: req.shortCode,
       ResponseType: req.responseType,
       ConfirmationURL: req.confirmationUrl,
       ValidationURL: req.validationUrl
     }
-    return await axios.post(url, c2BRegisterObj)
+    return await AXIOS.post(C2B_REGISTRATION_URL, C2B_REGISTRATION_OBJECT)
       .then(response => {
         return response.data
       })
       .catch(error => {
-        return requestsMixin.customErrorMessage(error)
+        return REQUESTS_MIXIN.customErrorMessage(error)
       })
   }
 
   static async c2B (req) {
     await setAuthorization()
-    const url = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate'
-    const c2BObj = {
+    const URL = 'https://sandbox.safaricom.co.ke/mpesa/c2b/v1/simulate'
+    const C2B_OBJ = {
       // Fill in the request parameters with valid values
       ShortCode: req.shortCode,
       CommandID: req.commandId,
@@ -88,23 +88,23 @@ class MPESAPaymentService {
       Msisdn: req.msisdn,
       BillRefNumber: req.billRefNumber
     }
-    return await axios.post(url, c2BObj)
+    return await AXIOS.post(URL, C2B_OBJ)
       .then(response => {
         return response.data
       })
-      .catch(error => requestsMixin.customErrorMessage(error))
+      .catch(error => REQUESTS_MIXIN.customErrorMessage(error))
   }
 
   /* Does the actual STK push request */
   static async sendSTKPush (req, url, stkPushObj) {
-    return await axios.post(url, stkPushObj)
+    return await AXIOS.post(url, stkPushObj)
       .then(async response => {
         if (response.data.ResponseCode === '0') {
-          const paymentObject = {
+          const PAYMENT_OBJECT = {
             reqObject: req,
             checkoutRequestId: response.data.CheckoutRequestID
           }
-          return await MPESAPaymentService.saveClientPayment(paymentObject)
+          return await MPESAPaymentService.saveClientPayment(PAYMENT_OBJECT)
             .then(async savingRes => {
               if (savingRes.paymentAdded) {
                 /* The topic that we are sending back to the client is used to subscribe to an MQTT
@@ -114,11 +114,11 @@ class MPESAPaymentService {
                 * as part of the STK push request.
                 * The client will therefore be able to instantly update the payment status the moment we get a
                 * response from M-PESA  */
-                const wsTopic = process.env.DEV_MQTT_WC_ORDER_PAYMENT_TOPIC.concat(savingRes.trId)
+                const WS_TOPIC = process.env.DEV_MQTT_WC_ORDER_PAYMENT_TOPIC.concat(savingRes.trId)
                 return {
                   status: true,
                   message: 'success',
-                  topic: wsTopic
+                  topic: WS_TOPIC
                 }
               } else {
                 /* There have been instances when the DBMS fails to save the payment details after sending the
@@ -132,7 +132,7 @@ class MPESAPaymentService {
                 let savingSuccess = false
                 let topic = null
                 while (count > 0) {
-                  await MPESAPaymentService.saveClientPayment(paymentObject)
+                  await MPESAPaymentService.saveClientPayment(PAYMENT_OBJECT)
                     .then(paymentSavedSuccess => {
                       if (paymentSavedSuccess.paymentAdded) {
                         count = 0
@@ -141,12 +141,12 @@ class MPESAPaymentService {
                       }
                     })
                     .catch(() => {
-                      console.log('Failed to resave client payment: ', paymentObject.checkoutRequestId)
+                      console.log('Failed to resave client payment: ', PAYMENT_OBJECT.checkoutRequestId)
                     })
                   count -= 1
                   await new Promise(resolve => setTimeout(resolve, 1000))
                 }
-                console.log('Client payment saving: ', savingSuccess, paymentObject.checkoutRequestId)
+                console.log('Client payment saving: ', savingSuccess, PAYMENT_OBJECT.checkoutRequestId)
                 return { status: true, message: 'Your payment will be processed shortly', topic: topic }
               }
             })
@@ -180,23 +180,23 @@ class MPESAPaymentService {
                 } else {
                   return await setAuthorization()
                     .then(async () => {
-                      const url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
-                      /* Getting the current timestamp using moment js, which will be an input to the security credential below */
-                      const timestamp = moment(moment.now()).format('YYYYMMDDHHmmss')
-                      const stkPushObj = {
+                      const URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
+                      /* Getting the current timestamp using MOMENT_JS js, which will be an input to the security credential below */
+                      const CURRENT_TIMESTAMP = MOMENT_JS(MOMENT_JS.now()).format('YYYYMMDDHHmmss')
+                      const STK_PUS_OBJ = {
                         BusinessShortCode: process.env.MPESA_SHORTCODE,
-                        Password: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + timestamp).toString('base64'),
-                        Timestamp: timestamp,
+                        Password: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + CURRENT_TIMESTAMP).toString('base64'),
+                        Timestamp: CURRENT_TIMESTAMP,
                         TransactionType: 'CustomerPayBillOnline',
                         Amount: req.totalAmount,
                         PartyA: req.mobile,
                         PartyB: process.env.MPESA_SHORTCODE,
                         PhoneNumber: req.mobile,
-                        CallBackURL: mpesaConfig.C2B_CALLBACK_URL,
+                        CallBackURL: MPESA_CONFIG.C2B_CALLBACK_URL,
                         AccountReference: 'EssaySpring Testing',
                         TransactionDesc: 'Testing STK PUSH'
                       }
-                      return await MPESAPaymentService.sendSTKPush(req, url, stkPushObj)
+                      return await MPESAPaymentService.sendSTKPush(req, URL, STK_PUS_OBJ)
                         .then(stkResponse => stkResponse)
                         .catch(stkError => {
                           console.log('stkError: ', stkError)
@@ -220,27 +220,27 @@ class MPESAPaymentService {
           return Promise.reject(new Error('Failed to check order payment status').message)
         })
     } catch (error) {
-      return requestsMixin.customErrorMessage(error)
+      return REQUESTS_MIXIN.customErrorMessage(error)
     }
   }
 
   static async stkQuery (req) {
     await setAuthorization()
     /* Getting the current timestamp using moment js, which will be an input to the security credential below */
-    const timestamp = moment(moment.now()).format('YYYYMMDDHHmmss')
-    const url = 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query'
-    const stkQueryObj = {
+    const CURRENT_TIMESTAMP = MOMENT_JS(MOMENT_JS.now()).format('YYYYMMDDHHmmss')
+    const URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query'
+    const STK_QUERY_OBJ = {
       BusinessShortCode: process.env.MPESA_SHORTCODE,
-      Password: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + timestamp).toString('base64'),
-      Timestamp: timestamp,
+      Password: Buffer.from(process.env.MPESA_SHORTCODE + process.env.MPESA_PASSKEY + CURRENT_TIMESTAMP).toString('base64'),
+      Timestamp: CURRENT_TIMESTAMP,
       CheckoutRequestID: req.checkoutRequestId
     }
-    return await axios.post(url, stkQueryObj)
+    return await AXIOS.post(URL, STK_QUERY_OBJ)
       .then(response => {
         return response.data
       })
       .catch(error => {
-        return requestsMixin.customErrorMessage(error)
+        return REQUESTS_MIXIN.customErrorMessage(error)
       })
   }
 

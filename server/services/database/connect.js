@@ -2,7 +2,7 @@
 
 /* Makes requests to the database micro-service */
 
-const axios = require('axios')
+const AXIOS = require('AXIOS')
 
 let apiKey, dbMicroService, origin
 
@@ -16,11 +16,11 @@ if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
   apiKey = process.env.DEV_API_KEY
 }
 
-axios.defaults.headers.common.api_key = apiKey
-axios.defaults.headers.common['x-allowed-origin'] = origin
+AXIOS.defaults.headers.common.api_key = apiKey
+AXIOS.defaults.headers.common['x-allowed-origin'] = origin
 
 module.exports.getDBRequest = async url => {
-  return await axios
+  return await AXIOS
     .get(dbMicroService + url)
     .then(res => {
       return res.data
@@ -31,7 +31,7 @@ module.exports.getDBRequest = async url => {
 }
 
 module.exports.postDBRequest = async (url, body) => {
-  return await axios
+  return await AXIOS
     .post(dbMicroService + url, body)
     .then(res => {
       return res.data
@@ -45,6 +45,6 @@ module.exports.postDBRequest = async (url, body) => {
 * to the Safaricom Daraja api. There was need then to set the headers again before calling
 * our DBMS */
 module.exports.setHeaders = () => {
-  axios.defaults.headers.common.api_key = apiKey
-  axios.defaults.headers.common['x-allowed-origin'] = origin
+  AXIOS.defaults.headers.common.api_key = apiKey
+  AXIOS.defaults.headers.common['x-allowed-origin'] = origin
 }

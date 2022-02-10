@@ -4,10 +4,10 @@
 
 /* Importing the index model that will be used to access the sequelize instance, which will in turn help create
 * sequelize transactions */
-const model = require('../../models/index')
+const MODEL = require('../../models/index')
 
 /* Importing bcrypt, used to encrypt and decrypt user passwords */
-const bcrypt = require('bcrypt')
+const BCRYPT = require('bcrypt')
 
 /* Importing models that will be used to handle user logic */
 const {
@@ -55,7 +55,7 @@ class UserHelper {
   /* Function to get a user's basic details from the user table by email */
   static async getUserByMail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         return await User.findOne({
           attributes: ['id'],
           raw: true,
@@ -76,12 +76,12 @@ class UserHelper {
   /* Function to get a client's email by a writer's email */
   static async getClientEmailByWriterEmail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
-        const writer = await UserHelper.getWriterByEmail(req.email)
+      return await MODEL.sequelize.transaction(async (t) => {
+        const WRITER = await UserHelper.getWriterByEmail(req.email)
         return await ClientWriter.findOne({
           attributes: ['id'],
           where: {
-            writerId: writer.id
+            writerId: WRITER.id
           },
           include: [
             {
@@ -114,7 +114,7 @@ class UserHelper {
   * It also returns the client or writer details, depending on the account type */
   static async getWebUserByMail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* First get the User details by email */
         return await User.findOne({
           attributes: ['id', 'email', 'password'],
@@ -139,19 +139,19 @@ class UserHelper {
             if (userDetails) {
               /* Return client details, together with order details */
               if (userDetails.AccountType.type === 'Client') {
-                const client = await Client.findOne({
+                const CLIENT = await Client.findOne({
                   where: {
                     userId: userDetails.id
                   },
                   attributes: ['id']
                 })
-                const clientObj = {
-                  id: client.id,
+                const CLIENT_OBJ = {
+                  id: CLIENT.id,
                   password: userDetails.password,
                   loginVia: userDetails.LoginVia.via
                 }
                 /* The orderDetails functions returns the details of an order, as seen in the orders helper */
-                return orderDetails(clientObj, null, req.gotStarted)
+                return orderDetails(CLIENT_OBJ, null, req.gotStarted)
               } else if (userDetails.AccountType.type === 'Writer') {
                 /* Otherwise return a writers details */
                 return await Writer.findOne({
@@ -180,7 +180,7 @@ class UserHelper {
                 }, { transaction: t })
                   .then(async regDetails => {
                     /* First check if the user has been invited by a client */
-                    const writerHasBeenInvited = await WriterInvitation.findOne({
+                    const WRITER_HAS_BEEN_INVITED = await WriterInvitation.findOne({
                       where: {
                         email: req.email, /* TODO: To add the column isDeleted to all queries */
                         isDeleted: false
@@ -188,7 +188,7 @@ class UserHelper {
                       attributes: ['id']
                     })
                     /* Check whether account is confirmed first */
-                    const accountConfirmed = await WriterEmailSubmission.findOne({
+                    const ACCOUNT_CONFIRMED = await WriterEmailSubmission.findOne({
                       where: {
                         userId: userDetails.id
                       },
@@ -204,13 +204,13 @@ class UserHelper {
                         return {
                           type: 'Writer',
                           user: userDetails,
-                          accountConfirmed: accountConfirmed.accountConfirmed,
+                          accountConfirmed: ACCOUNT_CONFIRMED.accountConfirmed,
                           regDetails: regDetails,
                           applicationDone: true
                         }
                       }
                       /* Check whether the person had started doing a sample essay before */
-                      const submissionDone = await WriterSampleEssay.findOne({
+                      const SUBMISSION_DONE = await WriterSampleEssay.findOne({
                         where: {
                           writerId: regDetails.id
                         },
@@ -218,14 +218,14 @@ class UserHelper {
                       })
                       /* If so, check if there is time taken - meaning that the person had started the essay, and then
                       * submitted it */
-                      if (submissionDone && submissionDone.timeTaken) {
+                      if (SUBMISSION_DONE && SUBMISSION_DONE.timeTaken) {
                         /* If so, then it means that the writer had finished registration - because the essay is
                         * the last step in the registration process. And therefore, return from here, and
                         * that the application is Done */
                         return {
                           type: 'Writer',
                           user: userDetails,
-                          accountConfirmed: accountConfirmed.accountConfirmed,
+                          accountConfirmed: ACCOUNT_CONFIRMED.accountConfirmed,
                           regDetails: regDetails,
                           applicationDone: true
                         }
@@ -251,7 +251,7 @@ class UserHelper {
                           throw new Error(error)
                         })
                       /* Get some writer details */
-                      const [writerCitationStyles, writerDisciplines, writerWorkExperience, writerEducation] = await Promise.all([
+                      const [WRITER_CITATION_STYLES, WRITER_DISCIPLINES, WRITER_WORK_EXPERIENCE, WRITER_EDUCATION] = await Promise.all([
                         WriterCitationStyle.findOne({
                           where: {
                             writerId: regDetails.id
@@ -287,24 +287,24 @@ class UserHelper {
                       return {
                         type: 'Writer',
                         user: userDetails,
-                        accountConfirmed: accountConfirmed.accountConfirmed,
+                        accountConfirmed: ACCOUNT_CONFIRMED.accountConfirmed,
                         regDetails: regDetails,
                         applicationDone: false,
-                        writerInvited: !!writerHasBeenInvited,
-                        citationStyles: writerCitationStyles,
-                        disciplines: writerDisciplines,
-                        workExperience: writerWorkExperience,
-                        education: writerEducation,
+                        writerInvited: !!WRITER_HAS_BEEN_INVITED,
+                        citationStyles: WRITER_CITATION_STYLES,
+                        disciplines: WRITER_DISCIPLINES,
+                        workExperience: WRITER_WORK_EXPERIENCE,
+                        education: WRITER_EDUCATION,
                         grammarPassed: grammarPassed
                       }
                     } else {
                       return {
                         type: 'Writer',
                         user: userDetails,
-                        accountConfirmed: accountConfirmed.accountConfirmed,
+                        accountConfirmed: ACCOUNT_CONFIRMED.accountConfirmed,
                         regDetails: regDetails,
                         regStep: 0,
-                        writerInvited: !!writerHasBeenInvited
+                        writerInvited: !!WRITER_HAS_BEEN_INVITED
                       }
                     }
                   })
@@ -331,7 +331,7 @@ class UserHelper {
   static async getWriterByEmail (email) {
     /* Get the user details by email */
     /* TODO: To create one reusable function to do the query below */
-    const user = await User.findOne({
+    const USER = await User.findOne({
       where: {
         email: email.toLowerCase()
       },
@@ -340,7 +340,7 @@ class UserHelper {
     /* And get the writer id */
     return await Writer.findOne({
       where: {
-        userId: user.id
+        userId: USER.id
       },
       attributes: ['id']
     })
@@ -349,7 +349,7 @@ class UserHelper {
   /* Function to add a client's details */
   static async addClientDetails (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* First the user's details by email */
         return await User.findOne({
           where: {
@@ -364,13 +364,13 @@ class UserHelper {
             } else {
               /* Else add a user */
               /* First define the user's object */
-              const addUserObj = {
+              const ADD_USER_OBJ = {
                 email: req.email,
                 loginType: req.loginType,
                 accountType: 'Client'
               }
               /* Call the AddUser function, which does the adding itself */
-              return await UserHelper.addUser(addUserObj)
+              return await UserHelper.addUser(ADD_USER_OBJ)
                 .then(async userCreated => {
                   /* If user is created, then add the client details */
                   if (userCreated) {
@@ -413,7 +413,7 @@ class UserHelper {
   /* Function to check whether the window to accept writer applications is open or not */
   static async checkWriterRegistrationStatus (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Look for a record in the writer management table where the isDeleted column is false */
         return await WriterManagement.findOne({
           attributes: ['id', 'registrationOpen'],
@@ -453,7 +453,7 @@ class UserHelper {
   * for the records so as to know of persons who applied */
   static async saveWriterApplicationDetails (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Here we are just saving the email address of the writer applicant */
         return await WriterApplication.create({
           email: req.body.email
@@ -473,7 +473,7 @@ class UserHelper {
   /* Function that adds a user details to the User table */
   static async addUser (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* First get the accountStatus of the user depending on the user's accountType */
         let userAccountStatus
         if (req.accountType === 'Writer') {
@@ -488,7 +488,7 @@ class UserHelper {
           userAccountStatus = 'Deactivated'
         }
         /* Get login type, user type and account status */
-        const [loginValid, userType, accountStatus] = await Promise.all([LoginVia.findOne({
+        const [LOGIN_VALID, USER_TYPE, ACCOUNT_STATUS] = await Promise.all([LoginVia.findOne({
           where: {
             via: req.loginType
           },
@@ -512,9 +512,9 @@ class UserHelper {
         /* Then create the user */
         return await User.create({
           email: req.email.toLowerCase(),
-          accountStatus: accountStatus.id,
-          loginVia: loginValid.id,
-          userType: userType.id,
+          accountStatus: ACCOUNT_STATUS.id,
+          loginVia: LOGIN_VALID.id,
+          userType: USER_TYPE.id,
           isDeleted: false
         }, { transaction: t })
           .then(userCreated => userCreated)
@@ -531,15 +531,15 @@ class UserHelper {
   /* Function to submit a writer's email after clicking the 'Get Started' button */
   static async submitWriterEmail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Specify user's details first */
-        const addUserObj = {
+        const ADD_USER_OBJ = {
           email: req.body.content.email,
           loginType: 'Email',
           accountType: 'Writer'
         }
         /* Then call the addUser function to add the details to the User table */
-        return await UserHelper.addUser(addUserObj)
+        return await UserHelper.addUser(ADD_USER_OBJ)
           .then(async userAdded => {
             /* If a user is added successfully, then add an email submission record */
             if (userAdded) {
@@ -582,7 +582,7 @@ class UserHelper {
   /* Function to confirm a writer's email address */
   static async confirmWriterEmail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* First get the user id */
         return await User.findOne({
           where: {
@@ -592,14 +592,14 @@ class UserHelper {
         }, { transaction: t })
           .then(async writerConfirmed => {
             /* Then get the email confirmation details */
-            const emailConfirmed = await WriterEmailSubmission.findOne({
+            const EMAIL_CONFIRMED = await WriterEmailSubmission.findOne({
               where: {
                 userId: writerConfirmed.id
               },
               attributes: ['accountConfirmed']
             })
             /* If email already confirm, just return */
-            if (emailConfirmed.accountConfirmed) {
+            if (EMAIL_CONFIRMED.accountConfirmed) {
               return { response: true, message: 'Email already confirmed' }
             } else {
               /* Else confirm the account */
@@ -632,7 +632,7 @@ class UserHelper {
   /* Function to create a writer's password in encrypted form */
   static async createWriterPassword (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* As usual, get user id */
         return await User.findOne({
           where: {
@@ -642,14 +642,14 @@ class UserHelper {
         }, { transaction: t })
           .then(async writerConfirmed => {
             /* Then get his or her account confirmation details */
-            const emailConfirmed = await WriterEmailSubmission.findOne({
+            const EMAIL_CONFIRMED = await WriterEmailSubmission.findOne({
               where: {
                 userId: writerConfirmed.id
               },
               attributes: ['accountConfirmed']
             })
             /* If account already confirmed, then update the password */
-            if (emailConfirmed.accountConfirmed) {
+            if (EMAIL_CONFIRMED.accountConfirmed) {
               /* First get the email submission record */
               return await WriterEmailSubmission.findOne({
                 where: {
@@ -662,8 +662,8 @@ class UserHelper {
                   if (record) {
                     /* Use a promise */
                     return new Promise((resolve, reject) => {
-                      /* We are using bcrypt here */
-                      bcrypt.hash(req.password, 10, async (err, hash) => {
+                      /* We are using BCRYPT here */
+                      BCRYPT.hash(req.password, 10, async (err, hash) => {
                         /* Reject in case of an error */
                         if (err) {
                           reject(err)
@@ -713,28 +713,28 @@ class UserHelper {
   /* Function to create a connection between a client and a writer */
   static async createClientWriterConnection (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First check if the person has an invitation */
-        const writerInvitation = await WriterInvitation.findOne({
+        const WRITER_INVITATION = await WriterInvitation.findOne({
           where: {
             email: req.email
           },
           attributes: ['clientId']
         })
-        const writer = await UserHelper.getWriterByEmail(req.email)
-        const connectionExists = await ClientWriter.findOne({
+        const WRITER = await UserHelper.getWriterByEmail(req.email)
+        const CONNECTION_EXISTS = await ClientWriter.findOne({
           where: {
-            writerId: writer.id,
-            clientId: writerInvitation.clientId
+            writerId: WRITER.id,
+            clientId: WRITER_INVITATION.clientId
           },
           attributes: ['id']
         })
-        if (connectionExists) {
+        if (CONNECTION_EXISTS) {
           return { response: 'success' }
         }
         return await ClientWriter.create({
-          writerId: writer.id,
-          clientId: writerInvitation.clientId
+          writerId: WRITER.id,
+          clientId: WRITER_INVITATION.clientId
         }, { transaction: t })
           .then(clientWriterCreated => {
             if (clientWriterCreated) {
@@ -758,9 +758,9 @@ class UserHelper {
   /* TODO: to break the function into smaller, manageable or scalable bits */
   static async saveWriterProfile (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* First get and define the native language */
-        const engAs = 'English as a Second Language'
+        const ENG_AS = 'English as a Second Language'
         let status
         if (req.type === 'public') {
           status = 'Pending review'
@@ -768,7 +768,7 @@ class UserHelper {
           status = 'Active'
         }
         /* Then get the user, statusID and englishAsID */
-        const [user, statusId, englishAsId, writerType] = await Promise.all([
+        const [USER, STATUS_ID, ENGLISH_HAS_ID, WRITER_TYPE] = await Promise.all([
           User.findOne({
             where: {
               email: req.email.toLowerCase()
@@ -783,7 +783,7 @@ class UserHelper {
           }, { transaction: t }),
           EnglishAs.findOne({
             where: {
-              as: engAs
+              as: ENG_AS
             },
             attributes: ['id'],
             raw: true
@@ -799,7 +799,7 @@ class UserHelper {
         /* Next is to get the writer id */
         return await Writer.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id'],
           raw: true
@@ -809,8 +809,8 @@ class UserHelper {
             if (writer) {
               /* We are first updating the writer table itself */
               return await Writer.update({
-                userId: user.id,
-                type: writerType.id,
+                userId: USER.id,
+                type: WRITER_TYPE.id,
                 surname: req.personalInformation.surname,
                 otherNames: req.personalInformation.otherNames,
                 nIdFront: req.type === 'public' ? req.personalInformation.nidFront : null,
@@ -821,19 +821,19 @@ class UserHelper {
                 genderId: req.personalInformation.gender,
                 citizenshipId: req.personalInformation.country,
                 countyState: req.type === 'public' ? req.personalInformation.countyState : null,
-                englishAsId: englishAsId.id
+                englishAsId: ENGLISH_HAS_ID.id
               }, {
                 where: {
-                  userId: user.id
+                  userId: USER.id
                 }
               }, { transaction: t })
                 .then(async writerDetails => {
                   /* Then we update the user account status to 'Pending review' */
                   await User.update({
-                    accountStatus: statusId.id
+                    accountStatus: STATUS_ID.id
                   }, {
                     where: {
-                      id: user.id
+                      id: USER.id
                     }
                   })
                   if (req.type === 'private') {
@@ -1026,14 +1026,14 @@ class UserHelper {
                 })
             } else {
               /* First check if the person has an invitation */
-              const writerInvitation = await WriterInvitation.findOne({
+              const WRITER_INVITATION = await WriterInvitation.findOne({
                 where: {
                   email: req.email
                 },
                 attributes: ['clientId']
               })
               if (req.type === 'private') {
-                if (!writerInvitation) {
+                if (!WRITER_INVITATION) {
                   return {
                     response: 'No Associated Invitation'
                   }
@@ -1042,8 +1042,8 @@ class UserHelper {
               /* Else create records of the writer */
               /* We start by creating a writer object */
               return await Writer.create({
-                type: writerType.id,
-                userId: user.id,
+                type: WRITER_TYPE.id,
+                userId: USER.id,
                 surname: req.personalInformation.surname,
                 otherNames: req.personalInformation.otherNames,
                 nIdFront: req.type === 'public' ? req.personalInformation.nidFront : null,
@@ -1054,15 +1054,15 @@ class UserHelper {
                 genderId: req.personalInformation.gender,
                 citizenshipId: req.personalInformation.country,
                 countyState: req.type === 'public' ? req.personalInformation.countyState : null,
-                englishAsId: englishAsId.id
+                englishAsId: ENGLISH_HAS_ID.id
               }, { transaction: t })
                 .then(async writerDetails => {
                   /* Then update the account status, as usual */
                   await User.update({
-                    accountStatus: statusId.id
+                    accountStatus: STATUS_ID.id
                   }, {
                     where: {
-                      id: user.id
+                      id: USER.id
                     }
                   })
                   /* Before checking whether the writer details were created successfully */
@@ -1151,9 +1151,9 @@ class UserHelper {
   /* Function to save a writer's grammar test */
   static async submitGrammarTest (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         /* We start off, as usual, with getting a writer's user id */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
@@ -1162,7 +1162,7 @@ class UserHelper {
         /* Then we look for a writer record by the above user id */
         return await Writer.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id']
         }, { transaction: t })
@@ -1170,22 +1170,22 @@ class UserHelper {
             /* If a writer by the above details exist, then we go ahead to save the grammar details */
             if (writer) {
               /* We get the correct answers for the grammar test first */
-              const correctAnswerIds = await GrammarQuestion.findAll({
+              const CORRECT_ANSWER_IDS = await GrammarQuestion.findAll({
                 attributes: ['id', 'correctAnswerId'],
                 raw: true
               })
               /* We then initialize the correct answers array, and the wrong answers */
-              const correctAnswers = []
-              const wrongAnswers = []
+              const CORRECT_ANSWERS = []
+              const WRONG_ANSWERS = []
               /* We then loop through the grammar test answers */
-              for (const [key, value] of Object.entries(req.grammarTest)) {
+              for (const [KEY, VALUE] of Object.entries(req.grammarTest)) {
                 /* And check the answer against the correct answer ids */
-                if (value === correctAnswerIds[key - 1].correctAnswerId) {
+                if (VALUE === CORRECT_ANSWER_IDS[KEY - 1].correctAnswerId) {
                   /* If it matches, push to the correct answers */
-                  correctAnswers.push(key)
+                  CORRECT_ANSWERS.push(KEY)
                 } else {
                   /* Else push it to the wrong answers */
-                  wrongAnswers.push(key)
+                  WRONG_ANSWERS.push(KEY)
                 }
               }
               /* Once we have a list of right and wrong answers, then we need to save
@@ -1199,7 +1199,7 @@ class UserHelper {
                   /* We first check whether this writer already has his or her grammar test saved */
                   if (writerGrammarTest) {
                     /* If he or she does, then we return, no more action */
-                    if (wrongAnswers.length >= 10) {
+                    if (WRONG_ANSWERS.length >= 10) {
                       return { success: false, message: 'already saved' }
                     } else {
                       return { success: true, message: 'already saved' }
@@ -1208,15 +1208,15 @@ class UserHelper {
                     /* Else, we need to create a record */
                     return await WriterGrammarTest.create({
                       writerId: writer.id,
-                      totalScore: Math.floor(correctAnswers.length / 25 * 100),
-                      correctQuestions: correctAnswers,
-                      wrongQuestions: wrongAnswers
+                      totalScore: Math.floor(CORRECT_ANSWERS.length / 25 * 100),
+                      correctQuestions: CORRECT_ANSWERS,
+                      wrongQuestions: WRONG_ANSWERS
                     }, { transaction: t })
                       .then(testCreated => {
                         /* If test is created or added successfully */
                         if (testCreated) {
                           /* Check if the writer pass the test by failing not more four questions */
-                          if (wrongAnswers.length >= 10) {
+                          if (WRONG_ANSWERS.length >= 10) {
                             /* If not, then return failed */
                             return { success: false, message: 'failed the test' }
                           } else {
@@ -1250,7 +1250,7 @@ class UserHelper {
   /* Function to submit user email before logging in */
   static async submitLoginEmail (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Find user details by email */
         return await User.findOne({
           attributes: ['id', 'password'],
@@ -1304,10 +1304,10 @@ class UserHelper {
   /* Function to set the client password */
   static async setClientPassword (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         return new Promise((resolve, reject) => {
           /* Simply encrypt the password */
-          bcrypt.hash(req.password, 10, async (err, hash) => {
+          BCRYPT.hash(req.password, 10, async (err, hash) => {
             if (err) {
               reject(err)
             } else {
@@ -1343,7 +1343,7 @@ class UserHelper {
   static async getClientId (email) {
     /* Helps to return the client ID by email, reducing the need to duplicate such code - owing to the fact that
     * there are many places in the program that needs to have the client ID, by providing the email address */
-    const user = await User.findOne({
+    const USER = await User.findOne({
       where: {
         email: email.toLowerCase()
       },
@@ -1351,7 +1351,7 @@ class UserHelper {
     })
     return await Client.findOne({
       where: {
-        userId: user.id
+        userId: USER.id
       },
       attributes: ['id'],
       raw: true
@@ -1363,12 +1363,12 @@ class UserHelper {
   /* Function that gets personal writers */
   static async getPersonalWriters (req) {
     try {
-      return await model.sequelize.transaction(async t => {
-        const clientId = await UserHelper.getClientId(req.email)
+      return await MODEL.sequelize.transaction(async t => {
+        const CLIENT_ID = await UserHelper.getClientId(req.email)
         return await ClientWriter.findAll({
           attributes: ['id', 'connectionConfirmed'],
           where: {
-            clientId: clientId
+            clientId: CLIENT_ID
           },
           include: [
             {
@@ -1425,7 +1425,7 @@ class UserHelper {
   /* Function that get a selected personal writer */
   static async getSelectedPersonalWriter (req) {
     try {
-      return await model.sequelize.transaction(async t => {
+      return await MODEL.sequelize.transaction(async t => {
         return await Writer.findOne({
           attributes: ['surname', 'otherNames', 'mobileNo', 'createdAt'],
           where: {
@@ -1484,15 +1484,15 @@ class UserHelper {
   /* Function that approves personal writers */
   static async approvePersonalWriter (req) {
     try {
-      return await model.sequelize.transaction(async t => {
-        const clientWriter = await ClientWriter.findOne({
+      return await MODEL.sequelize.transaction(async t => {
+        const CLIENT_WRITER = await ClientWriter.findOne({
           attributes: ['id', 'connectionConfirmed'],
           where: {
             writerId: req.writerId
           }
         })
-        if (clientWriter) {
-          if (clientWriter.connectionConfirmed) {
+        if (CLIENT_WRITER) {
+          if (CLIENT_WRITER.connectionConfirmed) {
             return { confirmed: false, message: 'Already Confirmed!' }
           } else {
             return await ClientWriter.update({
@@ -1519,10 +1519,10 @@ class UserHelper {
   /* Function to simply get the sample essay themes */
   static async getSampleEssayThemes (req) {
     try {
-      const writer = await UserHelper.getWriterByEmail({ email: req.email })
-      const writerEssay = await WriterSampleEssay.findOne({
+      const WRITER = await UserHelper.getWriterByEmail({ email: req.email })
+      const WRITER_ESSAY = await WriterSampleEssay.findOne({
         where: {
-          writerId: writer.id
+          writerId: WRITER.id
         },
         attributes: ['themeId'],
         include: [
@@ -1533,18 +1533,18 @@ class UserHelper {
           }
         ]
       })
-      if (writerEssay) {
-        return writerEssay.SampleEssayTheme
+      if (WRITER_ESSAY) {
+        return WRITER_ESSAY.SampleEssayTheme
       }
-      const writerDisciplines = await WriterDiscipline.findOne({
+      const WRITER_DISCIPLINES = await WriterDiscipline.findOne({
         where: {
-          writerId: writer.id
+          writerId: WRITER.id
         },
         attributes: ['disciplineIds', 'primaryDiscipline']
       })
       return await SampleEssayTheme.findOne({
         where: {
-          subjectId: writerDisciplines.primaryDiscipline
+          subjectId: WRITER_DISCIPLINES.primaryDiscipline
         },
         attributes: ['id', 'topic', 'description']
       })
@@ -1560,28 +1560,28 @@ class UserHelper {
   /* Function to record the start of the writer essay */
   static async writerStartWriting (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Fetch user id */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
         /* And get the writer id */
-        const writer = await Writer.findOne({
+        const WRITER = await Writer.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id']
         })
         /* If writer does exist in the writer table, then return false. */
         /* Else continue */
-        if (!writer) return false
+        if (!WRITER) return false
         /* Get writer sample essay detail */
         return await WriterSampleEssay.findOne({
           where: {
-            writerId: writer.id
+            writerId: WRITER.id
           },
           attributes: ['id']
         })
@@ -1593,7 +1593,7 @@ class UserHelper {
               /* Else create a record */
               return await WriterSampleEssay.create({
                 timeAssigned: new Date(),
-                writerId: writer.id,
+                writerId: WRITER.id,
                 themeId: req.themeId
               }, { transaction: t })
                 .then(writerEssay => !!writerEssay)
@@ -1611,26 +1611,26 @@ class UserHelper {
   /* Function to save the writer's sample essay */
   static async saveWriterSampleEssay (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Get ids, as usual */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
-        const writer = await Writer.findOne({
+        const WRITER = await Writer.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id']
         })
         /* If writer does not exist, return false */
-        if (!writer) return false
+        if (!WRITER) return false
         /* Else continue */
         return await WriterSampleEssay.findOne({
           where: {
-            writerId: writer.id
+            writerId: WRITER.id
           },
           attributes: ['id', 'timeAssigned']
         })
@@ -1638,19 +1638,19 @@ class UserHelper {
             /* If sample essay details exist, then update */
             if (writerSampleEssay) {
               /* Try to calculate the time taken */
-              const timeAssigned = new Date(writerSampleEssay.timeAssigned).getTime()
-              const timeSubmitted = new Date().getTime()
-              const timeDifference = timeSubmitted - timeAssigned
-              const differenceDays = timeDifference / (1000 * 3600 * 24)
-              const differenceHours = (differenceDays % 1) * 24
+              const TIME_ASSIGNED = new Date(writerSampleEssay.timeAssigned).getTime()
+              const TIME_SUBMITTED = new Date().getTime()
+              const TIME_DIFFERENCE = TIME_SUBMITTED - TIME_ASSIGNED
+              const DIFFERENCE_DAYS = TIME_DIFFERENCE / (1000 * 3600 * 24)
+              const DIFFERENCE_HOURS = (DIFFERENCE_DAYS % 1) * 24
               /* Then update the time taken, essay and time submitted */
               return await WriterSampleEssay.update({
                 timeSubmitted: new Date(),
-                timeTaken: differenceHours.toFixed(4),
+                timeTaken: DIFFERENCE_HOURS.toFixed(4),
                 essay: req.body.essay
               }, {
                 where: {
-                  writerId: writer.id
+                  writerId: WRITER.id
                 }
               }, { transaction: t })
                 .then(writerEssay => {
@@ -1679,7 +1679,7 @@ class UserHelper {
   /* Function to get the writer details by email */
   static async writerApplicationStatus (req) {
     try {
-      return await model.sequelize.transaction(async () => {
+      return await MODEL.sequelize.transaction(async () => {
         return await User.findOne({
           where: {
             email: req.email.toLowerCase()
@@ -1718,16 +1718,16 @@ class UserHelper {
   /* Function to save a problem report from a writer or client */
   static async reportProblem (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Get user id */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
         /* First get the source ID of the problem */
-        const source = await DataSource.findOne({
+        const SOURCE = await DataSource.findOne({
           where: {
             source: req.source
           },
@@ -1735,19 +1735,19 @@ class UserHelper {
         })
         /* Then create the problem report record */
         return await ProblemReport.create({
-          userId: user.id,
+          userId: USER.id,
           description: req.obj.description,
-          source: source.id
+          source: SOURCE.id
         })
           .then(async response => {
             /* Loop through the supporting files and save them if any */
             for (let i = 0; i < req.obj.supportingFiles.length; i++) {
               /* Final original name to be formatted first before saving */
-              const finalOriginalName = originalNameFormatter(req.obj.supportingFiles[i].originalName)
+              const FINAL_ORIGINAL_NAME = originalNameFormatter(req.obj.supportingFiles[i].originalName)
               await ProblemReportFile.create({
                 reportId: response.dataValues.id,
                 fileUrl: req.obj.supportingFiles[i].fileUrl,
-                originalName: finalOriginalName
+                originalName: FINAL_ORIGINAL_NAME
               }, { transaction: t })
             }
             return !!response
@@ -1764,16 +1764,16 @@ class UserHelper {
   /* Function to save the login details of a user */
   static async saveLogin (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Simply get the user id */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
         /* And the source */
-        const source = await DataSource.findOne({
+        const SOURCE = await DataSource.findOne({
           where: {
             source: req.source
           },
@@ -1781,8 +1781,8 @@ class UserHelper {
         })
         /* Before adding a login record */
         return await Login.create({
-          userId: user.id,
-          source: source.id
+          userId: USER.id,
+          source: SOURCE.id
         })
           .then(response => !!response)
           .catch(error => {
@@ -1797,7 +1797,7 @@ class UserHelper {
   /* Function to get a client's mobile phone */
   static async getClientMobile (req) {
     try {
-      const user = await User.findOne({
+      const USER = await User.findOne({
         where: {
           email: req.email.toLowerCase()
         },
@@ -1805,12 +1805,12 @@ class UserHelper {
       })
       return await Client.findOne({
         where: {
-          userId: user.id
+          userId: USER.id
         },
         attributes: ['id']
       })
         .then(async clientID => {
-          const mobile = await ClientPayment.findOne({
+          const MOBILE = await ClientPayment.findOne({
             where: {
               clientId: clientID.id
             },
@@ -1819,7 +1819,7 @@ class UserHelper {
               ['createdAt', 'DESC']
             ]
           })
-          return mobile ? mobile.mobile : ''
+          return MOBILE ? MOBILE.mobile : ''
         })
         .catch(error => {
           throw new Error(error)

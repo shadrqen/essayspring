@@ -477,14 +477,14 @@ export default {
         await api.getRequest('users/v1/get_writers')
           .then(response => {
             // this.postNewOrderOngoing = false
-            const atLeastOneActiveWriter = response.writers.filter(writer => writer.connectionConfirmed)
-            if (atLeastOneActiveWriter.length > 0) {
-              const email = this.clientPostOrderForm.email
+            const AT_LEAST_ONE_ACTIVE_WRITER = response.writers.filter(writer => writer.connectionConfirmed)
+            if (AT_LEAST_ONE_ACTIVE_WRITER.length > 0) {
+              const CLIENT_EMAIL = this.clientPostOrderForm.email
               this.resetClientPostOrderForm()
               this.changeClientPostOrderForm({
                 key: 'email',
                 subKey: null,
-                val: email,
+                val: CLIENT_EMAIL,
                 option: null
               })
               this.$router.push('/client/place-order')
@@ -494,7 +494,7 @@ export default {
                 location.reload()
               }, 2000) */
             } else {
-              if (atLeastOneActiveWriter.length === 0 && response.writers.length > 0) {
+              if (AT_LEAST_ONE_ACTIVE_WRITER.length === 0 && response.writers.length > 0) {
                 this.inviteWriterNotification = 'Kindly approve at least one writer to continue'
               } else {
                 this.inviteWriterNotification = 'Kindly invite at least one writer and approve to continue'

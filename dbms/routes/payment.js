@@ -1,25 +1,25 @@
 /* Route that handles requests related to payments */
 
 /* Importing an instance of express */
-const express = require('express')
-/* Creating an express router instance */
-const router = express.Router()
+const EXPRESS = require('express')
+/* Creating an express ROUTER instance */
+const ROUTER = EXPRESS.Router()
 
 /* The service that handles authentication */
 const { auth } = require('../services/auth')
 
 /* The helpers that handles authentication */
-const paymentsHelper = require('../helpers/payments/payment')
+const PAYMENTS_HELPER = require('../helpers/payments/payment')
 
 /* GET home page. */
-router.get('/', auth, function (req, res) {
+ROUTER.get('/', auth, function (req, res) {
   res.json({ title: 'Payments' })
 })
 
 /* Endpoint to save client payment information */
-router.post('/mpesa/save_client_payment', auth, async function (req, res) {
+ROUTER.post('/mpesa/save_client_payment', auth, async function (req, res) {
   /* Call the function that does the saving of client order payment details on the payments helper */
-  await paymentsHelper.saveClientOrderPayment(req.body)
+  await PAYMENTS_HELPER.saveClientOrderPayment(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -29,8 +29,8 @@ router.post('/mpesa/save_client_payment', auth, async function (req, res) {
 })
 
 /* Endpoint to update client order payment details */
-router.post('/mpesa/update_client_order_payment', auth, async function (req, res) {
-  await paymentsHelper.updateClientOrderPayment(req.body)
+ROUTER.post('/mpesa/update_client_order_payment', auth, async function (req, res) {
+  await PAYMENTS_HELPER.updateClientOrderPayment(req.body)
     .then(response => {
       console.log('\n\n\n res: ', response, '\n\n\n')
       res.status(200).json(response)
@@ -42,8 +42,8 @@ router.post('/mpesa/update_client_order_payment', auth, async function (req, res
 })
 
 /* Endpoint to check the payment status of an order */
-router.post('/mpesa/check_order_payment_status', auth, async function (req, res) {
-  await paymentsHelper.checkOrderPaymentStatus(req.body)
+ROUTER.post('/mpesa/check_order_payment_status', auth, async function (req, res) {
+  await PAYMENTS_HELPER.checkOrderPaymentStatus(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -53,8 +53,8 @@ router.post('/mpesa/check_order_payment_status', auth, async function (req, res)
 })
 
 /* Endpoint to check if an order has already been paid for or not */
-router.post('/mpesa/check_if_order_is_already_paid', auth, async function (req, res) {
-  await paymentsHelper.checkIfOrderIsAlreadyPaid(req.body)
+ROUTER.post('/mpesa/check_if_order_is_already_paid', auth, async function (req, res) {
+  await PAYMENTS_HELPER.checkIfOrderIsAlreadyPaid(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -64,8 +64,8 @@ router.post('/mpesa/check_if_order_is_already_paid', auth, async function (req, 
 })
 
 /* Endpoint to check whether a transaction is currently ongoing or not */
-router.post('/mpesa/check_if_transaction_is_ongoing', auth, async function (req, res) {
-  await paymentsHelper.checkOngoingTransaction(req.body)
+ROUTER.post('/mpesa/check_if_transaction_is_ongoing', auth, async function (req, res) {
+  await PAYMENTS_HELPER.checkOngoingTransaction(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -75,8 +75,8 @@ router.post('/mpesa/check_if_transaction_is_ongoing', auth, async function (req,
 })
 
 /* Endpoint to get the price ratio that helps in calculating the price of a paper */
-router.post('/price_ratio', auth, async function (req, res) {
-  await paymentsHelper.getPriceRatios(req.body)
+ROUTER.post('/price_ratio', auth, async function (req, res) {
+  await PAYMENTS_HELPER.getPriceRatios(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -85,5 +85,5 @@ router.post('/price_ratio', auth, async function (req, res) {
     })
 })
 
-/* Exporting the router */
-module.exports = router
+/* Exporting the ROUTER */
+module.exports = ROUTER

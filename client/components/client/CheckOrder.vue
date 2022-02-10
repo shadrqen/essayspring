@@ -325,8 +325,8 @@ export default {
       timeAmPm: 'timeAmPm'
     }),
     pricePerPage () {
-      const pricePP = this.clientPostOrderForm.paymentSummary.totalPrice / this.clientPostOrderForm.pageCount
-      return Math.round(pricePP * 100) / 100
+      const PRICE_PP = this.clientPostOrderForm.paymentSummary.totalPrice / this.clientPostOrderForm.pageCount
+      return Math.round(PRICE_PP * 100) / 100
     },
     deadline () {
       return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, this.clientPostOrderForm.deadlineTime)
@@ -446,9 +446,9 @@ export default {
      * @returns {void}
      */
     removeExtra (extraId, price) {
-      const index = this.clientPostOrderForm.paymentSummary.extrasList.map(function (e) { return e.id }).indexOf(extraId)
-      if (index > -1) {
-        this.clientPostOrderForm.paymentSummary.extrasList.splice(index, 1)
+      const INDEX = this.clientPostOrderForm.paymentSummary.extrasList.map(function (e) { return e.id }).indexOf(extraId)
+      if (INDEX > -1) {
+        this.clientPostOrderForm.paymentSummary.extrasList.splice(INDEX, 1)
         /* The chosen extras list determines the length of the third column in the payment summary
         * As the list grows, there is need to update the column height to accommodate the growing items and
         * vice versa */
@@ -488,11 +488,11 @@ export default {
           extrasPrice += Number(extra.price)
         })
       }
-      const totalPrice = this.clientPostOrderForm.paymentSummary.paperPrice + extrasPrice
+      const TOTAL_PRICE = this.clientPostOrderForm.paymentSummary.paperPrice + extrasPrice
       this.changeClientPostOrderForm({
         key: 'paymentSummary',
         subKey: 'totalPrice',
-        val: totalPrice,
+        val: TOTAL_PRICE,
         option: null
       })
     },

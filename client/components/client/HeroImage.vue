@@ -496,9 +496,9 @@ export default {
     },
     orderDeadline () {
       if (this.clientPostOrderForm.deadlineTime) {
-        const targetDeadlineTime = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
-        const timeIn24Hrs = TimeMixin.deadlineHoursAmPm(targetDeadlineTime)
-        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, timeIn24Hrs)
+        const TARGET_DEADLINE_TIME = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
+        const TIME_IN_24HRS = TimeMixin.deadlineHoursAmPm(TARGET_DEADLINE_TIME)
+        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, TIME_IN_24HRS)
       } else {
         return null
       }
@@ -516,8 +516,8 @@ export default {
       /* We only get the states if the type of client is public */
       this.getStates()
     }
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
+    const DATE_TIME = new Time.DateTime()
+    this.currentDate = DATE_TIME.date()
     bus.$on('registerClient', (val, email) => {
       if (!this.registerClientCalled) {
         this.registerClientCalled = true
@@ -549,8 +549,8 @@ export default {
     }),
     async proceedToPlaceOrder () {
       if (this.$refs.clientPostOrderForm.validate()) {
-        const orderDetailsSaved = await this.processOrderDetails()
-        if (orderDetailsSaved) {
+        const ORDER_DETAILS_SAVED = await this.processOrderDetails()
+        if (ORDER_DETAILS_SAVED) {
           if (this.loginStatus) {
             if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'private') {
               await this.$router.push('/client/place-order')
@@ -566,11 +566,11 @@ export default {
     },
     async processOrderDetails () {
       this.overlay = true
-      const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-      if (validatePageCount.status) {
+      const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+      if (VALIDATE_PAGE_COUNT.status) {
         return await this.saveOrderDetails()
       } else {
-        return this.showPageValidationError(validatePageCount.message)
+        return this.showPageValidationError(VALIDATE_PAGE_COUNT.message)
       }
     },
     /**
@@ -623,19 +623,19 @@ export default {
         loginType: 'Email'
       })
         .then(async registerUserResponse => {
-          const registrationStatus = registerUserResponse.response
+          const REGISTRATION_STATUS = registerUserResponse.response
           /* There are two options here:
           * 1. The user is new. He/she is therefore registered before getting access tokens to proceed
           * 2. The user is not new, here should be prompted to log in */
           /* Option 2: Prompt the 'not new' user to log in in case an account already exists */
           /* FIXME: How can a user who is not new find himself/herself here? (like scenarios)? */
-          if (registrationStatus === 'success' && !registerUserResponse.isNew) {
+          if (REGISTRATION_STATUS === 'success' && !registerUserResponse.isNew) {
             await this.submitExistingUserEmail()
           } else {
             this.overlay = false
             this.setClientSessionVariables({
               calledFromBaseDialog: calledFromBaseDialog,
-              registerUserResponse: registrationStatus
+              registerUserResponse: REGISTRATION_STATUS
             })
           }
         })
@@ -872,9 +872,9 @@ export default {
      * @returns {void}
      */
     changePageCount (sign) {
-      const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-      if (validatePageCount.status) {
-        this.clientPostOrderForm.pageCount = validatePageCount.number
+      const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+      if (VALIDATE_PAGE_COUNT.status) {
+        this.clientPostOrderForm.pageCount = VALIDATE_PAGE_COUNT.number
         switch (sign) {
           case 'add':
             this.clientPostOrderForm.pageCount += 1
@@ -888,7 +888,7 @@ export default {
         this.changeClientPostOrderForm({ key: 'pageCount', subKey: null, val: this.clientPostOrderForm.pageCount, option: null })
       } else {
         this.numOfPagesError.status = true
-        this.numOfPagesError.message = validatePageCount.message
+        this.numOfPagesError.message = VALIDATE_PAGE_COUNT.message
         setTimeout(() => {
           this.numOfPagesError.status = false
           this.numOfPagesError.message = ''
@@ -897,10 +897,10 @@ export default {
     },
     validateNumOfPages () {
       setTimeout(() => {
-        const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-        if (!validatePageCount.status) {
+        const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+        if (!VALIDATE_PAGE_COUNT.status) {
           this.numOfPagesError.status = true
-          this.numOfPagesError.message = validatePageCount.message
+          this.numOfPagesError.message = VALIDATE_PAGE_COUNT.message
           setTimeout(() => {
             this.numOfPagesError.status = false
             this.numOfPagesError.message = ''

@@ -128,14 +128,14 @@ export default {
     },
     async redirectToOrders () {
       this.changeOrderPostingDone(true)
-      const email = this.clientPostOrderForm.email
+      const CLIENT_EMAIL = this.clientPostOrderForm.email
       /* Resetting the registration state */
       this.changeWholeClientPostOrderForm(this.defaultForm)
       /* Before setting the client email. This is important because we need it when the client wants to post another order */
       this.changeClientPostOrderForm({
         key: 'email',
         subKey: null,
-        val: email,
+        val: CLIENT_EMAIL,
         option: null
       })
       await this.$router.push('/client/orders')

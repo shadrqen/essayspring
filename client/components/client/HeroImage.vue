@@ -630,7 +630,7 @@ export default {
           /* Option 2: Prompt the 'not new' user to log in in case an account already exists */
           /* FIXME: How can a user who is not new find himself/herself here? (like scenarios)? */
           if (REGISTRATION_STATUS === 'success' && !registerUserResponse.isNew) {
-            await this.submitExistingUserEmail()
+            await this.submitExistingUserEmail(email)
           } else {
             this.overlay = false
             this.setClientSessionVariables({

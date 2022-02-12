@@ -695,8 +695,8 @@ class AuthService {
         /* One key sets the email address while the other sets the token.
             * The email expires in 1 hour. The token however expires in 30 minutes.
             * TODO: To confirm reasoning behind the difference in the expiry times */
-        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email), OTP_CODE, 'EX', 60 * 10)
-        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email, '-token'), OTP_CODE, 'EX', 30)
+        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email), OTP_CODE, { EX: 60 * 10, NX: false })
+        await REDIS_CLIENT.set(req.redisPrefix.concat(req.email, '-token'), OTP_CODE, { EX: 30, NX: false })
         const HTML_TO_SEND = EMAIL_OTP.emailOTPCode(OTP_CODE, req.intention)
         const EMAIL_DETAILS = {
           to: req.email,

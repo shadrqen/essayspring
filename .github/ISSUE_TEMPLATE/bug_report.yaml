@@ -34,7 +34,7 @@ body:
     id: essayspring-version
     attributes:
       label: What version of EssaySpring are you using?
-      description: 'Version is displayed under "Settings". For example: 1.5.2'
+      description: 'Version is displayed under "Settings". For example: 1.0.0'
     validations:
       required: true
   - type: input
@@ -43,7 +43,7 @@ body:
       label: What version of Node.js are you using?
       description: 'For example: 16.13.2'
     validations:
-      required: true
+      required: false
   - type: input
     attributes:
       label: What browser are you using?
@@ -62,4 +62,4 @@ body:
       label: How are you deploying EssaySpring?
       description: 'For example: running locally, Docker, Kubernetes'
     validations:
-      required: true
+      required: false

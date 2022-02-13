@@ -26,7 +26,8 @@ export default Vue.extend({
   },
   data () {
     return {
-      pageLoaded: false
+      pageLoaded: false,
+      viewportTimer: null
     }
   },
   mounted () {
@@ -41,9 +42,7 @@ export default Vue.extend({
     this.set_viewport_code()
   },
   methods: {
-    ...mapMutations({
-      changeViewPortCode: 'changeViewPortCode'
-    }),
+    ...mapMutations(['changeViewPortCode']),
     set_viewport_code () {
       let width = 0
       if (process.env.VUE_ENV === 'client') {
@@ -51,21 +50,26 @@ export default Vue.extend({
       }
       switch (true) {
         case (width < 600):
-          this.changeViewPortCode('xs')
+          this.changeViewPortDebounce('xs')
           break
         case (width > 600 && width < 960):
-          this.changeViewPortCode('sm')
+          this.changeViewPortDebounce('sm')
           break
         case (width > 960 && width < 1264):
-          this.changeViewPortCode('md')
+          this.changeViewPortDebounce('md')
           break
         case (width > 1264 && width < 1904):
-          this.changeViewPortCode('lg')
+          this.changeViewPortDebounce('lg')
           break
         case (width > 1904):
-          this.changeViewPortCode('xl')
+          this.changeViewPortDebounce('xl')
           break
       }
+    },
+    changeViewPortDebounce (viewport) {
+      const timeout = 10
+      clearTimeout(this.viewportTimer)
+      this.viewportTimer = setTimeout(() => { this.changeViewPortCode(viewport) }, timeout)
     }
   }
 })

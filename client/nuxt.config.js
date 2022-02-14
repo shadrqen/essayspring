@@ -30,7 +30,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~plugins/bus.js',
-    { src: '~/plugins/localStorage.js', ssr: false }
+    { src: '~/plugins/vuex-persisted-state', ssr: true }
   ],
 
   // generate: {
@@ -46,7 +46,6 @@ export default {
       UserAgent: '*',
       Disallow: '/client'
     }
-
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

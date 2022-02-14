@@ -192,13 +192,17 @@ const actions = {
     }
   },
   async getAssignmentTypes ({ commit, state }: any) {
+    console.log('\n\n\n states: ', state.assignmentTypes, '\n\n\n')
     if (state.assignmentTypes.length === 0 || !Array.isArray(state.assignmentTypes)) {
       return await api.getRequest('orders/v1/get_assignment_types')
         .then((response: any) => {
           commit('changeAssignmentTypes', Array.isArray(response) ? response : [])
+          console.log('\n\n\n states: ', state.assignmentTypes, '\n\n\n')
           return true
         })
         .catch((error: any) => {
+          // commit('changeAssignmentTypes', [{ name: 'a' }, { name: 'b' }])
+          console.log('\n\n\n states: ', state.assignmentTypes, '\n\n\n')
           return Promise.reject(error)
         })
     } else {

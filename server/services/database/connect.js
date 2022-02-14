@@ -2,7 +2,7 @@
 
 /* Makes requests to the database micro-service */
 
-const AXIOS = require('AXIOS')
+const AXIOS = require('axios')
 
 let apiKey, dbMicroService, origin
 

@@ -1,7 +1,6 @@
 // const dbConnection = require('../functions/db-connection')
 
-// eslint-disable-next-line no-undef
 test('The database is connected successfully', async () => {
-  // eslint-disable-next-line no-undef
+  expect(1 + 1).toBe(2)
   // await expect(dbConnection()).resolves.toBe('database connected successfully')
 })

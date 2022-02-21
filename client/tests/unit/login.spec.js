@@ -31,7 +31,6 @@ import loginMixin from '@/mixins/login'
  * Mocking modules
  */
 
-/* eslint-disable no-undef */
 const mock = new MockAdapter(axios)
 
 jest.mock('@/services/facebook-login.js')
@@ -54,15 +53,13 @@ const BACKEND_URL = `http://${process.env.URL}:3100`
 
 const localVue = createLocalVue()
 
-/* eslint-enable no-undef */
-
 localVue.use(Vuex)
 localVue.use(Vuetify)
 localVue.use(VueRouter)
 const router = new VueRouter()
 
 const vuetify = new Vuetify()
-/* eslint-disable no-undef */
+
 describe('Authentication Service -> Log in User', () => {
   let wrapper, getters, mutations, store
 
@@ -416,4 +413,3 @@ describe('Authentication Service -> Log in User', () => {
     })
   })
 })
-/* eslint-enable no-undef */

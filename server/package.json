@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lintfix": "eslint --fix ."
   },
   "dependencies": {
     "axios": "^0.25.0",

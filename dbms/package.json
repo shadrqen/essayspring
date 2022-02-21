@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lintfix": "eslint --fix ."
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

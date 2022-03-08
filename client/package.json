@@ -88,7 +88,7 @@
         "jest": "^27.5.0",
         "jsdoc": "^3.6.10",
         "jsdoc-vuejs": "^3.0.9",
-        "prettier": "^1.19.1",
+        "prettier": "^2.5.1",
         "sass": "^1.49.7",
         "sass-loader": "^10.2.0",
         "standard": "^14.3.4",

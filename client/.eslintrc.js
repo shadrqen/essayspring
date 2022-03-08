@@ -22,6 +22,7 @@ module.exports = {
     'vue',
     '@typescript-eslint'
   ],
+  ignorePatterns: ['docs/*'], // <<< ignore all files in test folder
   rules: {
   }
 }

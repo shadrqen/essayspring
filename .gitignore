@@ -92,4 +92,8 @@ sw.*
 # dev temporary database
 db_volume/
 
+out/
+
 docs/
+
+dump.rdb

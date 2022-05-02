@@ -98,7 +98,12 @@
                     v-for="(extra, key) in extraOrderServices"
                     :key="key"
                     class="extras-list-item"
-                    @click="updateExtras(extra.id, extra.type, extra.price, extra.Currency.currencyCode)"
+                    @click="updateOrderPrice({
+                      extraId: extra.id,
+                      extraType: extra.type,
+                      extraPrice: Number(extra.price),
+                      extraCurrency: extra.Currency.currencyCode
+                    })"
                   >
                     <template>
                       <v-list-item-action>
@@ -134,7 +139,7 @@
         >
           <v-card
             :style="{ 'height': mainClassHeight }"
-            class="main-card"
+            class="main-card extras-card"
             flat
           >
             <v-card-title class="grey lighten-4">
@@ -320,8 +325,8 @@ export default {
       timeAmPm: 'timeAmPm'
     }),
     pricePerPage () {
-      const pricePP = this.clientPostOrderForm.paymentSummary.totalPrice / this.clientPostOrderForm.pageCount
-      return Math.round(pricePP * 100) / 100
+      const PRICE_PP = this.clientPostOrderForm.paymentSummary.totalPrice / this.clientPostOrderForm.pageCount
+      return Math.round(PRICE_PP * 100) / 100
     },
     deadline () {
       return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, this.clientPostOrderForm.deadlineTime)
@@ -353,26 +358,7 @@ export default {
       this.overlay = true
       await this.savePaymentDetails()
         .then(res => {
-          switch (res.response) {
-            case 'success':
-              this.changeClientPostOrderForm({
-                key: 'orderSavingProgress',
-                subKey: 'payment',
-                val: true,
-                option: null
-              })
-              this.$emit('progress-to-next-level', 4)
-              break
-            default:
-              this.errorObject.message = 'Failed to save. Kindly try again'
-              this.errorObject.value = true
-              setTimeout(() => {
-                this.errorObject.value = false
-                this.errorObject.message = null
-              }, 2000)
-              break
-          }
-          this.overlay = false
+          this.processPaymentDetails(res.response)
         })
         .catch(() => {
           this.overlay = false
@@ -384,6 +370,33 @@ export default {
           }, 2000)
         })
     },
+    /**
+     * Processes a successful payment while also showing errors in cases it fails
+     * @param {Object} apiResponse
+     * @returns {void}
+     */
+    processPaymentDetails (apiResponse) {
+      switch (apiResponse) {
+        case 'success':
+          this.changeClientPostOrderForm({
+            key: 'orderSavingProgress',
+            subKey: 'payment',
+            val: true,
+            option: null
+          })
+          this.$emit('progress-to-next-level', 4)
+          break
+        default:
+          this.errorObject.message = 'Failed to save. Kindly try again'
+          this.errorObject.value = true
+          setTimeout(() => {
+            this.errorObject.value = false
+            this.errorObject.message = null
+          }, 2000)
+          break
+      }
+      this.overlay = false
+    },
     async savePaymentDetails () {
       return await api.postRequest('orders/v1/save_order_payment_details', this.clientPostOrderForm)
         .then(res => {
@@ -393,28 +406,20 @@ export default {
           return Promise.reject(error)
         })
     },
-    updateExtras (id, type, price, currencyCode) {
-      price = Number(price)
+    /**
+     * Updates the different order prices such as extrasTotalPrice and totalPrice
+     * while also updating the extras by adding or removing from the list
+     * @param {Object} extraDetails
+     * @returns {void}
+     */
+    updateOrderPrice (extraDetails) {
       /* If the chosen extra already exists in the extras list, remove it */
-      if (this.clientPostOrderForm.paymentSummary.extrasList.some(extra => extra.id === id)) {
-        const index = this.clientPostOrderForm.paymentSummary.extrasList.map(function (e) { return e.id }).indexOf(id)
-        if (index > -1) {
-          this.clientPostOrderForm.paymentSummary.extrasList.splice(index, 1)
-          /* The chosen extras list determines the length of the third column in the payment summary
-          * As the list grows, there is need to update the column height so as to accommodate the growing items and
-          * vice versa */
-          this.updatePaymentSummaryHeight()
-          this.clientPostOrderForm.paymentSummary.extrasTotalPrice -= price
-          this.clientPostOrderForm.paymentSummary.totalPrice -= price
-        }
+      if (this.clientPostOrderForm.paymentSummary.extrasList.some(extra => extra.id === extraDetails.extraId)) {
+        this.removeExtra(extraDetails.extraId, extraDetails.extraPrice)
       } else {
-        /* Else add the target extra service to the extrasList */
-        this.clientPostOrderForm.paymentSummary.extrasList.push({ id: id, type: type, price: price, currencyCode: currencyCode })
-        this.updatePaymentSummaryHeight()
-        this.clientPostOrderForm.paymentSummary.extrasTotalPrice += price
-        this.clientPostOrderForm.paymentSummary.totalPrice = this.clientPostOrderForm.paymentSummary.extrasTotalPrice + this.clientPostOrderForm.paymentSummary.paperPrice
+        this.addExtra(extraDetails)
       }
-      /* Update the payment summaries */
+      /* Update the state of payment summaries */
       this.changeClientPostOrderForm({
         key: 'paymentSummary',
         subKey: 'extrasList',
@@ -434,6 +439,41 @@ export default {
         option: null
       })
     },
+    /**
+     * Removes an extra item from the list of extras
+     * @param {number} extraId - The id of the extra item
+     * @param {number} price - The cost/price of an extra
+     * @returns {void}
+     */
+    removeExtra (extraId, price) {
+      const INDEX = this.clientPostOrderForm.paymentSummary.extrasList.map(function (e) { return e.id }).indexOf(extraId)
+      if (INDEX > -1) {
+        this.clientPostOrderForm.paymentSummary.extrasList.splice(INDEX, 1)
+        /* The chosen extras list determines the length of the third column in the payment summary
+        * As the list grows, there is need to update the column height to accommodate the growing items and
+        * vice versa */
+        this.updatePaymentSummaryHeight()
+        this.clientPostOrderForm.paymentSummary.extrasTotalPrice -= price
+        this.clientPostOrderForm.paymentSummary.totalPrice -= price
+      }
+    },
+    /**
+     * Adds an extra item to the list of extras
+     * @param {Object} extraDetails - The details of the selected extra item
+     * @returns {void}
+     */
+    addExtra (extraDetails) {
+      /* Else add the target extra service to the extrasList */
+      this.clientPostOrderForm.paymentSummary.extrasList.push({
+        id: extraDetails.extraId,
+        type: extraDetails.extraType,
+        price: extraDetails.extraPrice,
+        currencyCode: extraDetails.extraCurrency
+      })
+      this.updatePaymentSummaryHeight()
+      this.clientPostOrderForm.paymentSummary.extrasTotalPrice += extraDetails.extraPrice
+      this.clientPostOrderForm.paymentSummary.totalPrice = this.clientPostOrderForm.paymentSummary.extrasTotalPrice + this.clientPostOrderForm.paymentSummary.paperPrice
+    },
     /* Function to update the total price once this component is loaded.
     * This is important because the paper price is selected in another component.
     * We therefore need to confirm that the total price is up-to date because there are situations where the
@@ -448,14 +488,20 @@ export default {
           extrasPrice += Number(extra.price)
         })
       }
-      const totalPrice = this.clientPostOrderForm.paymentSummary.paperPrice + extrasPrice
+      const TOTAL_PRICE = this.clientPostOrderForm.paymentSummary.paperPrice + extrasPrice
       this.changeClientPostOrderForm({
         key: 'paymentSummary',
         subKey: 'totalPrice',
-        val: totalPrice,
+        val: TOTAL_PRICE,
         option: null
       })
     },
+    /**
+     * The height of the extras-card needs to be dynamic because of the addition of extras.
+     * Therefore, this function dynamically adjusts the height of this card in accordance
+     * with an addition or removal of an extra
+     * @return {void}
+     */
     updatePaymentSummaryHeight () {
       switch (this.clientPostOrderForm.paymentSummary.extrasList.length) {
         case 0:
@@ -476,8 +522,7 @@ export default {
       }
     },
     loadStates () {
-      /* FIXME
-      * the updateTotalPrice() function updates extras even if the extras are already
+      /* FIXME - the updateTotalPrice() function updates extras even if the extras are already
       * included in the total price - this is after login, i.e. an order that a client
       * is picking up from last time */
       this.updateTotalPrice()

@@ -7,7 +7,7 @@
     <v-card-text>
       <v-container>
         <v-row
-          :style="xl ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+          :style="screenIsXL ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
           no-gutters
         >
           <v-col
@@ -21,13 +21,13 @@
               id="sit_back_relax"
               :class="textH5"
             >
-              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? mainHeroPub : mainHero }}
+              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? mainHeroPub : mainHero }}
             </p>
             <p
               id="we_offer_exemplary_service"
               :class="textSubTitle1"
             >
-              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? subHeroPub : subHero }}
+              {{ clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? subHeroPub : subHero }}
               <br>
               {{ subHeroNewLine }}
             </p>
@@ -37,7 +37,7 @@
                 justify="center"
               >
                 <v-img
-                  :height="clientPostOrderForm.type && clientPostOrderForm.type === 'public' ? null : 300"
+                  :height="clientPostOrderForm.type && clientPostOrderForm.type === 'private' ? null : 300"
                   :src="require('~/assets/exams.svg')"
                   class="mt-4"
                 >
@@ -81,14 +81,14 @@
                 :style="{ 'padding-left': clientPostOrderCardTextPadding,
                           'padding-right': clientPostOrderCardTextPadding}"
               >
-                <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                   Boost Your Grades
                 </template>
                 <template v-else>
                   Unlock Your Potential
                 </template>
               </v-card-title>
-              <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+              <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
               <v-form
                 ref="clientPostOrderForm"
                 @submit.prevent=""
@@ -113,7 +113,7 @@
                   />
                   <!--                  It is broken down into two instances: Public and private-->
                   <!--                  The public instance allows a client to specify order details-->
-                  <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                  <template v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                     <template v-if="pageFullyLoaded">
                       <br>
                       <label class="text_field_label">Assignment Type</label>
@@ -173,7 +173,7 @@
                       <label class="text_field_label">
                         Deadline:
                         <assignment-deadline
-                          :deadline="deadline"
+                          :deadline="orderDeadline"
                           color="#007991"
                         />
                       </label>
@@ -235,7 +235,7 @@
                             id="deadline-time"
                             v-model="clientPostOrderForm.deadlineTime"
                             :disabled="!clientPostOrderForm.deadlineDate"
-                            :items="computedItems"
+                            :items="filteredTimeInAmPm"
                             :rules="validate.deadlineTime"
                             append-icon="schedule"
                             class="text-field"
@@ -249,7 +249,7 @@
                             style="height: 50px"
                           />
                         </v-col>
-                        <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'public'">
+                        <br v-if="clientPostOrderForm.type && clientPostOrderForm.type === 'private'">
                       </v-row>
                     </template>
                     <template v-else>
@@ -467,7 +467,7 @@ export default {
     }
   },
   computed: {
-    xl () {
+    screenIsXL () {
       let val
       switch (this.$vuetify.breakpoint.name) {
         case 'xl':
@@ -485,7 +485,7 @@ export default {
       client: 'client',
       loginStatus: 'loginStatus'
     }),
-    computedItems () {
+    filteredTimeInAmPm () {
       return this.time.map(item => {
         return {
           id: item.id,
@@ -494,11 +494,11 @@ export default {
         }
       })
     },
-    deadline () {
+    orderDeadline () {
       if (this.clientPostOrderForm.deadlineTime) {
-        const targetDeadlineTime = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
-        const timeIn24Hrs = TimeMixin.deadlineHoursAmPm(targetDeadlineTime)
-        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, timeIn24Hrs)
+        const TARGET_DEADLINE_TIME = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
+        const TIME_IN_24HRS = TimeMixin.deadlineHoursAmPm(TARGET_DEADLINE_TIME)
+        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, TIME_IN_24HRS)
       } else {
         return null
       }
@@ -512,12 +512,12 @@ export default {
     }
   },
   mounted () {
-    if (this.clientPostOrderForm.type === 'public') {
+    if (this.clientPostOrderForm.type === 'private') {
       /* We only get the states if the type of client is public */
       this.getStates()
     }
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
+    const DATE_TIME = new Time.DateTime()
+    this.currentDate = DATE_TIME.date()
     bus.$on('registerClient', (val, email) => {
       if (!this.registerClientCalled) {
         this.registerClientCalled = true
@@ -545,177 +545,248 @@ export default {
       changeEmail: 'changeEmail',
       changeLoginDialogContents: 'changeLoginDialogContents',
       changeLoginDialog: 'changeLoginDialog',
-      changeClientGotStarted: 'changeClientGotStarted',
-      changeUserType: 'changeUserType'
+      changeClientGotStarted: 'changeClientGotStarted'
     }),
     async proceedToPlaceOrder () {
       if (this.$refs.clientPostOrderForm.validate()) {
-        this.overlay = true
-        const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-        if (validatePageCount.status) {
-          /* Loop through the formfields and save their values on the state */
-          await this.formFields.forEach(field => {
-            this.changeClientPostOrderForm({
-              key: field,
-              subKey: null,
-              val: this.clientPostOrderForm[field],
-              option: null
-            })
-          })
-          // /*If a person is already logged in, then redirect him or her to either the place-order or writers pages*/
+        const ORDER_DETAILS_SAVED = await this.processOrderDetails()
+        if (ORDER_DETAILS_SAVED) {
           if (this.loginStatus) {
-            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-              this.$router.push('/client/place-order')
+            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'private') {
+              await this.$router.push('/client/place-order')
             } else {
-              this.$router.push('/client/writers')
+              await this.$router.push('/client/writers')
             }
           } else {
             this.overlay = true
             await this.registerClient(false, this.clientPostOrderForm.email)
           }
-        } else {
-          this.numOfPagesError.status = true
-          this.numOfPagesError.message = validatePageCount.message
-          this.overlay = false
-          setTimeout(() => {
-            this.numOfPagesError.status = false
-            this.numOfPagesError.message = ''
-          }, 3000)
-          this.overlay = false
         }
       }
     },
-    async registerClient (redirected, email) {
-      /* We are accepting the redirected parameter here because it is important while setting session variables
-      * as you will see down on this function */
-      /* So we first try to register a user with the given email address */
-      return await api.postRequest('auth/v1/register_user', {
+    async processOrderDetails () {
+      this.overlay = true
+      const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+      if (VALIDATE_PAGE_COUNT.status) {
+        return await this.saveOrderDetails()
+      } else {
+        return this.showPageValidationError(VALIDATE_PAGE_COUNT.message)
+      }
+    },
+    /**
+     * Saves the order details in the vuex state
+     * @returns {Promise<boolean>} - The value of the 'processOrderDetails' function - which is a parent function.
+     * It is true because this function is in itself handling a successful page count validation
+     */
+    async saveOrderDetails () {
+      /* Loop through the form-fields and save their values on the state */
+      await this.formFields.forEach(field => {
+        this.changeClientPostOrderForm({
+          key: field,
+          subKey: null,
+          val: this.clientPostOrderForm[field],
+          option: null
+        })
+      })
+      return true
+    },
+    /**
+     * Displays the error that arises from the page count validation
+     * @param {string} validationError
+     * @returns {boolean} - The value of the 'processOrderDetails' function - which is a parent function.
+     * It is false because this function is in itself handling an error in page count validation
+     */
+    showPageValidationError (validationError) {
+      this.numOfPagesError.status = true
+      this.numOfPagesError.message = validationError
+      this.overlay = false
+      setTimeout(() => {
+        this.numOfPagesError.status = false
+        this.numOfPagesError.message = ''
+      }, 3000)
+      this.overlay = false
+      return false
+    },
+    /* TODO: To move the register functionality to a mixin to remove the use of the event bus */
+    /**
+     * Registers a user
+     * @param {boolean} calledFromBaseDialog - The function can be called in two ways, one from within this component
+     * and secondly by triggering the 'registerClient' event from the base dialog. This helps determine the page to
+     * redirect user to.
+     * @param {string} email - User email address
+     * @returns {void}
+     */
+    async registerClient (calledFromBaseDialog, email) {
+      await api.postRequest('auth/v1/register_user', {
         userType: 'Client',
         email: email,
         loginType: 'Email'
       })
-        .then(async response => {
+        .then(async registerUserResponse => {
+          const REGISTRATION_STATUS = registerUserResponse.response
           /* There are two options here:
           * 1. The user is new. He/she is therefore registered before getting access tokens to proceed
           * 2. The user is not new, here should be prompted to log in */
           /* Option 2: Prompt the 'not new' user to log in in case an account already exists */
-          if (response.response === 'success' && !response.isNew) {
-            await api.postRequest('auth/v1/submit_login_email', {
-              email: email
-            })
-              .then(async res => {
-                /* On loggin in, there are two scenarios:
-                * 1. The user is a client
-                * 2. The user is not a client - could be a writer. Mind you both writers and clients share the platform */
-                /* In the first case, there are two more scenarios:
-                * 1. The user has already set a password before
-                * 2. The user had registered and was given access tokens for the first time and therefore is yet to
-                * set his/her password */
-                /* IMPORTANT: Once a user has signed up or registered for an account with us, he/she is not prompted
-                * to create a password first. The password creation comes the second time he/she wants to log in. */
-                if (res.type === 'Client' && res.canLogIn) {
-                  /* For user who are clients and have already set their passwords */
-                  /* This is where the redirected variable comes in handy. This state helps to process other logic
-                  * that you will see in other parts of the application.
-                  * TODO: To confirm why we did not use the redirected variable here */
-                  this.changeClientGotStarted(true)
-                  /* At this point we now need to prompt the user to sign in. This is done by opening a dialog that
-                  * will prompt the user to enter the password */
-                  /* The form that we are using to sign in is in another component. That's why we are using the
-                  * updateLoginForm listener to prompt that element to update the email in the form so as to prevent
-                  * the user from entering again yet we already have his/her email address */
-                  setTimeout(() => {
-                    bus.$emit('updateLoginForm', email)
-                  }, 500)
-                  /* Here, were are now changing the contents of the login dialog in the state.
-                  * We start by disabling the submitEmail option (for cases when a user is prompted to enter
-                  * the email address before going ahead to enter the password) */
-                  this.changeLoginDialogContents({
-                    key: 'dialogContent',
-                    subKey: 'submitEmail',
-                    val: false,
-                    option: null
-                  })
-                  /* And turn on the login option. Here, the user has already submitted the email address and
-                  * is now being prompted to put the password */
-                  this.changeLoginDialogContents({
-                    key: 'dialogContent',
-                    subKey: 'login',
-                    val: true,
-                    option: null
-                  })
-                  this.overlay = false
-                  this.changeLoginDialog(true)
-                } else if (res.type === 'Client' && res.shouldSetPass) {
-                  /* In this case, a user is registered but is yet to set the password. So we show him/her the option
-                  * to set the password on the login dialog by calling the function below */
-                  this.shouldSetPass(res.message)
-                  this.overlay = false
-                } else if (res.type === 'NonClient') {
-                  /* Here, all we do is update the login form with the email address that we have here */
-                  setTimeout(() => {
-                    bus.$emit('updateLoginForm', email)
-                  }, 500)
-                  this.changeLoginDialogContents({
-                    key: 'dialogContent',
-                    subKey: 'login',
-                    val: false,
-                    option: null
-                  })
-                  /* And display the contents of the submit email option of the dialog.
-                  * IMPORTANT: The login dialog is customized for different scenarios. It is a dialog that
-                  * can be used to exclusively:
-                  * 1. Prompt a user to enter the email address
-                  * 2. Enter a password
-                  * 3. Show notifications
-                  * 4. Prompt a user to change/set the password
-                  *
-                  * Because of such, it was designed to take in the structure below:
-                  *       dialogTitle: 'Log in to your account',
-                          dialogContent: {
-                            submitEmail: true,
-                            login: false,
-                            notification: false,
-                            notificationMessage: null,
-                            loginInfo: null,
-                            clientLogin: false,
-                            setPassword: false
-                          }
-                  *
-                  * As evident, we have the title, which has a default - but can be changed depending on the 4
-                  * scenarios above.
-                  *The content has various options, with case 1 being taken care of by the
-                  * 'submitEmail' option while case is handled by the 'login' option. Case 3 and 4 are handled
-                  * by the 'notification' and 'setPassword' option.
-                  * FIXME: Make these options to be one, with its value changing. For example we can have a variable
-                  *  named option that can either be 'login', 'notification' or 'setPassword' et
-                  * */
-                  this.changeLoginDialogContents({
-                    key: 'dialogContent',
-                    subKey: 'submitEmail',
-                    val: true,
-                    option: null
-                  })
-                  /* Disable the overlay and display the login dialog */
-                  this.overlay = false
-                  this.changeLoginDialog(true)
-                }
-              })
-              .catch(() => {
-                /* Close the overlay and log the error
-                * TODO: To handle the error */
-                this.overlay = false
-              })
+          /* FIXME: How can a user who is not new find himself/herself here? (like scenarios)? */
+          if (REGISTRATION_STATUS === 'success' && !registerUserResponse.isNew) {
+            await this.submitExistingUserEmail(email)
           } else {
             this.overlay = false
-            this.setClientSessionVariables(redirected, email, response)
+            this.setClientSessionVariables({
+              calledFromBaseDialog: calledFromBaseDialog,
+              registerUserResponse: REGISTRATION_STATUS
+            })
           }
         })
         .catch(error => {
           return Promise.reject(error)
         })
     },
+    /**
+     * In case a user who wants to register already has his or here email registered, submit the email for login
+     * @param {string} email - User email
+     * @returns {void}
+     */
+    async submitExistingUserEmail (email) {
+      await api.postRequest('auth/v1/submit_login_email', {
+        email: email
+      })
+        .then(async loginResponse => {
+          /* On logging in, there are two scenarios:
+          * 1. The user is a client
+          * 2. The user is not a client - could be a writer. Mind you both writers and clients share the platform */
+          /* In the first case, there are two more scenarios:
+          * 1. The user has already set a password before
+          * 2. The user had registered and was given access tokens for the first time and therefore is yet to
+          * set his/her password */
+          /* IMPORTANT: Once a user has signed up or registered for an account with us, he/she is not prompted
+          * to create a password first. The password creation comes the second time he/she wants to log in. */
+          /* TODO: To combine the 'canLogIn, shouldSetPass' etc. functionality with that in BaseDialogs */
+          if (loginResponse.type === 'Client' && loginResponse.canLogIn) {
+            this.promptUserToEnterPassword(email)
+          } else if (loginResponse.type === 'Client' && loginResponse.shouldSetPass) {
+            /* In this case, a user is registered but is yet to set the password. So we show him/her the option
+            * to set the password on the login dialog by calling the function below */
+            this.shouldSetPass(loginResponse.message)
+            this.overlay = false
+          } else if (loginResponse.type === 'NonClient') {
+            this.showNonClientNotification(email)
+          }
+        })
+        .catch(() => {
+          /* Close the overlay and log the error
+          * TODO: To handle the error */
+          this.overlay = false
+        })
+    },
+    /**
+     * Prompts the user to sign in. This is done by opening a dialog that will prompt the user to enter the password.
+     * The form that we are using to sign in is in another component. That's why we are using the
+     * updateLoginForm listener to prompt that element to update the email in the form to prevent
+     * the user from entering again, yet we already have his/her email address
+     * @param {string} email - Client email
+     * @returns {void}
+     */
+    promptUserToEnterPassword (email) {
+      /* For clients who have already set their passwords and logged in by clicking the 'Get Started' button */
+      this.changeClientGotStarted(true)
+      /* TODO: To remove this event and use a mixin instead */
+      setTimeout(() => {
+        bus.$emit('updateLoginForm', email)
+      }, 500)
+      /* Here, we're now changing the contents of the login dialog in the state.
+      * We start by disabling the submitEmail option (for cases when a user is prompted to enter
+      * the email address before going ahead to enter the password) */
+      this.changeLoginDialogContents({
+        key: 'dialogContent',
+        subKey: 'submitEmail',
+        val: false,
+        option: null
+      })
+      /* And turn on the login option. Here, the user has already submitted the email address and
+      * is now being prompted to put the password */
+      this.changeLoginDialogContents({
+        key: 'dialogContent',
+        subKey: 'login',
+        val: true,
+        option: null
+      })
+      this.overlay = false
+      this.changeLoginDialog(true)
+    },
+    /**
+     * shows existing users a notification why they are not allowed to log in here as clients.
+     * This is because there are two other separate sub-systems for other users.
+     * This one is specifically for users who are of type client
+     * @param {string} email - Client email
+     * @returns {void}
+     */
+    showNonClientNotification (email) {
+      /* Here, all we do is update the login form with the email address that we have here */
+      setTimeout(() => {
+        bus.$emit('updateLoginForm', email)
+      }, 500)
+      this.changeLoginDialogContents({
+        key: 'dialogContent',
+        subKey: 'login',
+        val: false,
+        option: null
+      })
+      /* And display the contents of the submit email option of the dialog.
+      * IMPORTANT: The login dialog is customized for different scenarios. It is a dialog that
+      * can be used to exclusively:
+      * 1. Prompt a user to enter the email address
+      * 2. Enter a password
+      * 3. Show notifications
+      * 4. Prompt a user to change/set the password
+      *
+      * Because of such, it was designed to take in the structure below:
+      *       dialogTitle: 'Log in to your account',
+              dialogContent: {
+                submitEmail: true,
+                login: false,
+                notification: false,
+                notificationMessage: null,
+                loginInfo: null,
+                clientLogin: false,
+                setPassword: false
+              }
+      *
+      * As evident, we have the title, which has a default - but can be changed depending on the 4
+      * scenarios above.
+      *The content has various options, with case 1 being taken care of by the
+      * 'submitEmail' option while case is handled by the 'login' option. Case 3 and 4 are handled
+      * by the 'notification' and 'setPassword' option.
+      * FIXME: Make these options to be one, with its value changing. For example we can have a variable
+      *  named option that can either be 'login', 'notification' or 'setPassword' et
+      * */
+      this.changeLoginDialogContents({
+        key: 'dialogContent',
+        subKey: 'submitEmail',
+        val: true,
+        option: null
+      })
+      /* Disable the overlay and display the login dialog */
+      this.overlay = false
+      this.changeLoginDialog(true)
+    },
+    /**
+     * Shows the user a notification to set a password and then prompts him/her to do so 5 seconds later
+     * @param {string} message - Notification to show to user
+     * @returns {void}
+     */
     shouldSetPass (message) {
+      this.showSetPassNotification(message)
+      this.showSetPasswordDialog()
+    },
+    /**
+     * Shows user the notification that he/she needs to set a password. The login dialog can accommodate
+     * various interfaces - logging  in, setting passwords and showing notifications
+     * @param {string} message - Notification to show to user
+     * @returns {void}
+     */
+    showSetPassNotification (message) {
       this.changeLoginDialogContents({
         key: 'dialogContent',
         subKey: 'submitEmail',
@@ -734,6 +805,8 @@ export default {
         option: null
       })
       this.changeLoginDialog(true)
+    },
+    showSetPasswordDialog () {
       setTimeout(() => {
         this.changeLoginDialogContents({
           key: 'dialogContent',
@@ -762,20 +835,25 @@ export default {
       /* FIXME: As hinted earlier, there is need to harmonize the loginDialogsContent state to make it more dynamic
       * by introducing one field whose values will be dynamic as opposed to the many boolean options */
     },
-    /* This function is the one that logs the user in after successfully logging in on the back-end
-    * Mind you this is a stateless authentication but with a client session */
-    setClientSessionVariables (redirected, email, res) {
-      switch (res.response) {
+    /**
+     * This function is the one that logs in the user after successfully logging in on the back-end
+     * Mind you this is a stateless authentication but with a client session. The function sets the client
+     * session variables
+     * @param {{registerUserResponse, calledFromBaseDialog}} clientDetails - Client details
+     * @returns {void}
+     */
+    setClientSessionVariables (clientDetails) {
+      switch (clientDetails.registerUserResponse) {
         /* We only act on the success option */
         case 'success':
-          this.loginCurrentUser(res)
+          this.loginCurrentUser(clientDetails.registerUserResponse, 'Email')
           /* TODO: To confirm the role of the redirected variable */
-          if (redirected) {
+          if (clientDetails.calledFromBaseDialog) {
             if (this.$route.fullPath !== '/') {
               this.$router.push('/')
             }
           } else {
-            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
+            if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'private') {
               this.$router.push('/client/place-order')
             } else {
               this.$router.push('/client/writers')
@@ -788,10 +866,15 @@ export default {
           break
       }
     },
+    /**
+     * Adds or removes number of pages
+     * @param {string} sign - Either 'remove' or 'add'
+     * @returns {void}
+     */
     changePageCount (sign) {
-      const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-      if (validatePageCount.status) {
-        this.clientPostOrderForm.pageCount = validatePageCount.number
+      const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+      if (VALIDATE_PAGE_COUNT.status) {
+        this.clientPostOrderForm.pageCount = VALIDATE_PAGE_COUNT.number
         switch (sign) {
           case 'add':
             this.clientPostOrderForm.pageCount += 1
@@ -805,7 +888,7 @@ export default {
         this.changeClientPostOrderForm({ key: 'pageCount', subKey: null, val: this.clientPostOrderForm.pageCount, option: null })
       } else {
         this.numOfPagesError.status = true
-        this.numOfPagesError.message = validatePageCount.message
+        this.numOfPagesError.message = VALIDATE_PAGE_COUNT.message
         setTimeout(() => {
           this.numOfPagesError.status = false
           this.numOfPagesError.message = ''
@@ -814,10 +897,10 @@ export default {
     },
     validateNumOfPages () {
       setTimeout(() => {
-        const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-        if (!validatePageCount.status) {
+        const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+        if (!VALIDATE_PAGE_COUNT.status) {
           this.numOfPagesError.status = true
-          this.numOfPagesError.message = validatePageCount.message
+          this.numOfPagesError.message = VALIDATE_PAGE_COUNT.message
           setTimeout(() => {
             this.numOfPagesError.status = false
             this.numOfPagesError.message = ''
@@ -851,7 +934,7 @@ export default {
           this.statesLoaded.disciplines = res
         })
         .catch(() => {
-          /* In case of failure, try regetting the same */
+          /* In case of failure, try re-getting the same */
           this.reGetStates()
         })
       this.getTime()

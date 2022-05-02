@@ -63,8 +63,8 @@ Currently, the client-facing platform (EssaySpring) has been integrated successf
 
 <p align="center">
     <img alt="EssaySpring Preview All Devices" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/all-devices-black.png">
-    <img alt="EssaySpring Preview Tablet" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/tablet-white.png">
-    <img alt="EssaySpring Preview Mobile" width="100%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/mobile-white.png">
+    <img alt="EssaySpring Preview Tablet" width="30%" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/tablet-white.png">
+    <img alt="EssaySpring Preview Mobile" src="https://raw.githubusercontent.com/shadrqen/essayspring/main/client/static/mobile-white.png">
 </p>
 
 Installation

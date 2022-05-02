@@ -1,8 +1,7 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
-    jest: true
+    es2021: true
   },
   extends: [
     'plugin:vue/essential',
@@ -12,7 +11,21 @@ module.exports = {
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
+    jest: true,
+    expect: true,
+    mockFn: true,
+    config: true,
+    afterEach: true,
+    beforeEach: true,
+    describe: true,
+    it: true,
+    runs: true,
+    waitsFor: true,
+    pit: true,
+    require: true,
+    xdescribe: true,
+    xit: true
   },
   parserOptions: {
     ecmaVersion: 12,
@@ -23,7 +36,6 @@ module.exports = {
     'vue',
     '@typescript-eslint'
   ],
-  ignorePatterns: ['docs/*'], // <<< ignore all files in test folder
   rules: {
   }
 }

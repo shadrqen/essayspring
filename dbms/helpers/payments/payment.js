@@ -27,10 +27,10 @@ const { Op } = require('sequelize')
 
 /* Importing the index model that will be used to access the sequelize instance, which will in turn help create
 * sequelize transactions */
-const model = require('../../models/index')
+const MODEL = require('../../models/index')
 
 /* Importing the crypto module, which will be used to generate random numbers */
-const crypto = require('crypto')
+const CRYPTO = require('crypto')
 
 /* The payments helper, which makes use of static functions to enable calling them on the class themselves
 * directly, as opposed to creating a class instance then calling them on the instance */
@@ -65,19 +65,19 @@ class PaymentHelper {
       * from MPESA is sent after, say 30 minutes, or 1 hour. In such a scenario, there
       * would be need to contact MPESA for their records to confirm the authenticity
       * of such claims. */
-      const randNum = await crypto.randomBytes(29).toString('hex')
-      return await model.sequelize.transaction(async (t) => {
+      const RAND_NUM = await CRYPTO.randomBytes(29).toString('hex')
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Get the user, client, currency and payment status first */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.reqObject.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
-        const [client, currency, status] = await Promise.all([
+        const [CLIENT, CURRENCY, STATUS] = await Promise.all([
           Client.findOne({
             where: {
-              userId: user.id
+              userId: USER.id
             },
             attributes: ['id'],
             raw: true
@@ -101,7 +101,7 @@ class PaymentHelper {
         * number plus amount to pay */
         return await ClientPayment.findOne({
           where: {
-            clientId: client.id,
+            clientId: CLIENT.id,
             orderId: req.reqObject.orderId,
             mobile: req.reqObject.mobile,
             amount: req.reqObject.totalAmount
@@ -122,15 +122,15 @@ class PaymentHelper {
               return { paymentAdded: false, message: 'Similar transaction is already underway' }
             } else {
               /* Otherwise, we need to save the transaction details in the database */
-              const transactionId = String(client.id).concat(randNum, String(client.id)) /* Generating the transaction
+              const TRANSACTION_ID = String(CLIENT.id).concat(RAND_NUM, String(CLIENT.id)) /* Generating the transaction
               ID */
               /* Creating the client payment record */
               return await ClientPayment.create({
-                clientId: client.id,
-                currencyId: currency.id,
+                clientId: CLIENT.id,
+                currencyId: CURRENCY.id,
                 orderId: req.reqObject.orderId,
-                statusId: status.id,
-                transactionId: transactionId,
+                statusId: STATUS.id,
+                transactionId: TRANSACTION_ID,
                 checkoutRequestId: req.checkoutRequestId,
                 mobile: req.reqObject.mobile,
                 amount: req.reqObject.totalAmount,
@@ -163,17 +163,17 @@ class PaymentHelper {
   /* Function to check whether a transaction is currently ongoing or not */
   static async checkOngoingTransaction (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Get the user and client details */
-        const user = await User.findOne({
+        const USER = await User.findOne({
           where: {
             email: req.email.toLowerCase()
           },
           attributes: ['id']
         }, { transaction: t })
-        const client = await Client.findOne({
+        const CLIENT = await Client.findOne({
           where: {
-            userId: user.id
+            userId: USER.id
           },
           attributes: ['id'],
           raw: true
@@ -181,7 +181,7 @@ class PaymentHelper {
         /* Then search for the client payment details before checking its status */
         return await ClientPayment.findAll({
           where: {
-            clientId: client.id,
+            clientId: CLIENT.id,
             orderId: req.orderId,
             mobile: req.mobile,
             amount: req.totalAmount
@@ -198,9 +198,9 @@ class PaymentHelper {
           .then(async exists => {
             /* If it exists, then check whether it is ongoing */
             if (exists.length > 0) {
-              const processingPaymentTransExists = exists.filter(trans => trans.PaymentStatus.status === 'Processing payment')
+              const PROCESSING_PAYMENT_TRANS_EXISTS = exists.filter(trans => trans.PaymentStatus.status === 'Processing payment')
               /* If the transaction is currently processing payments */
-              if (processingPaymentTransExists.length > 0) {
+              if (PROCESSING_PAYMENT_TRANS_EXISTS.length > 0) {
                 /* Check the time that has lapsed between the time the transaction was started, and now.
                 * If the transaction has lasted more than two minutes, then we assume that there was no
                 * activity here, and that we can start another transaction. However, there is still for
@@ -210,24 +210,24 @@ class PaymentHelper {
                 * has lasted more than 2 minutes or not. The second request tends to work well, mysteriously
                 * so */
                 /* Get the time updated */
-                const timeUpdated = new Date(processingPaymentTransExists[0].updatedAt).getTime()
+                const TIME_UPDATED = new Date(PROCESSING_PAYMENT_TRANS_EXISTS[0].updatedAt).getTime()
                 /* And the current time */
-                const currentTime = new Date().getTime()
+                const CURRENT_TIME = new Date().getTime()
                 /* Then calculate the time difference in milliseconds */
-                const timeDifference = currentTime - timeUpdated
+                const TIME_DIFFERENCE = CURRENT_TIME - TIME_UPDATED
                 /* Get the time difference in minutes */
-                const timeDifferenceInMinutes = Math.floor(timeDifference / 1000 / 60)
+                const TIME_DIFFERENCE_IN_MINUTES = Math.floor(TIME_DIFFERENCE / 1000 / 60)
                 /* If it is more than 2 minutes, then update the order payment status to having failed
                 * before returning a response that the transaction is not ongoing */
-                if (timeDifferenceInMinutes >= 2) {
-                  const processPaymentOrderPaymentStatus = await PaymentStatus.findOne({
+                if (TIME_DIFFERENCE_IN_MINUTES >= 2) {
+                  const PROCESS_PAYMENT_OR_DERPAYMENT_STATUS = await PaymentStatus.findOne({
                     where: {
                       status: 'Processing payment'
                     },
                     attributes: ['id'],
                     raw: true
                   })
-                  const orderPaymentStatus = await PaymentStatus.findOne({
+                  const ORDER_PAYMENT_STATUS = await PaymentStatus.findOne({
                     where: {
                       status: 'Failed'
                     },
@@ -236,14 +236,14 @@ class PaymentHelper {
                   })
                   /* Update the client payment status to failed */
                   return await ClientPayment.update({
-                    statusId: orderPaymentStatus.id
+                    statusId: ORDER_PAYMENT_STATUS.id
                   }, {
                     where: {
                       orderId: req.orderId,
-                      clientId: client.id,
+                      clientId: CLIENT.id,
                       mobile: req.mobile,
                       amount: req.totalAmount,
-                      statusId: processPaymentOrderPaymentStatus.id
+                      statusId: PROCESS_PAYMENT_OR_DERPAYMENT_STATUS.id
                     }
                   }, { transaction: t })
                     .then(async updatedPaymentRes => {
@@ -278,16 +278,16 @@ class PaymentHelper {
   /* Function that updates the client order payment upon getting a response from MPESA */
   static async updateClientOrderPayment (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* As usual, first the client payment details, and transaction ID of that payment detail record */
-        const orderDetails = await ClientPayment.findOne({
+        const ORDER_DETAILS = await ClientPayment.findOne({
           where: {
             checkoutRequestId: req.CheckoutRequestID
           },
           attributes: ['orderId', 'amount'],
           raw: true
         })
-        const transactionId = await ClientPayment.findOne({
+        const TRANSACTION_ID = await ClientPayment.findOne({
           where: {
             checkoutRequestId: req.CheckoutRequestID
           },
@@ -299,8 +299,8 @@ class PaymentHelper {
         if (req.ResultCode === 0) {
           /* Extract callback items from the MPESA message, before getting the result code from the list
           * saved in the MPESAResultCode tables */
-          const callbackItems = req.CallbackMetadata?.Item
-          const mpesaResultCode = await MPESAResultCode.findOne({
+          const CALLBACK_ITEMS = req.CallbackMetadata?.Item
+          const MPESA_RESULT_CODE = await MPESAResultCode.findOne({
             where: {
               resultCode: req.ResultCode
             },
@@ -311,31 +311,31 @@ class PaymentHelper {
           return await MPESA.create({
             checkoutRequestId: req.CheckoutRequestID,
             merchantRequestId: req.MerchantRequestID,
-            amount: callbackItems.filter(item => item.Name === 'Amount')[0].Value,
-            receiptNumber: callbackItems.filter(item => item.Name === 'MpesaReceiptNumber')[0].Value,
-            transactionDate: callbackItems.filter(item => item.Name === 'TransactionDate')[0].Value,
-            mobile: callbackItems.filter(item => item.Name === 'PhoneNumber')[0].Value,
-            resultCodeId: mpesaResultCode.id
+            amount: CALLBACK_ITEMS.filter(item => item.Name === 'Amount')[0].Value,
+            receiptNumber: CALLBACK_ITEMS.filter(item => item.Name === 'MpesaReceiptNumber')[0].Value,
+            transactionDate: CALLBACK_ITEMS.filter(item => item.Name === 'TransactionDate')[0].Value,
+            mobile: CALLBACK_ITEMS.filter(item => item.Name === 'PhoneNumber')[0].Value,
+            resultCodeId: MPESA_RESULT_CODE.id
           })
             .then(async mpesaRecordAdded => {
               /* If the creation of the record succeeds, then update the payment status, plus the order status */
               if (mpesaRecordAdded) {
                 /* If the order details exist, plus the orderID exists, then update the status */
-                if (orderDetails && orderDetails.orderId) {
-                  /* First get the actualOrderTotalCost */
-                  const actualOrderTotalCost = await OrderPaymentDetail.findOne({
+                if (ORDER_DETAILS && ORDER_DETAILS.orderId) {
+                  /* First get the ACTUAL_ORDER_TOTAL_COST */
+                  const ACTUAL_ORDER_TOTAL_COST = await OrderPaymentDetail.findOne({
                     where: {
-                      orderId: orderDetails.orderId
+                      orderId: ORDER_DETAILS.orderId
                     },
                     attributes: ['totalPrice'],
                     raw: true
                   })
-                  /* Check if the actualOrderTotalCost matches the cost in the order details */
-                  if (actualOrderTotalCost.totalPrice === orderDetails.amount) {
+                  /* Check if the ACTUAL_ORDER_TOTAL_COST matches the cost in the order details */
+                  if (ACTUAL_ORDER_TOTAL_COST.totalPrice === ORDER_DETAILS.amount) {
                     /* If it does, then continue with the process because it shows that the transaction is
                     * legitimate */
                     /* Get the success order payment status */
-                    const orderPaymentStatus = await PaymentStatus.findOne({
+                    const ORDER_PAYMENT_STATUS = await PaymentStatus.findOne({
                       where: {
                         status: 'Success'
                       },
@@ -344,33 +344,33 @@ class PaymentHelper {
                     })
                     /* Then use it to update the client payment status */
                     return await ClientPayment.update({
-                      statusId: orderPaymentStatus.id
+                      statusId: ORDER_PAYMENT_STATUS.id
                     }, {
                       where: {
-                        orderId: orderDetails.orderId,
+                        orderId: ORDER_DETAILS.orderId,
                         checkoutRequestId: req.CheckoutRequestID,
-                        amount: callbackItems.filter(item => item.Name === 'Amount')[0].Value,
-                        mobile: callbackItems.filter(item => item.Name === 'PhoneNumber')[0].Value
+                        amount: CALLBACK_ITEMS.filter(item => item.Name === 'Amount')[0].Value,
+                        mobile: CALLBACK_ITEMS.filter(item => item.Name === 'PhoneNumber')[0].Value
                       }
                     }, { transaction: t })
                       .then(async updatedPayment => {
                         /* In case it updates successfully, then get the ongoing order status */
                         if (updatedPayment) {
                           /* check if a writer has already been assigned */
-                          const writerAlreadyAssigned = await WriterOrder.findOne({
+                          const WRITER_ALREADY_ASSIGNED = await WriterOrder.findOne({
                             where: {
-                              orderId: orderDetails.orderId
+                              orderId: ORDER_DETAILS.orderId
                             },
                             attributes: ['id'],
                             raw: true
                           })
                           let paymentStatus
-                          if (writerAlreadyAssigned) {
+                          if (WRITER_ALREADY_ASSIGNED) {
                             paymentStatus = 'Ongoing'
                           } else {
                             paymentStatus = 'Available'
                           }
-                          const ongoingStatus = await OrderStatus.findOne({
+                          const ONGOING_STATUS = await OrderStatus.findOne({
                             where: {
                               status: paymentStatus
                             },
@@ -379,20 +379,20 @@ class PaymentHelper {
                           })
                           /* Then use it to update the order status to ongoing */
                           return await Order.update({
-                            statusId: ongoingStatus.id
+                            statusId: ONGOING_STATUS.id
                           }, {
                             where: {
-                              id: orderDetails.orderId
+                              id: ORDER_DETAILS.orderId
                             }
                           })
                             .then(orderUpdated => {
                               /* Once updated, return that the payment has been updated successfully, together with
                               * the transaction id */
                               if (orderUpdated) {
-                                return { paymentUpdated: true, trId: transactionId.transactionId }
+                                return { paymentUpdated: true, trId: TRANSACTION_ID.transactionId }
                               } else {
                                 /* Else return a false payment updated status, message and transaction ID */
-                                return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Failed to update order status' }
+                                return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Failed to update order status' }
                               }
                             })
                             .catch(orderUpdatedError => {
@@ -400,20 +400,20 @@ class PaymentHelper {
                             })
                         } else {
                           /* Else return a false paymentUpdated status, plus transaction ID and message */
-                          return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Failed to update payment' }
+                          return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Failed to update payment' }
                         }
                       })
                       .catch(updatedPaymentError => {
                         throw new Error(updatedPaymentError)
                       })
                   } else {
-                    return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Amount paid is different from the actual amount' }
+                    return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Amount paid is different from the actual amount' }
                   }
                 } else {
-                  return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Record does not exist' }
+                  return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Record does not exist' }
                 }
               } else {
-                return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Failed to add MPESA record' }
+                return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Failed to add MPESA record' }
               }
             })
             .catch(failedToAddRecord => {
@@ -421,7 +421,7 @@ class PaymentHelper {
             })
         } else {
           /* Else save the failure of the transaction */
-          if (orderDetails.orderId) {
+          if (ORDER_DETAILS.orderId) {
             /* For now, we are only saving two statuses, cancelled by the user and failed */
             /* TODO: To include saving all the other failed statuses such as insufficient balance etc */
             let orderStatus
@@ -432,7 +432,7 @@ class PaymentHelper {
               orderStatus = 'Failed'
             }
             /* Get the specified order payment status */
-            const orderPaymentStatus = await PaymentStatus.findOne({
+            const ORDER_PAYMENT_STATUS = await PaymentStatus.findOne({
               where: {
                 status: orderStatus
               },
@@ -441,27 +441,27 @@ class PaymentHelper {
             })
             /* Then use it to update the client payment status */
             return await ClientPayment.update({
-              statusId: orderPaymentStatus.id
+              statusId: ORDER_PAYMENT_STATUS.id
             }, {
               where: {
-                orderId: orderDetails.orderId,
+                orderId: ORDER_DETAILS.orderId,
                 checkoutRequestId: req.CheckoutRequestID
               }
             }, { transaction: t })
               .then(async updatedPaymentStatus => {
                 /* Then as above, return a true payment status and transaction ID */
                 if (updatedPaymentStatus) {
-                  return { paymentUpdated: true, trId: transactionId.transactionId }
+                  return { paymentUpdated: true, trId: TRANSACTION_ID.transactionId }
                 } else {
                   /* Or a false payment status ID */
-                  return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Failed to update payment' }
+                  return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Failed to update payment' }
                 }
               })
               .catch(updatedPaymentError => {
                 throw new Error(updatedPaymentError)
               })
           } else {
-            return { paymentUpdated: false, trId: transactionId.transactionId, message: 'Failed to update payment' }
+            return { paymentUpdated: false, trId: TRANSACTION_ID.transactionId, message: 'Failed to update payment' }
           }
         }
       })
@@ -473,7 +473,7 @@ class PaymentHelper {
   /* Function to check the payment status of an order */
   static async checkOrderPaymentStatus (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Simply query the client payment status by a given transaction ID */
         return await ClientPayment.findOne({
           where: {
@@ -505,7 +505,7 @@ class PaymentHelper {
   /* Function to check if an order has already been paid for */
   static async checkIfOrderIsAlreadyPaid (req) {
     try {
-      return await model.sequelize.transaction(async (t) => {
+      return await MODEL.sequelize.transaction(async (t) => {
         /* Get the order */
         return await Order.findOne({
           where: {
@@ -520,26 +520,26 @@ class PaymentHelper {
           ]
         }, { transaction: t })
           .then(async response => {
-            const orderPaymentStatus = await PaymentStatus.findOne({
+            const ORDER_PAYMENT_STATUS = await PaymentStatus.findOne({
               where: {
                 status: 'Success'
               },
               attributes: ['id'],
               raw: true
             })
-            const orderIsAlreadyPaidFor = await ClientPayment.findOne({
+            const ORDER_IS_ALREADY_PAID_FOR = await ClientPayment.findOne({
               where: {
-                statusId: orderPaymentStatus.id,
+                statusId: ORDER_PAYMENT_STATUS.id,
                 orderId: req.orderId
               },
               attributes: ['id']
             })
-            if (orderIsAlreadyPaidFor) {
+            if (ORDER_IS_ALREADY_PAID_FOR) {
               return { orderAlreadyPaidFor: true }
             }
             /* Then check if its status is among the list of 'Already paid for' statuses below */
-            const unPaidOrdersStatuses = ['Pending payment', 'Pending writer acknowledgement', 'Available', 'Bidding ongoing']
-            if (!unPaidOrdersStatuses.includes(response.OrderStatus.status)) {
+            const UNPAID_ORDERS_STATUSES = ['Pending payment', 'Pending writer acknowledgement', 'Available', 'Bidding ongoing']
+            if (!UNPAID_ORDERS_STATUSES.includes(response.OrderStatus.status)) {
               return { orderAlreadyPaidFor: true }
             } else {
               return { orderAlreadyPaidFor: false }
@@ -557,9 +557,9 @@ class PaymentHelper {
   /* Function to get price ratios that help calculate the total price of an order, and its discount  */
   static async getPriceRatios (req) {
     try {
-      return await model.sequelize.transaction(async () => {
+      return await MODEL.sequelize.transaction(async () => {
         /* First get the tier, serviceType and discount by the assignment type */
-        const [tier, serviceType, discount] = await Promise.all([
+        const [TIER, SERVICE_TYPE, DISCOUNT] = await Promise.all([
           AssignmentType.findOne({
             where: {
               id: req.assignmentType
@@ -585,24 +585,24 @@ class PaymentHelper {
           })
         ])
         /* Then use the service type and tier to get the price ratio */
-        const priceRatio = await PriceIncrement.findOne({
+        const PRICE_RATIO = await PriceIncrement.findOne({
           where: {
-            serviceType: serviceType.id,
-            tier: tier.tier
+            serviceType: SERVICE_TYPE.id,
+            tier: TIER.tier
           },
           attributes: {
             exclude: ['isDeleted', 'createdAt', 'updatedAt']
           }
         })
         /* Declare the discount. An order can only have a discount if it is more than one page */
-        const finalDiscount = req.pageCount === 1 ? 0 : discount
+        const FINAL_DISCOUNT = req.pageCount === 1 ? 0 : DISCOUNT
         /* Then get the base price again using the tier and serviceType
         * The BasePrice here is different from the price ratio. There is a base price for every
         * assignment type and tier. */
         return await BasePrice.findOne({
           where: {
-            tier: tier.tier,
-            serviceType: serviceType.id
+            tier: TIER.tier,
+            serviceType: SERVICE_TYPE.id
           },
           attributes: ['price'],
           include: [
@@ -616,8 +616,8 @@ class PaymentHelper {
           .then(price => {
             return {
               price: price,
-              discount: finalDiscount,
-              priceRatio: priceRatio
+              discount: FINAL_DISCOUNT,
+              priceRatio: PRICE_RATIO
             }
           })
           .catch(error => {

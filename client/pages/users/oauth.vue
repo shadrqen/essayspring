@@ -48,9 +48,9 @@ export default {
     this.processGoogleOAuth()
   },
   methods: {
-    ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeUserType', 'changeClient',
+    ...mapMutations(['changeClientPostOrderForm', 'changeLoginStatus', 'changeClient',
       'changeAccessToken', 'changeRefreshToken', 'changeEmail', 'changeLoginDialogContents', 'changeLoginDialog',
-      'changeLoginMode', 'changeOrderPostingDone', 'changeUserType'
+      'changeLoginMode', 'changeOrderPostingDone'
     ]),
     async processGoogleOAuth () {
       if (this.$route.query.code) {
@@ -63,7 +63,7 @@ export default {
         await api.postRequest('auth/v1/auth/google', { code: code })
           .then(res => {
             if (res.response === 'success' || res.message === 'success') {
-              this.loginClient(res)
+              this.loginClient(res, 'Google')
             } else {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',
@@ -83,8 +83,8 @@ export default {
         }
       }
     },
-    loginClient (res) {
-      this.loginCurrentUser(res)
+    loginClient (res, loginMode) {
+      this.loginCurrentUser(res, loginMode)
       if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
         this.changeOrderPostingDone(true)
         this.$router.push('/client/orders')

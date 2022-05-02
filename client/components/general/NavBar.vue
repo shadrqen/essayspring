@@ -290,10 +290,10 @@ export default {
     }),
     formattedEmail () {
       if (this.viewportCode === 'xs') {
+        console.log(this.email, this.email.split('@'))
         return this.email.split('@')[0]
-      } else {
-        return this.email
       }
+      return this.email
     },
     xl () {
       let val
@@ -352,8 +352,8 @@ export default {
         if (link === 'close_nav_dialog') {
           this.navbarIcon = false
         } else {
-          const linkWithHash = '/' + link // so as to use in the if statement below
-          if (this.$route.fullPath !== linkWithHash) {
+          const LINK_WITH_HASH = '/' + link // so as to use in the if statement below
+          if (this.$route.fullPath !== LINK_WITH_HASH) {
             if (link === 'login') {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',

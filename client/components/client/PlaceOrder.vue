@@ -369,7 +369,7 @@
             />
             <br>
             <v-layout
-              v-if="clientPostOrderForm.type === 'public'"
+              v-if="clientPostOrderForm.type === 'private'"
               class="pa-2 mt-2 mb-1 price-layout"
               row
             >
@@ -546,7 +546,7 @@
                 class="text-subtitle-1 text-xl-subtitle-1 text-lg-subtitle-1
                     text-md-subtitle-1 text-sm-subtitle-1"
               >
-                <template v-if="clientPostOrderForm.type === 'public'">
+                <template v-if="clientPostOrderForm.type === 'private'">
                   Select a Writer
                 </template>
                 <template v-else>
@@ -687,11 +687,11 @@ export default {
     * These states are used in the DOM. They need to be set to prevent errors or rather unwanted (user) behaviour
     * or experience */
     allStatesLoaded: function () {
-      const expectedStates = [
+      const EXPECTED_STATES = [
         'citationStyles', 'disciplines', 'extraOrderServices', 'orderFormats', 'serviceType', 'orderStudyLevels',
         'timeAmPm'
       ]
-      return expectedStates.filter(state => !state).length === 0
+      return EXPECTED_STATES.filter(state => !state).length === 0
     },
     /* Order formats are more than 1. However, at any given point, only one is in use. A field currentlyInUse is
     * used to determine whether a given format is in use. The function below returns that format - given that the
@@ -701,10 +701,10 @@ export default {
       if (this.orderFormats.length === 0) {
         return { wordsPerPage: 0, spacing: '' }
       } else {
-        const orderFormatInUse = this.orderFormats.filter(format => format.currentlyInUse === true)
+        const ORDER_FORMAT_IN_USE = this.orderFormats.filter(format => format.currentlyInUse === true)
         return {
-          wordsPerPage: this.clientPostOrderForm.pageCount * orderFormatInUse[0].wordsPerPage,
-          spacing: orderFormatInUse[0].spacing
+          wordsPerPage: this.clientPostOrderForm.pageCount * ORDER_FORMAT_IN_USE[0].wordsPerPage,
+          spacing: ORDER_FORMAT_IN_USE[0].spacing
         }
       }
     },
@@ -712,9 +712,9 @@ export default {
     * user-friendly manner. That's why this function formats the same */
     deadline () {
       if (this.clientPostOrderForm.deadlineTime) {
-        const targetDeadlineTime = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
-        const timeIn24Hrs = TimeMixin.deadlineHoursAmPm(targetDeadlineTime)
-        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, timeIn24Hrs)
+        const TARGET_DEADLINE_TIME = this.time.filter(time => time.id === this.clientPostOrderForm.deadlineTime)[0].time
+        const TIME_IN_24HRS = TimeMixin.deadlineHoursAmPm(TARGET_DEADLINE_TIME)
+        return TimeMixin.deadline(this.clientPostOrderForm.deadlineDate, TIME_IN_24HRS)
       } else {
         return null
       }
@@ -729,8 +729,8 @@ export default {
       })
     },
     initialPaperPrice () {
-      const percentageAsDecimal = this.clientPostOrderForm.paymentSummary.discount / 100
-      return Math.round(this.clientPostOrderForm.paymentSummary.paperPrice / (1 - percentageAsDecimal))
+      const PERCENTAGE_AS_DECIMAL = this.clientPostOrderForm.paymentSummary.discount / 100
+      return Math.round(this.clientPostOrderForm.paymentSummary.paperPrice / (1 - PERCENTAGE_AS_DECIMAL))
     },
     xl () {
       let val
@@ -763,8 +763,8 @@ export default {
     }
   },
   mounted () {
-    const dateTime = new Time.DateTime()
-    this.currentDate = dateTime.date()
+    const DATE_TIME = new Time.DateTime()
+    this.currentDate = DATE_TIME.date()
     this.setTextAreaHeight()
     if (/Android|webOS|iPhone|iPad|Mac|Macintosh|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
       this.isMobile = true
@@ -818,10 +818,10 @@ export default {
     * sources. */
     validateNumOfPages () {
       setTimeout(() => {
-        const validateNumOfPages_ = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-        if (!validateNumOfPages_.status) {
+        const VALIDATE_NUM_OF_PAGES = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+        if (!VALIDATE_NUM_OF_PAGES.status) {
           this.numOfPagesError.status = true
-          this.numOfPagesError.message = validateNumOfPages_.message
+          this.numOfPagesError.message = VALIDATE_NUM_OF_PAGES.message
           setTimeout(() => {
             this.numOfPagesError.status = false
             this.numOfPagesError.message = ''
@@ -835,16 +835,16 @@ export default {
     /* The CPP also requires the same validation, with the value having to be at least 1 or above etc */
     validateCPP () {
       setTimeout(() => {
-        const validateCPP_ = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
-        if (!validateCPP_.status) {
+        const VALIDATE_CPP = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
+        if (!VALIDATE_CPP.status) {
           this.cppError.status = true
-          this.cppError.message = validateCPP_.message
+          this.cppError.message = VALIDATE_CPP.message
           setTimeout(() => {
             this.cppError.status = false
             this.cppError.message = ''
           }, 3000)
         } else {
-          this.clientPostOrderForm.paymentSummary.cpp = validateCPP_.number
+          this.clientPostOrderForm.paymentSummary.cpp = VALIDATE_CPP.number
           this.changeCPP(null)
         }
       }, 0)
@@ -925,9 +925,9 @@ export default {
       }
     },
     changePageCount (sign) {
-      const validatePageCount = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-      if (validatePageCount.status) {
-        this.clientPostOrderForm.pageCount = validatePageCount.number
+      const VALIDATE_PAGE_COUNT = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+      if (VALIDATE_PAGE_COUNT.status) {
+        this.clientPostOrderForm.pageCount = VALIDATE_PAGE_COUNT.number
         switch (sign) {
           case 'add':
             this.clientPostOrderForm.pageCount += 1
@@ -944,7 +944,7 @@ export default {
           val: this.clientPostOrderForm.pageCount,
           option: null
         })
-        if (this.clientPostOrderForm.type === 'public') {
+        if (this.clientPostOrderForm.type === 'private') {
           setTimeout(() => {
             this.priceCalculationIsNecessary()
           }, 0)
@@ -961,7 +961,7 @@ export default {
         }
       } else {
         this.numOfPagesError.status = true
-        this.numOfPagesError.message = validatePageCount.message
+        this.numOfPagesError.message = VALIDATE_PAGE_COUNT.message
         setTimeout(() => {
           this.numOfPagesError.status = false
           this.numOfPagesError.message = ''
@@ -970,8 +970,8 @@ export default {
     },
     changeCPP (sign) {
       if (sign) {
-        const validateCPP = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
-        if (validateCPP.status) {
+        const VALIDATE_CPP = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
+        if (VALIDATE_CPP.status) {
           switch (sign) {
             case 'add':
               this.clientPostOrderForm.paymentSummary.cpp += 1
@@ -984,7 +984,7 @@ export default {
           }
         } else {
           this.cppError.status = true
-          this.cppError.message = validateCPP.message
+          this.cppError.message = VALIDATE_CPP.message
           setTimeout(() => {
             this.cppError.status = false
             this.cppError.message = ''
@@ -1017,7 +1017,7 @@ export default {
             val: this.clientPostOrderForm.paymentSummary.paperPrice,
             option: null
           })
-          if (this.clientPostOrderForm.type === 'public') {
+          if (this.clientPostOrderForm.type === 'private') {
             this.clientPostOrderForm.paymentSummary.totalPrice = this.clientPostOrderForm.paymentSummary.paperPrice + this.clientPostOrderForm.paymentSummary.extrasTotalPrice
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
@@ -1034,10 +1034,10 @@ export default {
             val: this.clientPostOrderForm.paymentSummary.totalPrice,
             option: null
           })
-          const validateNumOfPages_ = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
-          if (validateNumOfPages_.status) {
-            const validateCPP = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
-            if (!validateCPP.status) {
+          const VALIDATE_NUM_OF_PAGES = registrationMixin.validateNumOfPages(this.clientPostOrderForm.pageCount)
+          if (VALIDATE_NUM_OF_PAGES.status) {
+            const VALIDATE_CPP = registrationMixin.validateCPP(this.clientPostOrderForm.paymentSummary.cpp)
+            if (!VALIDATE_CPP.status) {
               this.overlay = false
               this.errorObject.message = 'Kindly use numbers only as CPP'
               this.errorObject.value = true
@@ -1101,7 +1101,7 @@ export default {
             }
           } else {
             this.numOfPagesError.status = true
-            this.numOfPagesError.message = validateNumOfPages_.message
+            this.numOfPagesError.message = VALIDATE_NUM_OF_PAGES.message
             setTimeout(() => {
               this.numOfPagesError.status = false
               this.numOfPagesError.message = ''
@@ -1140,7 +1140,7 @@ export default {
         })
     },
     async uploadCurrentFile (e) {
-      const file = document.getElementById('file').files[0]
+      const FILE = document.getElementById('file').files[0]
       this.supportingFileUploading = true
       this.uploadFile(e)
         .then(response => {
@@ -1150,7 +1150,7 @@ export default {
                 this.changeClientPostOrderForm({
                   key: 'supportingFiles',
                   subKey: null,
-                  val: { originalName: file.name, fileUrl: response.filename },
+                  val: { originalName: FILE.name, fileUrl: response.filename },
                   option: 'push'
                 })
               }
@@ -1186,7 +1186,8 @@ export default {
       }
     },
     priceCalculationIsNecessary () {
-      if (this.clientPostOrderForm.type === 'public') {
+      console.log(this.clientPostOrderForm.type)
+      if (this.clientPostOrderForm.type === 'private') {
         if (this.clientPostOrderForm.deadlineDate && this.clientPostOrderForm.deadlineTime &&
             this.clientPostOrderForm.pageCount && this.clientPostOrderForm.assignmentType &&
             this.clientPostOrderForm.studyLevel
@@ -1210,30 +1211,30 @@ export default {
           studyLevel: this.studyLevel.find(level => level.id === this.clientPostOrderForm.studyLevel).level
         })
           .then(response => {
-            const percentageAsDecimal = response.discount / 100
-            const finalPrice = Math.round(response.basePrice * (1 - percentageAsDecimal))
+            const PERCENTAGE_AS_DECIMAL = response.discount / 100
+            const FINAL_PRICE = Math.round(response.basePrice * (1 - PERCENTAGE_AS_DECIMAL))
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
               subKey: 'totalPrice',
-              val: finalPrice + this.clientPostOrderForm.paymentSummary.extrasTotalPrice,
+              val: FINAL_PRICE + this.clientPostOrderForm.paymentSummary.extrasTotalPrice,
               option: null
             })
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
               subKey: 'paperPrice',
-              val: finalPrice,
+              val: FINAL_PRICE,
               option: null
             })
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
               subKey: 'leastPaperPrice',
-              val: finalPrice,
+              val: FINAL_PRICE,
               option: null
             })
             this.changeClientPostOrderForm({
               key: 'paymentSummary',
               subKey: 'cpp',
-              val: finalPrice / this.clientPostOrderForm.pageCount,
+              val: FINAL_PRICE / this.clientPostOrderForm.pageCount,
               option: null
             })
             this.changeClientPostOrderForm({

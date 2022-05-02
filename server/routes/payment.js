@@ -1,24 +1,24 @@
-const express = require('express')
-const router = express.Router()
+const EXPRESS = require('express')
+const ROUTER = EXPRESS.Router()
 const { auth } = require('../services/users/auth')
-const paymentService = require('../services/payment/mpesa/payment')
-const priceService = require('../services/payment/price')
+const PAYMENT_SERVICE = require('../services/payment/mpesa/payment')
+const PRICE_SERVICE = require('../services/payment/price')
 const { logger } = require('../services/logs/logger')
-const prettyjson = require('prettyjson')
+const PRETTY_JSON = require('prettyjson')
 
 const { publishOrderPaymentStatus } = require('../services/sockets/order')
 
-const options = {
+const OPTIONS = {
   noColor: true
 }
 
 /* GET home page. */
-router.get('/', logger, auth, function (req, res, next) {
+ROUTER.get('/', logger, auth, function (req, res, next) {
   res.json({ title: 'Payments' })
 })
 
-router.post('/mpesa/stk_push', logger, auth, async function (req, res, next) {
-  await paymentService.stkPush(req.body)
+ROUTER.post('/mpesa/stk_push', logger, auth, async function (req, res, next) {
+  await PAYMENT_SERVICE.stkPush(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -28,9 +28,9 @@ router.post('/mpesa/stk_push', logger, auth, async function (req, res, next) {
 })
 
 // B2C ResultURL - /api/v1/b2c/result
-router.post('/mpesa/b2c/result', logger, function (req, res) {
+ROUTER.post('/mpesa/b2c/result', logger, function (req, res) {
   console.log('-----------B2C CALLBACK------------')
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
   console.log('-----------------------')
 
   const message = {
@@ -42,9 +42,9 @@ router.post('/mpesa/b2c/result', logger, function (req, res) {
 })
 
 // B2C QueueTimeoutURL - /api/v1/b2c/timeout
-router.post('/mpesa/b2c/timeout', function (req, res) {
+ROUTER.post('/mpesa/b2c/timeout', function (req, res) {
   console.log('-----------B2C TIMEOUT------------')
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
   console.log('-----------------------')
 
   const message = {
@@ -56,9 +56,9 @@ router.post('/mpesa/b2c/timeout', function (req, res) {
 })
 
 // C2B ValidationURL - /api/v1/c2b/validation
-router.post('/mpesa/c2b/validation', logger, function (req, res) {
+ROUTER.post('/mpesa/c2b/validation', logger, function (req, res) {
   console.log('-----------C2B VALIDATION REQUEST-----------')
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
   console.log('-----------------------')
 
   const message = {
@@ -71,7 +71,7 @@ router.post('/mpesa/c2b/validation', logger, function (req, res) {
 })
 
 // C2B ConfirmationURL - /api/v1/c2b/confirmation
-router.post('/mpesa/c2b/confirmation', logger, async function (req, res) {
+ROUTER.post('/mpesa/c2b/confirmation', logger, async function (req, res) {
   console.log('-----------C2B CONFIRMATION REQUEST------------')
 
   /*  ResultCode: 17
@@ -82,9 +82,9 @@ router.post('/mpesa/c2b/confirmation', logger, async function (req, res) {
   *  ResultDesc: 'Request cancelled by user
   * */
 
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
 
-  await paymentService.updateClientOrderPayment(req.body.Body.stkCallback)
+  await PAYMENT_SERVICE.updateClientOrderPayment(req.body.Body.stkCallback)
     .then(async response => {
       await publishOrderPaymentStatus(response.trId)
       console.log('Update payment response: ', response)
@@ -102,8 +102,8 @@ router.post('/mpesa/c2b/confirmation', logger, async function (req, res) {
 })
 
 // B2B ResultURL - /api/v1/b2b/result
-router.post('/mpesa/c2b/check_payment_status', logger, auth, async function (req, res) {
-  await paymentService.checkOrderPaymentStatus(req.body)
+ROUTER.post('/mpesa/c2b/check_payment_status', logger, auth, async function (req, res) {
+  await PAYMENT_SERVICE.checkOrderPaymentStatus(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -113,9 +113,9 @@ router.post('/mpesa/c2b/check_payment_status', logger, auth, async function (req
 })
 
 // B2B ResultURL - /api/v1/b2b/result
-router.post('/mpesa/b2b/result', logger, function (req, res) {
+ROUTER.post('/mpesa/b2b/result', logger, function (req, res) {
   console.log('-----------B2B CALLBACK------------')
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
   console.log('-----------------------')
 
   const message = {
@@ -127,9 +127,9 @@ router.post('/mpesa/b2b/result', logger, function (req, res) {
 })
 
 // B2B QueueTimeoutURL - /api/v1/b2b/timeout
-router.post('/mpesa/b2c/timeout', logger, function (req, res) {
+ROUTER.post('/mpesa/b2c/timeout', logger, function (req, res) {
   console.log('-----------B2C TIMEOUT------------')
-  console.log(prettyjson.render(req.body, options))
+  console.log(PRETTY_JSON.render(req.body, OPTIONS))
   console.log('-----------------------')
 
   const message = {
@@ -140,8 +140,8 @@ router.post('/mpesa/b2c/timeout', logger, function (req, res) {
   res.json(message)
 })
 
-router.post('/price/calculation', logger, auth, async function (req, res) {
-  await priceService.getPrice(req.body)
+ROUTER.post('/price/calculation', logger, auth, async function (req, res) {
+  await PRICE_SERVICE.getPrice(req.body)
     .then(response => {
       res.status(200).json(response)
     })
@@ -150,4 +150,4 @@ router.post('/price/calculation', logger, auth, async function (req, res) {
     })
 })
 
-module.exports = router
+module.exports = ROUTER

@@ -38,10 +38,10 @@
 
           <!--          We only have two steps above for a private writer-->
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'" />
+          <v-divider v-if="clientPostOrderForm.type === 'private'" />
 
           <v-stepper-step
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             :complete="level > 3"
             color="#007991"
             step="3"
@@ -49,10 +49,10 @@
             {{ steps.step3 }}
           </v-stepper-step>
 
-          <v-divider v-if="clientPostOrderForm.type === 'public'" />
+          <v-divider v-if="clientPostOrderForm.type === 'private'" />
 
           <v-stepper-step
-            v-if="clientPostOrderForm.type === 'public'"
+            v-if="clientPostOrderForm.type === 'private'"
             :complete="level > 4"
             color="#007991"
             step="4"
@@ -97,13 +97,13 @@
         </v-stepper-content>
         <!--        We only have two steps above for a private writer-->
         <v-stepper-content
-          v-if="clientPostOrderForm.type === 'public'"
+          v-if="clientPostOrderForm.type === 'private'"
           step="3"
         >
           <slot name="stepper-content-step-3" />
         </v-stepper-content>
         <v-stepper-content
-          v-if="clientPostOrderForm.type === 'public'"
+          v-if="clientPostOrderForm.type === 'private'"
           step="4"
         >
           <slot name="stepper-content-step-4" />
@@ -175,7 +175,7 @@ export default {
   },
   methods: {
     set_stepper_margin_right () {
-      const marginVsViewportVsLevel = {
+      const MARGIN_VS_VIEWPORT_VS_LEVEL = {
         1: {
           xs: '-85px',
           sm: '-102px',
@@ -205,7 +205,7 @@ export default {
           xl: '0'
         }
       }
-      this.stepper_item_margin_right = marginVsViewportVsLevel[this.level][this.viewport_code]
+      this.stepper_item_margin_right = MARGIN_VS_VIEWPORT_VS_LEVEL[this.level][this.viewport_code]
     }
   }
 }

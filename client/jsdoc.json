@@ -1,0 +1,24 @@
+{
+  "plugins": [
+    "node_modules/jsdoc-vuejs"
+  ],
+  "recurseDepth": 10,
+  "opts": {
+    "recurse": true,
+    "destination": "./docs/"
+  },
+  "source": {
+    "include": ["components","middleware", "mixins", "plugins", "services", "sockets", "utils"],
+    "includePattern": ".+\\.vue(js|x)?$",
+    "excludePattern": "node_modules"
+  },
+  "sourceType": "module",
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}

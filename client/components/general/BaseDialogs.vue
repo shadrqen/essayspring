@@ -48,6 +48,7 @@
                 v-model="loginForm.email"
                 :rules="validate.emailField"
                 class="text-field"
+                data-test-id="login-email-field"
                 flat
                 label="Enter your email"
                 solo
@@ -65,6 +66,7 @@
                 id="submit_email_btn"
                 ref="continueEmail"
                 :disabled="submitEmailOngoing"
+                data-test-id="submit-email-button"
                 outlined
                 @click="submitEmail"
               >
@@ -293,6 +295,7 @@
                 :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showPassword ? 'text' : 'password'"
                 class="text-field"
+                data-test-id="login-form-password"
                 flat
                 label="Password"
                 solo
@@ -324,6 +327,7 @@
                 id="login_btn"
                 :disabled="loginOngoing"
                 class="mt-2"
+                data-test-id="login-button"
                 outlined
                 @click="startLoggingIn(false)"
               >
@@ -620,20 +624,6 @@ export default {
     bus.$on('updateLoginForm', val => {
       this.loginForm.email = val
     })
-    /*
-    watch: {
-      loginDialog () {
-        if (this.loginDialog === ) {
-          setTimeout(() => {
-            if (!['xs', 'sm'].includes(this.viewport_code)) {
-              document.getElementById('loginEmail').focus()
-              document.getElementById('loginEmail').select()
-            }
-          }, 0)
-        }
-      }
-    },
-     */
   },
   methods: {
     ...mapMutations([
@@ -648,8 +638,7 @@ export default {
       'changeLoginMode',
       'changeOrderPostingDone',
       'changeClientGotStarted',
-      'changeReportProblemDialog',
-      'changeUserType'
+      'changeReportProblemDialog'
     ]),
     closeLoginDialog () {
       this.changeLoginDialog(false)
@@ -753,9 +742,9 @@ export default {
     },
     /* TODO: To use a module to do this */
     checkPasswordSimilarity () {
-      const passwordsNotSimilar = this.setPasswordForm.password.length === this.setPasswordForm.repeatPassword.length &&
+      const PASSWORDS_NOT_SIMILAR = this.setPasswordForm.password.length === this.setPasswordForm.repeatPassword.length &&
         this.setPasswordForm.password !== this.setPasswordForm.repeatPassword
-      if (passwordsNotSimilar) {
+      if (PASSWORDS_NOT_SIMILAR) {
         this.setPasswordOngoing = false
         this.errorObject = {
           value: true,
@@ -782,46 +771,39 @@ export default {
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
           if (res.message === 'success') {
-            this.loginCurrentUser(res)
+            // console.log('\n\n\n just b4 calling ... \n\n\n')
+            this.loginCurrentUser(res, 'Email')
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a
             * client had a pending order on his last log in or not. If the status of the variable is finished,
             * then we are ascertained that there is no pending order */
-            if (res.orderPostingStep && res.orderPostingStep === 'Finished') {
+            if (res.orderPostingStep === 'Finished' || !res.orderPostingStep) {
               /* The clientGotStarted variable determines whether a client clicked on the 'Get Started' button
               * on the home to log in. This is because there are two ways of loggin a user in - the 'Get Started'
               * button and the Login button. A person who logs in through the 'Get Started' button needs
               * to be handled differently from that who logged in as evident below */
               if (this.clientGotStarted) {
-                if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                  this.$router.push('/client/place-order')
-                } else {
-                  this.$router.push('/client/writers')
-                }
+                this.$router.push('/client/place-order')
                 this.changeClientGotStarted(false)
                 bus.$emit('changeNavOverlay', false)
               } else {
                 this.changeOrderPostingDone(true)
                 if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                  this.$router.push('/client/place-order')
-                } else {
                   this.$router.push('/client/writers')
+                } else {
+                  this.$router.push('/client/orders')
                 }
                 bus.$emit('changeNavOverlay', false)
               }
             } else {
               /* That's why we push the response as a parameter to the route below. The response contains
               * details about the last order that is unfinished - which needs to be resumed from */
-              if (this.clientPostOrderForm.type && this.clientPostOrderForm.type === 'public') {
-                this.$router.push({
-                  name: 'client-place-order',
-                  params: {
-                    response: JSON.stringify(res)
-                  }
-                })
-              } else {
-                this.$router.push('/client/writers')
-              }
+              this.$router.push({
+                name: 'client-place-order',
+                params: {
+                  response: JSON.stringify(res)
+                }
+              })
               bus.$emit('changeNavOverlay', false)
             }
           } else {
@@ -915,6 +897,14 @@ export default {
         this.submitEmailOngoing = true
         await api.postRequest('auth/v1/submit_login_email', this.loginForm)
           .then(async res => {
+            /* TODO: To harmonize the return object to remove redundancy (check object below)
+            * {
+                accountExists: true,
+                type: 'Client',
+                canLogIn: true,
+                shouldSetPass: false
+              }
+            * */
             if (res.accountExists) {
               if (res.type === 'Client' && res.canLogIn) {
                 this.changeLoginDialogContents({
@@ -929,10 +919,12 @@ export default {
                   val: true,
                   option: null
                 })
-                setTimeout(() => {
-                  document.getElementById('loginPassword').focus()
-                  document.getElementById('loginPassword').select()
-                }, 0)
+                if (process.env.NODE_ENV !== 'test') {
+                  setTimeout(() => {
+                    document.getElementById('loginPassword').focus()
+                    document.getElementById('loginPassword').select()
+                  }, 0)
+                }
               } else if (res.type === 'Client' && res.shouldSetPass) {
                 this.clientIsSettingPassword = true
                 this.clientIsChangingPassword = false
@@ -950,8 +942,7 @@ export default {
               }, 2000)
             }
           })
-          .catch(e => {
-            console.log(e)
+          .catch(() => {
             this.setAlertMessages('Error submitting email address. Kindly try again')
             this.submitEmailOngoing = false
           })
@@ -1030,7 +1021,7 @@ export default {
       await FacebookLogin.checkLoginStatus()
         .then(res => {
           if (res.response === 'success' || res.message === 'success') {
-            this.loginClient(res)
+            this.loginClient(res, 'Facebook')
           } else {
             this.disableLoginFacebook = false
             this.errorObject.message = res.message
@@ -1181,8 +1172,8 @@ export default {
         if (link === 'close_nav_dialog') {
           this.navbarIcon = false
         } else {
-          const linkWithHash = '/' + link // so as to use in the if statement below
-          if (this.$route.fullPath !== linkWithHash) {
+          const LINK_WITH_HASH = '/' + link
+          if (this.$route.fullPath !== LINK_WITH_HASH) {
             if (link === 'login') {
               this.changeLoginDialogContents({
                 key: 'dialogTitle',
@@ -1225,31 +1216,31 @@ export default {
       }
     },
     removeFile (file) {
-      const index = this.problemForm.supportingFiles.map(function (e) {
+      const INDEX = this.problemForm.supportingFiles.map(function (e) {
         return e.fileUrl
       }).indexOf(file.fileUrl)
-      if (index > -1) {
-        this.problemForm.supportingFiles.splice(index, 1)
+      if (INDEX > -1) {
+        this.problemForm.supportingFiles.splice(INDEX, 1)
       }
     },
     pickFile () {
       this.$refs.image.click()
     },
     async uploadFile (e) {
-      const files = e.target.files || e.dataTransfer.files
+      const FILES = e.target.files || e.dataTransfer.files
       /* The function only accepts a given set of file types indicated on the confirmFileMimeType function */
       if (registrationMixin.confirmFileMimeType(e)) {
-        if (!files.length) { return }
+        if (!FILES.length) { return }
         this.supportingFileUploading = true
-        const file = document.getElementById('problemFile').files[0]
-        const fileForm = new FormData()
-        fileForm.append('file', file)
-        await api.postRequest('users/v1/upload_file', fileForm)
+        const FILE = document.getElementById('problemFile').files[0]
+        const FILE_FORM = new FormData()
+        FILE_FORM.append('file', FILE)
+        await api.postRequest('users/v1/upload_file', FILE_FORM)
           .then(res => {
             if (!res.error) {
               this.problemForm.supportingFiles.push({
                 fileUrl: res.filename,
-                originalName: file.name
+                originalName: FILE.name
               })
             }
             this.supportingFileUploading = false

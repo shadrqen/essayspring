@@ -7,22 +7,22 @@ export default {
 * also select a time that is later than 8am.
 * This is what the function below does. */
     disablePossibleDeadlineTimes () {
-      const dateTime = new Time.DateTime()
+      const DATE_TIME = new Time.DateTime()
       if (this.clientPostOrderForm.deadlineDate) {
-        const time = dateTime._time
-        const currentRefinedTime = String(time.split(' ')[0].split(':')[0]).concat(time.split(' ')[1])
-        const indexOfCurrentTime = this.time.filter(time__ => time__.time === currentRefinedTime)[0]
-        if (this.clientPostOrderForm.deadlineDate === dateTime._date) {
-          const maximumAllowedTimeIds = indexOfCurrentTime.id + 6 > 24 ? 24 : indexOfCurrentTime.id + 6
+        const time = DATE_TIME._time
+        const CURRENT_REFINED_TIME = String(time.split(' ')[0].split(':')[0]).concat(time.split(' ')[1])
+        const INDEX_OF_CURRENT_TIME = this.time.filter(time__ => time__.time === CURRENT_REFINED_TIME)[0]
+        if (this.clientPostOrderForm.deadlineDate === DATE_TIME._date) {
+          const maximumAllowedTimeIds = INDEX_OF_CURRENT_TIME.id + 6 > 24 ? 24 : INDEX_OF_CURRENT_TIME.id + 6
           this.disabledTimes = this.time.filter(time__ => time__.id <= maximumAllowedTimeIds)
           const selectedTimeIsDisabled = this.time.filter(time__ => time__.id === this.clientPostOrderForm.deadlineTime)
           if (selectedTimeIsDisabled.length > 0) {
             this.clientPostOrderForm.deadlineTime = ''
           }
-        } else if (this.clientPostOrderForm.deadlineDate === dateTime.tomorrow) {
-          if (dateTime.currentHr >= 18) {
-            const timeDiffToMidnight = dateTime.currentHr - 17
-            this.disabledTimes = this.time.filter(time__ => time__.id <= timeDiffToMidnight)
+        } else if (this.clientPostOrderForm.deadlineDate === DATE_TIME.tomorrow) {
+          if (DATE_TIME.currentHr >= 18) {
+            const TIME_DIFF_TO_MIDNIGHT = DATE_TIME.currentHr - 17
+            this.disabledTimes = this.time.filter(time__ => time__.id <= TIME_DIFF_TO_MIDNIGHT)
           } else {
             this.disabledTimes = []
           }

@@ -1,17 +1,17 @@
 import api from '../api/api'
 export default {
   methods: {
-    loginCurrentUser (res) {
+    loginCurrentUser (res, loginMode) {
       const email = res.email
       this.changeClient({ key: 'regUpdateSuccessful', val: true })
       this.changeClient({ key: 'isNew', val: res.isNew })
       this.changeAccessToken(res.accessToken)
       this.changeRefreshToken(res.refreshToken)
-      this.changeUserType('Client')
       this.changeLoginStatus(true)
       this.changeLoginDialog(false)
       this.changeEmail(email)
-      this.changeLoginMode('Google')
+      /* TODO: To return this functionality later */
+      // this.changeLoginMode(loginMode)
       this.changeClientPostOrderForm({
         key: 'email',
         subKey: null,

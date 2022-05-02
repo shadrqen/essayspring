@@ -1,18 +1,18 @@
-const express = require('express')
-const router = express.Router()
+const EXPRESS = require('express')
+const ROUTER = EXPRESS.Router()
 
 const { auth, writerayAuth } = require('../services/users/auth')
 
 const { logger } = require('../services/logs/logger')
 
-const sockets = require('../services/sockets/order')
+const SOCKETS_SERVICE = require('../services/sockets/order')
 
 /* GET home page. */
-router.get('/', logger, auth, function (req, res, next) {
+ROUTER.get('/', logger, auth, function (req, res, next) {
   res.json({ title: 'ws' })
 })
 
-router.get('/ws_wc_creds', logger, auth, function (req, res, next) {
+ROUTER.get('/ws_wc_creds', logger, auth, function (req, res, next) {
   let creds
   if (process.env.NODE_ENV === 'production') {
     const rand = Math.random() * (9999 - 1000) + 1000
@@ -36,11 +36,11 @@ router.get('/ws_wc_creds', logger, auth, function (req, res, next) {
   res.json(creds)
 })
 
-router.post('/bid/new', logger, writerayAuth, function (req, res, next) {
+ROUTER.post('/bid/new', logger, writerayAuth, function (req, res, next) {
   res.send()
-  sockets.getBids(req.body.orderId, false)
+  SOCKETS_SERVICE.getBids(req.body.orderId, false)
     .then(() => {})
     .catch(() => {})
 })
 
-module.exports = router
+module.exports = ROUTER

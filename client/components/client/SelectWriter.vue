@@ -468,9 +468,9 @@ export default {
     * That is the basis of the function below. */
     expandWriterQuote (quoteId) {
       if (this.writerQuoteWhiteSpaceNormal.includes(quoteId)) {
-        const index = this.writerQuoteWhiteSpaceNormal.indexOf(quoteId)
-        if (index > -1) {
-          this.writerQuoteWhiteSpaceNormal.splice(index, 1)
+        const INDEX = this.writerQuoteWhiteSpaceNormal.indexOf(quoteId)
+        if (INDEX > -1) {
+          this.writerQuoteWhiteSpaceNormal.splice(INDEX, 1)
         }
       } else {
         this.writerQuoteWhiteSpaceNormal.push(quoteId)
@@ -589,8 +589,8 @@ export default {
         .then(async topic => {
           this.client = await Socket.doSubscribe(topic.topic)
           this.client.on('message', (topic, message) => {
-            const parsedMessage = JSON.parse(message)
-            this.writerBids = parsedMessage.bids
+            const PARSED_MESSAGE = JSON.parse(message)
+            this.writerBids = PARSED_MESSAGE.bids
           })
         })
     },

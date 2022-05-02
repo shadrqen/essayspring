@@ -637,7 +637,9 @@ class AuthService {
     }
 
     static async sendResetPasswordCode (req) {
+      console.log('\n\n\n services beginning... \n\n\n')
       try {
+        console.log('\n\n\n try \n\n\n')
         const CODE_PAYLOAD = {
           codeIntention: 'changing',
           intention: 'change',
@@ -646,6 +648,7 @@ class AuthService {
         }
         return AuthService.sendOTPCode(CODE_PAYLOAD)
       } catch (e) {
+        console.log('\n\n\n catch \n\n\n')
         return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }
@@ -682,6 +685,7 @@ class AuthService {
       /* eslint-disable no-async-promise-executor */
       /* TODO: To remove the async in the promise below */
       return new Promise(async (resolve, reject) => {
+        console.log('\n\n\n final sending otp function \n\n\n')
         const RESPONSE = {
           accountExists: true,
           codeSent: false,
@@ -723,16 +727,21 @@ class AuthService {
 
     /* Called to send the code, but does not do the actual sending */
     static async sendOTPCode (req) {
+      console.log('\n\n\n send otp function \n\n\n')
       try {
+        console.log('\n\n\n try \n\n\n')
         return AuthService.postRequest('users/v1/web_user_by_email', { email: req.email })
           .then(user => {
+            console.log('\n\n\n user: ', user, ' \n\n\n')
             /* This functionality happens when a client wants to log in for the second time.
                     * That's why interest is only on clients not writers or even admins */
             if (user.type === 'Client') {
+              console.log('\n\n\n user is client \n\n\n')
               /* eslint-disable no-async-promise-executor */
               /* TODO: To remove the async in the promise below */
               return new Promise(async (resolve, reject) => {
                 try {
+                  console.log('\n\n\n otp promise \n\n\n')
                   const OTP = await REDIS_CLIENT.get(req.redisPrefix.concat(req.email))
                   const RESPONSE = {
                     accountExists: true,
@@ -743,29 +752,38 @@ class AuthService {
                     success: false
                   }
                   if (OTP) {
+                    console.log('\n\n\n if otp \n\n\n')
                     try {
+                      console.log('\n\n\n if otp try \n\n\n')
                       const OTP_TOKEN = await REDIS_CLIENT.get(req.redisPrefix.concat(req.email, '-token'))
+                      console.log('\n\n\n otp token: ', OTP_TOKEN, ' \n\n\n')
                       if (OTP_TOKEN) {
+                        console.log('\n\n\n code already sent \n\n\n')
                         RESPONSE.success = true
                         RESPONSE.message = 'Code already sent. Kindly retry again after 30 seconds'
                         resolve(RESPONSE)
                       } else {
+                        console.log('\n\n\n code not sent, setting on redis \n\n\n')
                         await REDIS_CLIENT.del(req.redisPrefix.concat(req.email))
+                        console.log('\n\n\n after setting otp redis \n\n\n')
                         resolve(AuthService.sendCode(req))
                       }
                     } catch (tokenErr) {
+                      console.log('\n\n\n if otp catch \n\n\n')
                       reject(tokenErr)
                     }
                   } else {
                     resolve(AuthService.sendCode(req))
                   }
                 } catch (err) {
+                  console.log('\n\n\n otp catch \n\n\n')
                   // ClosedClient Error
                   reject(err)
                 }
               })
               /* eslint-enable no-async-promise-executor */
             } else {
+              console.log('\n\n\n user not client \n\n\n')
               return {
                 accountExists: true,
                 codeSent: false,
@@ -780,6 +798,7 @@ class AuthService {
             throw new Error(error)
           })
       } catch (e) {
+        console.log('\n\n\n catch \n\n\n')
         return REQUESTS_MIXIN.customErrorMessage(e)
       }
     }

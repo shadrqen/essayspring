@@ -104,6 +104,7 @@ ROUTER.post('/set_client_password', logger, async (req, res) => {
 })
 
 ROUTER.post('/forgot_password', async function (req, res) {
+  console.log('\n\n\n route \n\n\n')
   await sendResetPasswordCode(req.body)
     .then(response => {
       res.status(200).json(response)

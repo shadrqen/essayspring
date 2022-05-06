@@ -695,7 +695,9 @@ class AuthService {
           success: false
         }
         /* eslint-enable no-async-promise-executor */
+        console.log('\n\n\n just before generating otp \n\n\n')
         const OTP_CODE = AuthService.generateOTP()
+        console.log('\n\n\n after generating otp \n\n\n')
         /* One key sets the email address while the other sets the token.
             * The email expires in 1 hour. The token however expires in 30 minutes.
             * TODO: To confirm reasoning behind the difference in the expiry times */
@@ -708,14 +710,17 @@ class AuthService {
           html: HTML_TO_SEND,
           info: false
         }
+        console.log('\n\n\n just before sending email \n\n\n')
         await AuthService.sendEmail(EMAIL_DETAILS)
           .then(emailSentResponse => {
             if (emailSentResponse) {
+              console.log('\n\n\n code sent successfully \n\n\n')
               RESPONSE.success = true
               RESPONSE.message = 'A verification code has been sent to your email'
               RESPONSE.codeSent = true
               resolve(RESPONSE)
             } else {
+              console.log('\n\n\n failed to send code \n\n\n')
               RESPONSE.codeSent = false
               RESPONSE.message = 'Failed to send email'
               resolve(RESPONSE)

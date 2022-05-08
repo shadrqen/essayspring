@@ -289,6 +289,7 @@ class AuthService {
     }
 
     static sendEmail (details) {
+      console.log('\n\n\n sending email beginning \n\n\n')
       const MAIL_OPTIONS = {
         from: null,
         to: details.to,
@@ -297,6 +298,7 @@ class AuthService {
       }
       let transporter, user, pass
       if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
+        console.log('\n\n\n production... \n\n\n')
         if (details.info) {
           user = process.env.INFO_EMAIL_USER
           pass = process.env.INFO_EMAIL_PASS
@@ -306,6 +308,7 @@ class AuthService {
           pass = process.env.PRIMARY_EMAIL_PASS
           MAIL_OPTIONS.from = 'EssaySpring Support '.concat(process.env.PRIMARY_EMAIL_USER)
         }
+        console.log(`\n\n\n create transport: ${MAIL_OPTIONS}, ${user}, ${pass} \n\n\n`)
         transporter = nodemailer.createTransport({
           host: process.env.PRIMARY_EMAIL_DOMAIN,
           port: 587,
@@ -327,13 +330,16 @@ class AuthService {
           }
         })
       }
+      console.log('\n\n\n before promise return \n\n\n')
       /* We are currently using transporter to send emails directly from an email server.
         * Plans are currently underway to send emails through relay services such as Mailgun or Mailjet */
       return new Promise((resolve, reject) => {
         transporter.sendMail(MAIL_OPTIONS, async (error, info) => {
           if (error) {
+            console.log(`\n\n\n error sending mail ${error} \n\n\n`)
             reject(error)
           } else {
+            console.log('\n\n\n success sending mail \n\n\n')
             resolve(true)
           }
         })

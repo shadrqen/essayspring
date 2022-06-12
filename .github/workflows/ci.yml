@@ -17,13 +17,13 @@ jobs:
         with:
           node-version: '16'
       - name: Install npm dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Run linter
-        run: npm run lint
+        run: yarn lint
       - name: Run unit tests
-        run: npm run test:unit
+        run: yarn test:unit
       - name: Build Nuxt project
-        run: npm run build
+        run: yarn build
 
   server-ci:
 

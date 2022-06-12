@@ -7,8 +7,8 @@ services:
       - POSTGRESQL_PASSWORD=Ole2020...
       - POSTGRESQL_DATABASE=essayprime_development
       - POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on
-    volumes:
-      - './db_volume:/bitnami/postgresql'
+#    volumes:
+#      - './db_volume:/bitnami/postgresql'
     ports:
       - '5432:5432'
   phppgadmin:

@@ -4,6 +4,13 @@
    nodemailer helps in sending mails */
 const nodemailer = require('nodemailer')
 
+const Mailjet = require('node-mailjet')
+
+const mailjet = new Mailjet({
+  apiKey: process.env.MJ_APIKEY_PUBLIC || '23d1be80932987b7ec33b248371ab570',
+  apiSecret: process.env.MJ_APIKEY_PRIVATE || '44ff099e5f14779453391827c811488e'
+})
+
 const AXIOS = require('axios')
 
 const EMAIL_OTP = require('../../views/otp_email')
@@ -295,49 +302,66 @@ class AuthService {
         subject: details.subject,
         html: details.html
       }
-      let transporter, user, pass
       if (process.env.NODE_ENV && process.env.NODE_ENV === 'production') {
+        let name = 'EssaySpring'
         if (details.info) {
-          user = process.env.INFO_EMAIL_USER
-          pass = process.env.INFO_EMAIL_PASS
-          MAIL_OPTIONS.from = 'EssaySpring '.concat(process.env.INFO_EMAIL_USER)
+          MAIL_OPTIONS.from = process.env.INFO_EMAIL_USER
         } else {
-          user = process.env.PRIMARY_EMAIL_USER
-          pass = process.env.PRIMARY_EMAIL_PASS
-          MAIL_OPTIONS.from = 'EssaySpring Support '.concat(process.env.PRIMARY_EMAIL_USER)
+          MAIL_OPTIONS.from = process.env.PRIMARY_EMAIL_USER
+          name = 'EssaySpring Support'
         }
-        transporter = nodemailer.createTransport({
-          host: process.env.PRIMARY_EMAIL_DOMAIN,
-          port: 587,
-          secure: false, // true for 465, false for other ports
-          auth: {
-            user: user,
-            pass: pass
-          }
-        })
+        const request = mailjet
+          .post('send', { version: 'v3.1' })
+          .request({
+            Messages: [
+              {
+                From: {
+                  Email: MAIL_OPTIONS.from,
+                  Name: name
+                },
+                To: [
+                  {
+                    Email: MAIL_OPTIONS.to,
+                    Name: MAIL_OPTIONS.to.split('@')[0]
+                  }
+                ],
+                Subject: MAIL_OPTIONS.subject,
+                HTMLPart: MAIL_OPTIONS.html,
+                CustomID: 'AppGettingStartedTest'
+              }
+            ]
+          })
+        return request
+          .then((result) => {
+            return true
+          })
+          .catch((err) => {
+            return Promise.reject(err)
+          })
       } else {
         /* We use Gmail and nodemailer for sending emails on development */
         MAIL_OPTIONS.from = process.env.GMAIL_USER
         /* Instantiating the nodemailer email options */
-        transporter = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
             user: process.env.GMAIL_USER,
             pass: process.env.GMAIL_PASS /* This comes from Google account, you have to request for one */
           }
         })
-      }
-      /* We are currently using transporter to send emails directly from an email server.
+
+        /* We are currently using transporter to send emails directly from an email server.
         * Plans are currently underway to send emails through relay services such as Mailgun or Mailjet */
-      return new Promise((resolve, reject) => {
-        transporter.sendMail(MAIL_OPTIONS, async (error, info) => {
-          if (error) {
-            reject(error)
-          } else {
-            resolve(true)
-          }
+        return new Promise((resolve, reject) => {
+          transporter.sendMail(MAIL_OPTIONS, async (error, info) => {
+            if (error) {
+              reject(error)
+            } else {
+              resolve(true)
+            }
+          })
         })
-      })
+      }
     }
 
     /* We log in by first submitting an email address, then password if a user exists.

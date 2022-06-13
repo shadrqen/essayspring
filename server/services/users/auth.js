@@ -7,8 +7,8 @@ const nodemailer = require('nodemailer')
 const Mailjet = require('node-mailjet')
 
 const mailjet = new Mailjet({
-  apiKey: process.env.MJ_APIKEY_PUBLIC || '23d1be80932987b7ec33b248371ab570',
-  apiSecret: process.env.MJ_APIKEY_PRIVATE || '44ff099e5f14779453391827c811488e'
+  apiKey: process.env.MJ_APIKEY_PUBLIC,
+  apiSecret: process.env.MJ_APIKEY_PRIVATE
 })
 
 const AXIOS = require('axios')

@@ -17,9 +17,9 @@ WORKDIR /app
 COPY package.json ./
 
 # Run the command inside your image filesystem
-RUN npm install -g pm2
+RUN yarn install -g pm2
 
-RUN npm install
+RUN yarn install
 
 #RUN npm install --save-dev sequelize-cli
 

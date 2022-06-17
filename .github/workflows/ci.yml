@@ -38,11 +38,11 @@ jobs:
         with:
           node-version: '16'
       - name: Install npm dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Run linter
-        run: npm run lint
+        run: yarn lint
       - name: Run unit tests
-        run: npm run test
+        run: yarn test
 
   dbms-ci:
 
@@ -57,8 +57,8 @@ jobs:
         with:
           node-version: '16'
       - name: Install npm dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Run linter
-        run: npm run lint
+        run: yarn lint
       - name: Run unit tests
-        run: npm run test
+        run: yarn test

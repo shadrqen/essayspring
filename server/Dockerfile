@@ -17,7 +17,7 @@ WORKDIR /app
 COPY package.json ./
 
 # Run the command inside your image filesystem
-RUN yarn install -g pm2
+RUN yarn global add pm2
 
 RUN yarn install
 

@@ -376,13 +376,13 @@
                 <v-col>
                   <span
                     style="cursor: pointer"
-                    @click="redirect_to_url('general/privacy-policy')"
+                    @click="redirect_to_url('/general/privacy-policy')"
                   >Privacy</span>
                 </v-col>
                 <v-col class="text-end text-xl-end text-lg-end text-sm-end text-md-end">
                   <span
                     style="cursor: pointer"
-                    @click="redirect_to_url('general/terms-and-conditions')"
+                    @click="redirect_to_url('/general/terms-and-conditions')"
                   >Terms</span>
                 </v-col>
               </v-row>

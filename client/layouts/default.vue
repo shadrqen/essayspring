@@ -50,22 +50,23 @@ export default Vue.extend({
       }
       switch (true) {
         case (width < 600):
-          this.changeViewPortDebounce('xs')
+          this.changeViewPortCode('xs')
           break
         case (width > 600 && width < 960):
-          this.changeViewPortDebounce('sm')
+          this.changeViewPortCode('sm')
           break
         case (width > 960 && width < 1264):
-          this.changeViewPortDebounce('md')
+          this.changeViewPortCode('md')
           break
         case (width > 1264 && width < 1904):
-          this.changeViewPortDebounce('lg')
+          this.changeViewPortCode('lg')
           break
         case (width > 1904):
-          this.changeViewPortDebounce('xl')
+          this.changeViewPortCode('xl')
           break
       }
     },
+    /* TODO: To integrate this debounce functionality */
     changeViewPortDebounce (viewport) {
       const timeout = 10
       clearTimeout(this.viewportTimer)

@@ -97,3 +97,5 @@ out/
 docs/
 
 dump.rdb
+
+appendonly.aof

@@ -633,10 +633,7 @@ export default {
             await this.submitExistingUserEmail(email)
           } else {
             this.overlay = false
-            this.setClientSessionVariables({
-              calledFromBaseDialog: calledFromBaseDialog,
-              registerUserResponse: REGISTRATION_STATUS
-            })
+            this.setClientSessionVariables(registerUserResponse, calledFromBaseDialog)
           }
         })
         .catch(error => {
@@ -839,16 +836,17 @@ export default {
      * This function is the one that logs in the user after successfully logging in on the back-end
      * Mind you this is a stateless authentication but with a client session. The function sets the client
      * session variables
-     * @param {{registerUserResponse, calledFromBaseDialog}} clientDetails - Client details
+     * @param {clientDetails} clientDetails - Client details
+     * @param {calledFromBaseDialog} - Whether the function was called the base dialog component
      * @returns {void}
      */
-    setClientSessionVariables (clientDetails) {
-      switch (clientDetails.registerUserResponse) {
+    setClientSessionVariables (clientDetails, calledFromBaseDialog) {
+      switch (clientDetails.response) {
         /* We only act on the success option */
         case 'success':
-          this.loginCurrentUser(clientDetails.registerUserResponse, 'Email')
+          this.loginCurrentUser(clientDetails, 'Email')
           /* TODO: To confirm the role of the redirected variable */
-          if (clientDetails.calledFromBaseDialog) {
+          if (calledFromBaseDialog) {
             if (this.$route.fullPath !== '/') {
               this.$router.push('/')
             }

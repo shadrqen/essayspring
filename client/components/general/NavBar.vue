@@ -290,7 +290,6 @@ export default {
     }),
     formattedEmail () {
       if (this.viewportCode === 'xs') {
-        console.log(this.email, this.email.split('@'))
         return this.email.split('@')[0]
       }
       return this.email

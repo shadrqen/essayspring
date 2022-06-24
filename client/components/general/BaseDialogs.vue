@@ -771,7 +771,6 @@ export default {
       await api.postRequest('auth/v1/login_user', payload)
         .then(res => {
           if (res.message === 'success') {
-            // console.log('\n\n\n just b4 calling ... \n\n\n')
             this.loginCurrentUser(res, 'Email')
             /* Important to note here is the fact that there is need to resume an order that was
             * pending completion by a client. The role of the orderPostingStep is to determine whether a

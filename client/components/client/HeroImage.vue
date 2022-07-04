@@ -7,7 +7,7 @@
     <v-card-text>
       <v-container>
         <v-row
-          :style="screenIsXL ? 'margin-left: 13vw; margin-right: 15vw;' : ''"
+          :style="screenIsXL ? 'margin-left: 13vw; margin-right: 18vw;' : 'margin-right: 5vw;'"
           no-gutters
         >
           <v-col

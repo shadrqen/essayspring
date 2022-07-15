@@ -18,7 +18,7 @@
     "http-errors": "^1.6.3",
     "morgan": "~1.9.1",
     "pg": "^8.4.2",
-    "public-ip": "^4.0.3",
+    "public-ip": "^6.0.1",
     "pug": "^3.0.0",
     "sequelize": "^6.3.5"
   },

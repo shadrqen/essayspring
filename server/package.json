@@ -16,7 +16,7 @@
     "dotenv": "^8.2.0",
     "express": "~4.17.2",
     "fs": "^0.0.1-security",
-    "googleapis": "^105.0.0",
+    "googleapis": "^107.0.0",
     "http-errors": "^1.6.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",

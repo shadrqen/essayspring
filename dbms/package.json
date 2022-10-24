@@ -20,7 +20,7 @@
     "pg": "^8.4.2",
     "public-ip": "^4.0.3",
     "pug": "^3.0.0",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.25.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

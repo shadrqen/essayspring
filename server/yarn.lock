@@ -4199,10 +4199,10 @@ node-ipgeoblock@^0.1.4:
     mmdb-reader "0.0.4"
     request-ip "^1.1.4"
 
-node-mailjet@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/node-mailjet/-/node-mailjet-5.0.1.tgz#c935927f6db2b24aba667d74cc887e25dbc49f6a"
-  integrity sha512-+HJ6wDQe32LQ7Bna1FrXxelqOfDSn+DaBMsuWnPHlONvzEXMQOuodPUDEIxUWbQJVlCTuavpxzszWm80jqLtpA==
+node-mailjet@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/node-mailjet/-/node-mailjet-6.0.1.tgz#626efa5878f67873d29c3e9d2a34ea554097f87a"
+  integrity sha512-hxwyX/UivcJbhfzDrFH8UVcNF0iZxOQnEBO70xLbQefrysLaKD34peKeaLeyyVQXlAV9mWrare+sd924P0TZFw==
   dependencies:
     axios "^0.27.2"
     json-bigint "^1.0.0"
